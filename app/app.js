@@ -12,6 +12,7 @@ app.use(express.urlencoded({extended:false}));
 //rutas
 app.use(express.static("public"));
 app.use(require("../rutas/login"));
+app.use(require("../rutas/registroU"));
 
 
 
