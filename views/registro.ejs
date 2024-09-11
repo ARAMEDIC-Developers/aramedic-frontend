@@ -1,28 +1,63 @@
+
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
+    <link rel="stylesheet" href="/styles-registro.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
+    <div class="header-text">
+        <h1><span class="highlight">ARA</span>MEDIC</h1>
+    </div>
     
-    <h1>Registro de nuevo usaurio</h1>
-    <form action="/registroU" method="post">
-    
-        nombres:
-        <input type="text" name="nom" id="nom"><br><br>
-        apellidos:
-        <input type="text" name="ape" id="ape"><br><br>
-        email:
-        <input type="email" name="ema" id="ema"><br><br>
-        contraseña:
-        <input type="password" name="contra" id="contra"><br><br>
-        <input type="submit" value="Registrar">
-        
-    </form>
+    <div class="container">
+        <div class="title">Registro</div>
+        <form action="/registroU" method="POST">
+            <div class="user-details">
+                <div class="input-box">
+                    <span class="details">Nombres</span>
+                    <input type="text" name="nom" placeholder="Introduce tus nombres">
+                </div>
+                <div class="input-box">
+                    <span class="details">Apellidos</span>
+                    <input type="text" name="ape" placeholder="Introduce tus apellidos">
+                </div>
+                <div class="input-box">
+                    <span class="details">Email</span>
+                    <input type="email" name="ema" placeholder="Introduce tu email">
+                </div>
+                <div class="input-box">
+                    <span class="details">Contraseña</span>
+                    <input type="password" name="contra" placeholder="Introduce tu contraseña">
+                </div>
+                <div class="input-box">
+                    <span class="details">Confirmar Contraseña</span>
+                    <input type="password" name="confirm_contra" placeholder="Confirmar tu contraseña">
+                </div>
+            </div>
 
-    
-
+            <div class="gender-details">
+                <span class="gender-title">Género</span>
+                <div class="category">
+                    <label for="masculino">
+                        <input type="radio" name="gender" id="masculino" value="Masculino">
+                        <span class="dot one"></span>
+                        <span class="gender">Masculino</span>
+                    </label>
+                    <label for="femenino">
+                        <input type="radio" name="gender" id="femenino" value="Femenino">
+                        <span class="dot two"></span>
+                        <span class="gender">Femenino</span>
+                    </label>
+                </div>
+            </div>
+            <div class="button">
+                <input type="submit" value="Registrar">
+            </div>
+        </form>
+    </div>
 </body>
 </html>
