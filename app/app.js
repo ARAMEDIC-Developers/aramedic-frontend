@@ -1,6 +1,8 @@
 //librerias
+const path = require('path')
 const express = require("express");
 const app= express();
+const router = express.Router();
 
 
 //configuraciones
@@ -10,9 +12,11 @@ app.use(express.urlencoded({extended:false}));
 
 
 //rutas
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(require("../rutas/login"));
 app.use(require("../rutas/registroU"));
+app.use(require("../rutas/jmedico"));
+
 
 
 
