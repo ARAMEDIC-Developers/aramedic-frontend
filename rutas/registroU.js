@@ -10,14 +10,16 @@ router.get("/registroU",function(req,res){
 
 router.post("/registroU",function(req,res){
 
+
+    //validaciones entre la linea 14 y 20
     let nombres=req.body.nom;
     let apellidos=req.body.ape;
     let email=req.body.ema;
     let contrasena=req.body.contra;
-   
+    let DNI=req.body.dni;
     let genero=req.body.gender;
 
-    const insertar="INSERT INTO medico (nombre,apellido,correo,contrasena,genero) VALUES ('"+nombres+"','"+apellidos+"','"+email+"','"+contrasena+"','"+genero+"')";
+    const insertar="INSERT INTO medico (nombre,apellido,correo,contrasena,genero,DNI) VALUES ('"+nombres+"','"+apellidos+"','"+email+"','"+contrasena+"','"+genero+"','"+DNI+"')";
                 conexion.query(insertar,function(error){
                     if (error) {
                         console.log("TRIKA error");

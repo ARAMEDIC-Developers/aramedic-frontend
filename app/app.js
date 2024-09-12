@@ -1,30 +1,29 @@
-//librerias
+// Librerías
 const express = require("express");
-const app= express();
+const app = express();
+const methodOverride = require('method-override'); // Para usar métodos PUT y DELETE en formularios
 
-
-//configuraciones
-app.set("view engine","ejs");
+// Configuraciones
+app.set("view engine", "ejs");
 app.use(express.json());
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
+app.use(methodOverride('_method')); // Permite usar métodos PUT y DELETE
 
-
-//rutas
+// Rutas
 app.use(express.static("public"));
 app.use(require("../rutas/login"));
 app.use(require("../rutas/registroU"));
 
-
-
-//configuracion del puerto del servidor
-const PORT= process.env.PORT || 3000;
-app.listen(PORT, function(){
-    if (PORT==3000) {
-        console.log(" TRIKA Servidor creado http://localhost:3000")
+// Configuración del puerto del servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, function () {
+    if (PORT == 3000) {
+        console.log("TRIKA Servidor creado http://localhost:3000");
     } else {
         console.log(PORT);
     }
 });
+
 
 // app.get("/",function(req,res){
 //     res.render("index");
