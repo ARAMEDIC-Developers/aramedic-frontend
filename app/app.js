@@ -1,14 +1,16 @@
-//librerias
+// Librerías
 const path = require('path')
 const express = require("express");
-const app= express();
+const app = express();
+const methodOverride = require('method-override'); // Para usar métodos PUT y DELETE en formularios
 const router = express.Router();
 
 
 //configuraciones
 app.set("view engine","ejs");
 app.use(express.json());
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
+app.use(methodOverride('_method')); // Permite usar métodos PUT y DELETE
 
 
 //rutas
@@ -29,6 +31,7 @@ app.listen(PORT, function(){
         console.log(PORT);
     }
 });
+
 
 // app.get("/",function(req,res){
 //     res.render("index");
