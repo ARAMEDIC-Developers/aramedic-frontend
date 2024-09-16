@@ -6,8 +6,5 @@ router.get("/login",function(req,res){
     res.render("login",{link});
 });
 
-router.get("/dashboard_jmedico",function(req,res){
-    res.render("dashboard_jmedico",{link});
-});
 
 module.exports= router;
