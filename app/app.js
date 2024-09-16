@@ -22,6 +22,7 @@ app.use(require("../rutas/jmedico"));
 
 
 
+
 //configuracion del puerto del servidor
 const PORT= process.env.PORT || 3000;
 app.listen(PORT, function(){
