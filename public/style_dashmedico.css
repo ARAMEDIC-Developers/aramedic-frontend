@@ -21,7 +21,7 @@ body {
     font-family: 'Poppins', sans-serif;
     color: var(--text-color);
     line-height: 1.6;
-    background-image: url('public/imags/fondo.jpg');
+    background-image: url('/imgs/fondo.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
