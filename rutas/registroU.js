@@ -18,8 +18,11 @@ router.post("/registroU",function(req,res){
     let contrasena=req.body.contra;
     let DNI=req.body.dni;
     let genero=req.body.gender;
+    let numero_telefonico = req.body.num;
 
-    const insertar="INSERT INTO medico (nombre,apellido,correo,contrasena,genero,DNI) VALUES ('"+nombres+"','"+apellidos+"','"+email+"','"+contrasena+"','"+genero+"','"+DNI+"')";
+    const idrolPaciente = 1;
+
+    const insertar="INSERT INTO usuario (DNI,nombres,apellidos,num_telefonico,genero,correo,contrasena,idrol) VALUES ('"+DNI+"','"+nombres+"','"+apellidos+"','"+numero_telefonico+"','"+genero+"','"+email+"','"+contrasena+"','"+idrolPaciente+"')";
                 conexion.query(insertar,function(error){
                     if (error) {
                         console.log("TRIKA error");
