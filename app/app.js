@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 //configuraciones
-app.set("view engine","ejs");
+app.set("view engine","ejs");//paginas dinamicas
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method')); // Permite usar métodos PUT y DELETE
