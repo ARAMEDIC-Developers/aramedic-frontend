@@ -13,6 +13,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method')); // Permite usar métodos PUT y DELETE
 
 
+//manejo de sesiones
+// app.use(session({
+//     secret:"tu_contraseña",
+//     resave:false,
+//     saveUninitialized:false
+// }));
+
+
 //rutas
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(require("../rutas/login"));
