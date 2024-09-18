@@ -2,7 +2,7 @@ let mysql = require("mysql");
 
 let conexion=mysql.createConnection({
     host:"localhost",
-    database:"db_aramedic", //CAMBIADO LOCALMENTE
+    database:"aramedic",
     user:"root",
     password:""
 });
