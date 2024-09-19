@@ -6,6 +6,21 @@
     <title>Registro</title>
     <link rel="stylesheet" href="/styles-registro.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .error-box {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .error-list {
+            list-style: none;
+            padding-left: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="header-text">
@@ -14,27 +29,39 @@
     
     <div class="container">
         <div class="title">Registrar cuenta</div>
+        
+        <!-- Mostrar errores si existen -->
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <div class="error-box">
+                <ul class="error-list">
+                    <% errors.forEach(function(error) { %>
+                        <li><%= error.msg %></li>
+                    <% }); %>
+                </ul>
+            </div>
+        <% } %>
+
         <form action="/registroU" method="POST">
             <div class="user-details">
                 <div class="input-box">
                     <span class="details">Nombres</span>
-                    <input type="text" name="nom" placeholder="Introduce tus nombres">
+                    <input type="text" name="nom" placeholder="Introduce tus nombres" value="<%= oldData ? oldData.nom : '' %>">
                 </div>
                 <div class="input-box">
                     <span class="details">Apellidos</span>
-                    <input type="text" name="ape" placeholder="Introduce tus apellidos">
+                    <input type="text" name="ape" placeholder="Introduce tus apellidos" value="<%= oldData ? oldData.ape : '' %>">
                 </div>
                 <div class="input-box">
                     <span class="details">Email</span>
-                    <input type="email" name="ema" placeholder="Introduce tu email">
+                    <input type="email" name="ema" placeholder="Introduce tu email" value="<%= oldData ? oldData.ema : '' %>">
                 </div>
                 <div class="input-box">
                     <span class="details">Número Telefónico</span>
-                    <input type="text" name="num" placeholder="Introduce tu Número">
+                    <input type="text" name="num" placeholder="Introduce tu Número" value="<%= oldData ? oldData.num : '' %>">
                 </div>
                 <div class="input-box">
                     <span class="details">DNI</span>
-                    <input type="text" name="dni" placeholder="Introduce tu DNI">
+                    <input type="text" name="dni" placeholder="Introduce tu DNI" value="<%= oldData ? oldData.dni : '' %>">
                 </div>
                 <div class="input-box">
                     <span class="details">Contraseña</span>
@@ -47,8 +74,8 @@
                 <div class="input-box">
                     <span class="details">Género</span>
                     <select name="gender" id="gender">
-                        <option value="Masculino">Masculino</option>
-                        <option value="Femenino">Femenino</option>
+                        <option value="Masculino" <%= oldData && oldData.gender === 'Masculino' ? 'selected' : '' %>>Masculino</option>
+                        <option value="Femenino" <%= oldData && oldData.gender === 'Femenino' ? 'selected' : '' %>>Femenino</option>
                     </select>
                 </div>
             </div>

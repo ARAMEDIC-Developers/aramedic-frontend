@@ -2,12 +2,27 @@ const express = require("express");
 const router= express.Router();
 const conexion=require("../config/conexion");
 const link= require("../config/link");
+const { validateItem } = require('../validaciones/login');
+const { validationResult } = require('express-validator');
 
 router.get("/login",function(req,res){
-    res.render("login",{link});
+    res.render("login", { link, oldData: {} });
 });
 
-router.post("/login",function(req,res){
+router.post("/login",validateItem,function(req,res){
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        // Mostrar errores en la vista
+        return res.render("login", {
+            link,
+            errors: errors.array(),
+            oldData: req.body
+        });
+    }
+
+
+
     const DNI= req.body.dni;
     const contrasena= req.body.contra;
 
