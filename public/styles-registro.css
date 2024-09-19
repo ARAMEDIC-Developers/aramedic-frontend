@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+/* Estilo para el logo de la empresa en la parte superior izquierda */
+.header-text {
+    position: absolute;
+    top: 10px; /* Un poco de margen desde la parte superior */
+    left: 10px; /* Un poco de margen desde la parte izquierda */
+    font-size: 15px; /* Tamaño del texto inicial */
+    font-weight: bold;
+    color: white;
+    z-index: 1000; /* Para asegurarlo encima del resto del contenido */
+}
+
+.header-text h1 {
+    margin: 0; /* Eliminar márgenes */
+}
+
+.header-text .highlight {
+    color: orange;
+}
+
+/* Ajuste responsivo para el logo */
+@media (max-width: 584px) {
+    .header-text {
+        font-size: 14px; /* Reducir el tamaño en pantallas pequeñas */
+        top: 5px;
+        left: 5px;
+    }
+}
+
+body {
+    background-image: linear-gradient(
+      to right,
+      #353a7f,
+      rgba(40, 88, 167, 0.7)
+    ),
+    url("/imgs/header.png");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh; /* Cambiado de height a min-height */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; /* Añadido padding para evitar que el contenido toque los bordes */
+}
+
+/* Ajustar el ancho y reducir el padding para hacer menos alto */
+.container {
+    max-width: 800px;
+    width: 100%;
+    background: #fff;
+    padding: 15px 30px; /* Menos padding para reducir la altura */
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Añadido un poco de sombra */
+    overflow: hidden; /* Evitar que el contenido desborde */
+    margin-top: 60px; /* Margen para separar el container del logo */
+}
+
+/* Ajuste responsivo para el container */
+@media (max-width: 584px) {
+    .container {
+        margin-top: 80px; /* Más margen en pantallas pequeñas para evitar superposición con el logo */
+    }
+}
+
+/* Reducido el tamaño del título */
+.container .title {
+    font-size: 22px;
+    font-weight: 500;
+    position: relative;
+}
+
+.container .title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 30px;
+    background: linear-gradient(135deg, #71b7e6, #9b59b6);
+}
+
+.container form .user-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 10px 0 12px 0; /* Reducido el margen para compactar el contenido */
+}
+
+/* Reducido el tamaño de las entradas de texto */
+form .user-details .input-box {
+    margin-bottom: 10px; /* Reducido para ocupar menos altura */
+    width: calc(100% / 2 - 20px);
+}
+
+.user-details .input-box .details {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.user-details .input-box input {
+    height: 35px; /* Reducido para hacer menos alto */
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding-left: 10px; /* Menos padding */
+    font-size: 14px;
+    border-bottom-width: 2px;
+    transition: all 0.3s ease;
+}
+
+.user-details .input-box input:focus,
+.user-details .input-box input:valid {
+    border-color: black;
+}
+
+form .gender-details .gender-title {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* Ajustar la separación entre los botones de género */
+form .gender-details .category {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    width: auto;
+    margin: 10px 0; /* Reducido para compactar */
+}
+
+.gender-details .category label {
+    display: flex;
+    align-items: center;
+    cursor: pointer; /* Añadir un cursor para indicar que es clickeable */
+}
+
+.gender-details .category input[type="radio"] {
+    display: none; /* Oculta el input, pero mantiene su funcionalidad */
+}
+
+.gender-details .category .dot {
+    height: 16px;
+    width: 16px;
+    background: #d9d9d9;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 5px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.gender-details .category input[type="radio"]:checked + .dot {
+    background: black;
+    border-color: #d9d9d9;
+}
+
+form .button {
+    height: 35px; /* Reducido para hacer menos alto */
+    margin: 30px 0; /* Reducido para ocupar menos altura */
+}
+
+form .button input {
+    height: 100%;
+    width: 100%;
+    outline: none;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 5px;
+    letter-spacing: 1px;
+    background: blue;
+}
+
+form .button input:hover {
+    background: rgb(0, 195, 255);
+}
+
+/* Ajustes para pantallas más pequeñas */
+@media (max-width: 584px) {
+    .container {
+        max-width: 100%;
+        padding: 20px;
+        margin: 10px; /* Añadido margen para evitar que toque los bordes */
+    }
+
+    form .user-details .input-box {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    form .gender-details .category {
+        width: 100%;
+    }
+
+    .container form .user-details {
+        max-height: 300px;
+        overflow-y: scroll;
+    }
+
+    .user-details::-webkit-scrollbar {
+        width: 0;
+    }
+}

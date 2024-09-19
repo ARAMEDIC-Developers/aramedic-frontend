@@ -1,0 +1,30 @@
+{
+  "name": "aramedic-frontend",
+  "version": "1.0.0",
+  "description": "Instalación de Git",
+  "main": "app/app.js",
+  "scripts": {
+    "dev": "nodemon --exec node app/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ARAMEDIC-Developers/aramedic-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ARAMEDIC-Developers/aramedic-frontend/issues"
+  },
+  "homepage": "https://github.com/ARAMEDIC-Developers/aramedic-frontend#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "method-override": "^3.0.0",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
