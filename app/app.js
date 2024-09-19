@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const methodOverride = require('method-override'); // Para usar métodos PUT y DELETE en formularios
 const router = express.Router();
+const session = require('express-session');
 
 
 //configuraciones
@@ -14,11 +15,11 @@ app.use(methodOverride('_method')); // Permite usar métodos PUT y DELETE
 
 
 //manejo de sesiones
-// app.use(session({
-//     secret:"tu_contraseña",
-//     resave:false,
-//     saveUninitialized:false
-// }));
+app.use(session({
+    secret:"tu_contraseña",
+    resave:false,
+    saveUninitialized:false
+}));
 
 
 //rutas

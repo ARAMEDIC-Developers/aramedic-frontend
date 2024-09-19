@@ -20,14 +20,34 @@ router.post("/login",function(req,res){
         }
         if (rows.length<1) {
             mensaje="TRIKA el dni no existe";
-            res.redirect(link,mensaje);
+            res.render(mensaje,link);
         }  else {
-            console.log("TRIKA datos almacenados correctamente");
-            res.redirect(link+"login");
+            const user=rows[0];
+            const match= contrasena==user.contrasena;
+
+            if(!match){
+                mensaje="TRIKA contraseña incorrecta";
+                res.render(mensaje,link);
+
+            }else{
+                req.session.login=true;
+                req.session.idusu=user.idusuario;
+                req.session.dn=user.dni;
+                req.session.nom=user.nombres;
+                req.session.ape=user.apellidos;
+                req.session.naci=user.fecha_nacimiento;
+                req.session.tel=user.num_telefonico;
+                req.session.gen=user.genero;
+                req.session.cor=user.correo;
+                req.session.contra=user.contrasena;
+                req.session.rol=user.idrol;
+                console.log(req.session);//comprobar los datos que inician sesion
+                res.render("dashboard_medico/inicio",{datos:req.session,link});//deberia ser asi: res.render("dasboard_paciente",{datos:req.session,link});
+            }
         }
     });
 
-})
+});
 
 
 module.exports= router;
