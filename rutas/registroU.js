@@ -31,19 +31,19 @@ router.post("/registroU",function(req,res){
         const phonePattern = /^\d{9}$/;; //VERIFICA QUE LOS DATOS INGRESADOS SEAN NÚMEROS Y HAYAN 9 DÍGITOS
         return phonePattern.test(num_telefonico);
     }
+    function validarDNI(dni){
+        const dniPattern = /^\d{8}$/;; //VERIFICA QUE LOS DATOS INGRESADOS SEAN NÚMEROS Y HAYAN 8 DÍGITOS
+        return dniPattern.test(dni);
+    }
     const nombreCorrecto = validarNombres(nombres);
     const apellidoCorrecto = validarApellidos(apellidos);
     const numCorrecto = validarNumTelefonico(numero_telefonico);
+    const dniCorrecto = validarDNI(DNI);
 
-    if(!nombreCorrecto){
-        console.log('Error! Los nombres no pueden tener números ni carácteres especiales')
-    }
-    else if(!apellidoCorrecto){
-        console.log('Error! Los apellidos no pueden tener números ni carácteres especiales')
-    }
-    else if(!numCorrecto){
-        console.log('Error! El número telefónico que ha ingresado es incorrecto')
-    }
+    if(!nombreCorrecto) { console.log ('Error! Los nombres no pueden tener números ni carácteres especiales')}
+    else if(!apellidoCorrecto){ console.log('Error! Los apellidos no pueden tener números ni carácteres especiales')}
+    else if(!numCorrecto){ console.log('Error! El número telefónico que ha ingresado es incorrecto') }
+    else if(!dniCorrecto) { console.log('Error! El DNI que ha ingresado es incorrecto')}
     else{
         const insertar="INSERT INTO usuario (DNI,nombres,apellidos,num_telefonico,genero,correo,contrasena,fecha_nacimiento,idrol) VALUES ('"+DNI+"','"+nombres+"','"+apellidos+"','"+numero_telefonico+"','"+genero+"','"+email+"','"+contrasena+"','"+fecha_nacimiento+"','"+idrolPaciente+"')";
                 conexion.query(insertar,function(error){
