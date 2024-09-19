@@ -42,7 +42,7 @@ router.post("/login",function(req,res){
                 req.session.contra=user.contrasena;
                 req.session.rol=user.idrol;
                 console.log(req.session);//comprobar los datos que inician sesion
-                res.render("dashboard_medico/inicio",{datos:req.session,link});//deberia ser asi: res.render("dasboard_paciente",{datos:req.session,link});
+                res.redirect("dashboard_jmedico");//{datos:req.session,link}
             }
         }
     });
