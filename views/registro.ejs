@@ -53,7 +53,7 @@
                 </div>
                 <div class="input-box">
                     <span class="details">DNI</span>
-                    <input type="text" name="dni" placeholder="Introduce tu DNI">
+                    <input type="text" name="dni" placeholder="Introduce tu DNI" value="<%= oldData ? oldData.dni : '' %>">
                 </div>
                 <div class="input-box">
                     <span class="details">Email</span>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="input-box">
                     <span class="details">Fecha de Nacimiento</span>
-                    <input type="date" name="Fecha" placeholder="Introduce tu fecha de Nacimiento" value="<%= oldData ? oldData.dni : '' %>">
+                    <input type="date" name="fecha" placeholder="Introduce tu fecha de Nacimiento" value="<%= oldData ? oldData.fecha : '' %>">
                 </div>
                 <div class="input-box">
                     <span class="details">Contraseña</span>
