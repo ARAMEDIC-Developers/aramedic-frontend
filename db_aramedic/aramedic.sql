@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-09-2024 a las 23:06:23
+-- Tiempo de generación: 19-09-2024 a las 09:44:01
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -145,7 +145,9 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idusuario`, `dni`, `nombres`, `apellidos`, `fecha_nacimiento`, `num_telefonico`, `genero`, `correo`, `contrasena`, `idrol`) VALUES
-(1, '74733226', 'DERECK', 'FERNANDO', NULL, '111111', 'Masculino', 'dereckmunoz07@gmail.com', '123', 1);
+(7, '', '', '', NULL, '', 'Masculino', '', '', 1),
+(8, '', '', '', NULL, '', 'Masculino', '', '', 1),
+(10, '74733226', 'DERECK', 'FERNANDO', NULL, '999999999', 'Masculino', 'dereckmunoz07@gmail.com', 'Pecosin0412', 2);
 
 --
 -- Disparadores `usuario`
@@ -244,7 +246,7 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idusuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idusuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Restricciones para tablas volcadas

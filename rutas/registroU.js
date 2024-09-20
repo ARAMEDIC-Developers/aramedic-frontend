@@ -2,58 +2,68 @@ const express = require("express");
 const router= express.Router();
 const conexion=require("../config/conexion");
 const link= require("../config/link");
-router.get("/registroU",function(req,res){
-    res.render("registro",{link});
+const { validateCreate } = require('../validaciones/registroU');
+const { validationResult } = require('express-validator');
+
+// Mostrar el formulario de registro
+router.get("/registroU", function(req, res) {
+    res.render("registro", { 
+        link, 
+        errors: [], // No hay errores en la primera carga
+        oldData: {} // En la primera carga no hay datos previos
+    });
 });
 
-router.post("/registroU",function(req,res){
-    //validaciones entre la linea 14 y 20
-    let nombres=req.body.nom;
-    let apellidos=req.body.ape;
-    let email=req.body.ema;
-    let contrasena=req.body.contra;
-    let DNI=req.body.dni;
-    let genero=req.body.gender;
-    let numero_telefonico = req.body.num;
-    let fecha_nacimiento = req.body.naci;
-    const idrolPaciente = 1;
+// Procesar el formulario de registro
+router.post("/registroU", validateCreate, (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        // Si hay errores, renderizamos la vista 'registro' con los errores y datos anteriores
+        return res.render("registro", { 
+            link, 
+            errors: errors.array(), // Enviamos los errores a la vista
+            oldData: req.body // Enviamos los datos ingresados para que se mantengan
+        });
+    }
 
-    //VERIFICAR DATOS
-    function validarNombres(nombres){
-        const namePattern = /^[a-zA-Z\s-']+$/; //VERIFICA QUE SOLO SE INGRESEN LETRAS
-        return namePattern.test(nombres);
-    }
-    function validarApellidos(apellidos){
-        const lastNamePattern = /^[a-zA-Z\s-']+$/; //VERIFICA QUE SOLO SE INGRESEN LETRAS
-        return lastNamePattern.test(apellidos);
-    }
-    function validarNumTelefonico(num_telefonico){
-        const phonePattern = /^\d{9}$/;; //VERIFICA QUE LOS DATOS INGRESADOS SEAN NÚMEROS Y HAYAN 9 DÍGITOS
-        return phonePattern.test(num_telefonico);
-    }
-    function validarDNI(dni){
-        const dniPattern = /^\d{8}$/;; //VERIFICA QUE LOS DATOS INGRESADOS SEAN NÚMEROS Y HAYAN 8 DÍGITOS
-        return dniPattern.test(dni);
-    }
-    const nombreCorrecto = validarNombres(nombres);
-    const apellidoCorrecto = validarApellidos(apellidos);
-    const numCorrecto = validarNumTelefonico(numero_telefonico);
-    const dniCorrecto = validarDNI(DNI);
+    const { nom, ape, ema, num, dni, contra, confirm_contra, gender } = req.body;
 
-    if(!nombreCorrecto) { console.log ('Error! Los nombres no pueden tener números ni carácteres especiales')}
-    else if(!apellidoCorrecto){ console.log('Error! Los apellidos no pueden tener números ni carácteres especiales')}
-    else if(!numCorrecto){ console.log('Error! El número telefónico que ha ingresado es incorrecto') }
-    else if(!dniCorrecto) { console.log('Error! El DNI que ha ingresado es incorrecto')}
-    else{
-        const insertar="INSERT INTO usuario (DNI,nombres,apellidos,num_telefonico,genero,correo,contrasena,fecha_nacimiento,idrol) VALUES ('"+DNI+"','"+nombres+"','"+apellidos+"','"+numero_telefonico+"','"+genero+"','"+email+"','"+contrasena+"','"+fecha_nacimiento+"','"+idrolPaciente+"')";
-                conexion.query(insertar,function(error){
-                    if (error) {
-                        console.log("TRIKA error");
-                        throw error;
-                    } else {
-                        console.log("TRIKA datos almacenados correctamente");
-                        res.redirect(link+"login");
-                    }
-                });
-    }});
-module.exports=router
+    // Verificar si el DNI, correo o número de celular ya existen
+    const verificarUsuario = "SELECT * FROM usuario WHERE dni = ? OR correo = ? OR num_telefonico = ?";
+    conexion.query(verificarUsuario, [dni, ema, num], (error, rows) => {
+        if (error) {
+            console.log("TRIKA error en la consulta de verificación", error);
+            return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
+        }
+
+        if (rows.length > 0) {
+            // Si ya existe un usuario con el DNI, correo o número de celular
+            const mensajesError = [];
+            if (rows.some(row => row.dni === dni)) mensajesError.push({ msg: "El DNI ya está registrado" });
+            if (rows.some(row => row.correo === ema)) mensajesError.push({ msg: "El correo electrónico ya está registrado" });
+            if (rows.some(row => row.num_telefonico === num)) mensajesError.push({ msg: "El número de teléfono ya está registrado" });
+
+            return res.render("registro", {
+                link,
+                errors: mensajesError,
+                oldData: req.body
+            });
+        }
+
+        // Si no hay errores, insertar el nuevo usuario en la base de datos
+        const insertar="INSERT INTO usuario (DNI,nombres,apellidos,num_telefonico,genero,correo,contrasena,idrol) VALUES ('"+DNI+"','"+nombres+"','"+apellidos+"','"+numero_telefonico+"','"+genero+"','"+email+"','"+contrasena+"','"+idrolPaciente+"')";
+        conexion.query(insertar,function(error){
+            if (error) {
+                console.log("TRIKA error");
+                throw error;
+            } else {
+                console.log("TRIKA datos almacenados correctamente");
+                res.redirect(link+"login");
+            }
+        });
+    });
+});
+
+module.exports = router;
+
+
