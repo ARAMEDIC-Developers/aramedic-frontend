@@ -199,7 +199,11 @@ function editarServicio(id) {
 // Función para cerrar sesión (simulada)
 function cerrarSesion() {
     alert("Cerrando sesión...");
-    // Aquí iría la lógica real para cerrar sesión, como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
+    window.location.replace("login");
+    window.addEventListener('beforeunload', function() {
+        this.localStorage.clear();
+    })
+    // Aquí iría la lógica real para cerrar sesión,     como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
 }
 
 // Función para inicializar la aplicación

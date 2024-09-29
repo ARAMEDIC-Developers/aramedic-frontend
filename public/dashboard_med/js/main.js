@@ -196,7 +196,30 @@ function editarServicio(id) {
 
 // Función para cerrar sesión (simulada)
 function cerrarSesion() {
-    alert("Cerrando sesión...");
+    alert("CerrAndo Sesion...")
+    /*/
+    useEffect(()=>{
+        const handleBeforeUnload = (event) => {
+            if (!isFormDatasaved) {
+                event.preventDefault();
+                return event.returnValue = "";
+            }
+        };
+    
+        const handleOnUnload = () => {
+            localStorage.removeItem("formData");
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener("unload", handleOnUnload);
+    
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            window.removeEventListener("unload", handleOnUnload);
+            render("login", { link, oldData: {} });
+        };
+    }, [isFormDatasaved]);
+    /*/
     // Aquí iría la lógica real para cerrar sesión, como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
 }
 
