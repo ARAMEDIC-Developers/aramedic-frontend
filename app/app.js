@@ -27,7 +27,6 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(require("../rutas/login"));
 app.use(require("../rutas/registroU"));
 app.use(require("../rutas/jmedico"));
-app.use(require("../rutas/recuperarcuentaU"));
 
 
 
