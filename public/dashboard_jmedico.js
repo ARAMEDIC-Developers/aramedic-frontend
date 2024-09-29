@@ -1,3 +1,4 @@
+// Función para generar un nombre aleatorio
 function generarNombreAleatorio() {
     const nombres = ['Juan', 'María', 'Carlos', 'Ana', 'Luis', 'Laura', 'Pedro', 'Sofía', 'Miguel', 'Elena'];
     const apellidos = ['García', 'Rodríguez', 'López', 'Martínez', 'González', 'Pérez', 'Sánchez', 'Romero', 'Fernández', 'Torres'];
@@ -78,12 +79,14 @@ function manejarNavegacion() {
 
 // Función para manejar el menú hamburguesa
 function manejarHamburgerMenu() {
-    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const hamburgerMenu = document.getElementById('hamburger-menu');
     const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
 
     hamburgerMenu.addEventListener('click', (e) => {
         e.preventDefault();
-        sidebar.classList.toggle('active');
+        sidebar.classList.toggle('compressed');
+        mainContent.classList.toggle('expanded');
     });
 }
 
@@ -196,7 +199,11 @@ function editarServicio(id) {
 // Función para cerrar sesión (simulada)
 function cerrarSesion() {
     alert("Cerrando sesión...");
-    // Aquí iría la lógica real para cerrar sesión, como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
+    window.location.replace("login");
+    window.addEventListener('beforeunload', function() {
+        this.localStorage.clear();
+    })
+    // Aquí iría la lógica real para cerrar sesión,     como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
 }
 
 // Función para inicializar la aplicación
@@ -210,4 +217,4 @@ function inicializarApp() {
 }
 
 // Ejecutar funciones al cargar la página
-window.onload = inicializarApp();
+window.onload = inicializarApp;
