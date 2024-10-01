@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap'); 
+
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #f39c12;
+  --background-color: #f0f4f8;
+  --text-color: #333;
+  --border-color: #e0e0e0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-image: linear-gradient(to right, #4a90e2, #5ca0f2), url("/header.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  color: var(--text-color);
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px);
+}
+
+.header-text {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 20px; /* Ajustar tamaño del texto */
+  font-weight: bold;
+  color: white;
+  z-index: 1000;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.header-text h1 {
+  margin: 0;
+}
+
+.header-text .highlight {
+  color: var(--secondary-color);
+}
+
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 40px; /* Reducir el padding superior */
+}
+
+.container {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 20px; /* Reducir el padding */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  width: 50%; /* Reducir el ancho de la caja */
+  height: auto;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+}
+
+.container:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.title {
+  font-size: 24px; /* Reducir tamaño de fuente del título */
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--secondary-color);
+  padding-bottom: 8px;
+  text-align: center; 
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  grid-gap: 15px; /* Reducir el espacio entre columnas */
+}
+
+form label {
+  font-size: 14px; /* Reducir tamaño de las etiquetas */
+  font-weight: 500;
+}
+
+form input, form select {
+  width: 100%;
+  padding: 10px; /* Reducir tamaño del padding */
+  font-size: 14px; /* Reducir el tamaño de fuente */
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+form input:focus, form select:focus {
+  outline: none;
+  box-shadow: 0 0 5px var(--primary-color);
+}
+
+/* El botón al final del formulario */
+.field.button-field {
+  grid-column: span 2; 
+  display: flex;
+  justify-content: center;
+  margin-top: 15px; /* Reducir espacio extra antes del botón */
+}
+
+button {
+  width: 100%; /* Reducir ancho del botón */
+  padding: 15px; /* Reducir tamaño del botón */
+  border-radius: 8px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 16px; /* Reducir tamaño de texto del botón */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mejorar la organización en dispositivos móviles */
+@media (max-width: 768px) {
+  .container {
+    width: 80%; /* Cambiar el ancho para pantallas pequeñas */
+  }
+
+  form {
+    grid-template-columns: 1fr; 
+  }
+
+  button {
+    width: 100%;
+  }
+}
