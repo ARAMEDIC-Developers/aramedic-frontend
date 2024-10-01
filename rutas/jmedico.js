@@ -4,7 +4,12 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 
 router.get("/dashboard_jmedico",function(req,res){
-    res.render("dashboard_medico/inicio",{link});
+
+    const data = {
+        'link' : link,
+    }
+
+    res.render("dashboard_medico/calendario", data);
 });
 
 router.get("/dashboard_jmedico/calendario", async (req,res) => {

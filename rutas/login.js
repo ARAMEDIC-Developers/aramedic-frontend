@@ -26,7 +26,7 @@ router.post("/login",validateItem,function(req,res){
     const DNI= req.body.dni;
     const contrasena= req.body.contra;
 
-    const validar="SELECT * FROM usuario WHERE dni = ?";
+    const validar="SELECT * FROM usuario WHERE dni = ? ";
     conexion.query(validar,[DNI],async function(error,rows){
         let mensaje;
         if (error) {
@@ -57,7 +57,13 @@ router.post("/login",validateItem,function(req,res){
                 req.session.contra=user.contrasena;
                 req.session.rol=user.idrol;
                 console.log(req.session);//comprobar los datos que inician sesion
-                res.redirect("dashboard_jmedico");//{datos:req.session,link}
+
+                if (user.idrol == 1) {
+                    res.redirect("dashboard_paciente");//{datos:req.session,link}
+                } else if (user.idrol == 2) {
+                    res.redirect("dashboard_jmedico");//{datos:req.session,link}
+                }
+                
             }
         }
     });
