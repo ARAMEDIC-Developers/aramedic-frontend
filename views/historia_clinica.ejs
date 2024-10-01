@@ -16,8 +16,10 @@
         <div class="main-content">
             <div class="container">
                 <h2 class="title">Perfil de Historia Clínica del Paciente</h2>
-                <p>Completa la información del paciente: </p>
+                <p>Completa la información del paciente:</p>
                 <form id="patientForm">
+                    <!-- Información Personal -->
+                    <h3>Información Personal</h3>
                     <div class="form-group">
                         <label for="fullName">Nombres y Apellidos:</label>
                         <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" required>
@@ -31,9 +33,9 @@
                         <input type="number" id="age" name="age" placeholder="Ingresa tu edad" required>
                     </div>
                     <div class="form-group">
-                        <label for="gender">Género</label>
+                        <label for="gender">Género:</label>
                         <select id="gender" name="gender" required>
-                            <option value="">Selecciona tu género:</option>
+                            <option value="">Selecciona tu género</option>
                             <option value="Masculino">Masculino</option>
                             <option value="Femenino">Femenino</option>
                             <option value="Otro">Otro</option>
@@ -65,7 +67,97 @@
                         <label for="address">Dirección:</label>
                         <input type="text" id="address" name="address" placeholder="Ingresa tu dirección" required>
                     </div>
-                    <button type="submit" class="btn-guardar">Guardar</button>
+
+                    <!-- Motivo de Consulta -->
+                    <h3>Motivo de Consulta</h3>
+                    <div class="form-group">
+                        <label for="mainReason">Motivo Principal:</label>
+                        <input type="text" id="mainReason" name="mainReason" placeholder="Ingresa el motivo principal de consulta" required>
+                    </div>
+
+                    <!-- Antecedentes Médicos Personales -->
+                    <h3>Antecedentes Médicos Personales</h3>
+                    <div class="form-group">
+                        <label for="previousDiseases">Enfermedades previas:</label>
+                        <textarea id="previousDiseases" name="previousDiseases" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="allergies">Alergias:</label>
+                        <textarea id="allergies" name="allergies" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="medications">Medicamentos actuales:</label>
+                        <textarea id="medications" name="medications" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="previousSurgeries">Cirugías previas:</label>
+                        <textarea id="previousSurgeries" name="previousSurgeries" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="smoke">¿Fuma?:</label>
+                        <select id="smoke" name="smoke" required>
+                            <option value="no">No</option>
+                            <option value="yes">Sí</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="alcohol">¿Consume alcohol?:</label>
+                        <select id="alcohol" name="alcohol" required>
+                            <option value="no">No</option>
+                            <option value="yes">Sí</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hereditaryDiseases">Enfermedades hereditarias:</label>
+                        <textarea id="hereditaryDiseases" name="hereditaryDiseases" required></textarea>
+                    </div>
+
+                    <!-- Evaluación Física -->
+                    <h3>Evaluación Física</h3>
+                    <div class="form-group">
+                        <label for="weight">Peso (kg):</label>
+                        <input type="number" id="weight" name="weight" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Altura (cm):</label>
+                        <input type="number" id="height" name="height" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bmi">Índice de Masa Corporal (IMC):</label>
+                        <input type="number" id="bmi" name="bmi" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="physicalDescription">Descripción física:</label>
+                        <textarea id="physicalDescription" name="physicalDescription" required></textarea>
+                    </div>
+
+                    <!-- Plan de Tratamiento -->
+                    <h3>Plan de Tratamiento</h3>
+                    <div class="form-group">
+                        <label for="surgery">Cirugía:</label>
+                        <input type="text" id="surgery" name="surgery" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="procedureDescription">Descripción del procedimiento:</label>
+                        <textarea id="procedureDescription" name="procedureDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="risks">Riesgos y complicaciones:</label>
+                        <textarea id="risks" name="risks" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="preCare">Cuidado preoperatorio:</label>
+                        <textarea id="preCare" name="preCare" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="postCare">Cuidado postoperatorio:</label>
+                        <textarea id="postCare" name="postCare" required></textarea>
+                    </div>
+
+                    <!-- Botón para enviar el formulario -->
+                    <div class="form-group button-field">
+                        <button type="submit" class="btn-guardar">Guardar</button>
+                    </div>
                 </form>
             </div>
         </div>
