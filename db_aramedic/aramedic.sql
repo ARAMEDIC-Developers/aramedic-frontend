@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-09-2024 a las 09:44:01
+-- Tiempo de generación: 04-10-2024 a las 02:23:38
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -116,9 +116,10 @@ CREATE TABLE `servicios` (
   `idservicio` bigint(20) NOT NULL,
   `nombre_servicio` text NOT NULL,
   `tipo_procedimiento` text DEFAULT NULL,
-  `costo` decimal(10,2) NOT NULL,
-  `tiempo_estimado_procedimiento` text DEFAULT NULL,
-  `tiempo_estimado_recuperacion` text DEFAULT NULL
+  `precio` decimal(10,2) NOT NULL,
+  `detalles_precio` varchar(30) NOT NULL,
+  `tiempo_estimado` text DEFAULT NULL,
+  `permanencia_postoperatoria` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -147,7 +148,8 @@ CREATE TABLE `usuario` (
 INSERT INTO `usuario` (`idusuario`, `dni`, `nombres`, `apellidos`, `fecha_nacimiento`, `num_telefonico`, `genero`, `correo`, `contrasena`, `idrol`) VALUES
 (7, '', '', '', NULL, '', 'Masculino', '', '', 1),
 (8, '', '', '', NULL, '', 'Masculino', '', '', 1),
-(10, '74733226', 'DERECK', 'FERNANDO', NULL, '999999999', 'Masculino', 'dereckmunoz07@gmail.com', 'Pecosin0412', 2);
+(10, '74733226', 'DERECK', 'FERNANDO', NULL, '999999999', 'Masculino', 'dereckmunoz07@gmail.com', '123', 2),
+(11, '72666946', 'Dean Ayrton', 'Reyes Vallejos', NULL, '974617857', 'Masculino', 'deanreyesvallejos@gmail.com', 'fVC8Kn5Vr6v4TY5', 1);
 
 --
 -- Disparadores `usuario`
@@ -246,7 +248,7 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idusuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `idusuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Restricciones para tablas volcadas

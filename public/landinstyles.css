@@ -91,6 +91,7 @@ header {
 }
 
 .nav__links {
+  padding-top: 1rem;
   list-style: none;
   display: flex;
   align-items: center;
