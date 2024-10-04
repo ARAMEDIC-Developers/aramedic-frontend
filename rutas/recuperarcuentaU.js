@@ -4,7 +4,7 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 
 //MOSTRAR FORMULARIO DE RECUPERAR CUENTA
-router.get("/recuperarcuentaU", function(req, res) {
+router.get("/verificarcorreo", function(req, res) {
     res.render("recuperarcuenta", { 
         link,
         errors: [], 
