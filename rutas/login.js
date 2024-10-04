@@ -3,7 +3,7 @@ const router= express.Router();
 const conexion=require("../config/conexion");
 const link= require("../config/link");
 const { validateItem } = require('../validaciones/login');
-const { validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');  
 
 router.get("/login",function(req,res){
     res.render("login", { link, oldData: {} });
@@ -36,6 +36,11 @@ router.post("/login",validateItem,function(req,res){
         if (rows.length<1) {
             mensaje="TRIKA el dni no existe";
             res.render(mensaje,link);
+            // return res.render("login", {
+            //     link,
+            //     mensaje: mensaje,
+            //     oldData: req.body
+            // });
         }  else {
             const user=rows[0];
             const match= contrasena==user.contrasena;
@@ -43,6 +48,11 @@ router.post("/login",validateItem,function(req,res){
             if(!match){
                 mensaje="TRIKA contraseña incorrecta";
                 res.render(mensaje,link);
+                // return res.render("login", {
+                //     link,
+                //     mensaje: mensaje,
+                //     oldData: req.body
+                // });
 
             }else{
                 req.session.login=true;
