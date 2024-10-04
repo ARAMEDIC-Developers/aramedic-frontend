@@ -148,12 +148,36 @@
             </section>
 
             <section id="servicios" class="dashboard-section">
-                <h2 class="section-title">Servicios</h2>
-                <div class="search-bar">
-                    <input type="text" id="buscar-servicio" placeholder="Buscar servicio...">
-                    <button id="agregar-servicio" class="btn-primary">Agregar Servicio</button>
-                </div>
-                <div id="lista-servicios" class="lista-container"></div>
+                
+                    <div class="container1">
+                        <h2 class="title">Gestión de Servicios</h2>
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="searchInput" placeholder="Buscar servicios...">
+                        </div>
+                        <button id="btnAgregarServicio" class="add-button">
+                            <i class="fas fa-plus-circle"></i> Añadir Servicio
+                        </button>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Tipo</th>
+                                        <th>Costo</th>
+                                        <th>Tiempo Procedimiento</th>
+                                        <th>Tiempo Recuperación</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaServicios">
+                                    <!-- Los servicios se insertarán aquí dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+
             </section>
         </main>
     </div>

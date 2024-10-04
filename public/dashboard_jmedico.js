@@ -327,3 +327,127 @@ function hideTodayBtn(){
         todayBtn.style.display = "flex";
     }
 }
+
+let servicios = [
+    { id: 1, nombre: "Consulta General", tipo: "Consulta", costo: 50, tiempoProcedimiento: "30 minutos", tiempoRecuperacion: "Inmediato" },
+    { id: 2, nombre: "Biopsias", tipo: "Cirugía", costo: 200, tiempoProcedimiento: "30 minutos", tiempoRecuperacion: "5 días" },
+   
+];
+
+// Elementos del DOM
+const tablaServicios = document.getElementById('tablaServicios');
+const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+const modal = document.getElementById('modalServicio');
+const closeModal = document.querySelector('.close');
+const formServicio = document.getElementById('formServicio');
+const modalTitle = document.getElementById('modalTitle');
+const searchInput = document.getElementById('searchInput');
+
+// Función para renderizar la tabla de servicios
+function renderizarTabla(serviciosArray) {
+    tablaServicios.innerHTML = '';
+    serviciosArray.forEach(servicio => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${servicio.nombre}</td>
+            <td>${servicio.tipo}</td>
+            <td>S/. ${servicio.costo}</td>
+            <td>${servicio.tiempoProcedimiento}</td>
+            <td>${servicio.tiempoRecuperacion}</td>
+            <td>
+                <button class="edit-button" data-id="${servicio.id}">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="delete-button" data-id="${servicio.id}">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            </td>
+        `;
+        tablaServicios.appendChild(row);
+    });
+}
+
+// Inicializar la tabla
+renderizarTabla(servicios);
+
+// Evento para abrir el modal de agregar servicio
+btnAgregarServicio.addEventListener('click', () => {
+    modalTitle.textContent = 'Añadir Servicio';
+    formServicio.reset();
+    modal.classList.add('show');
+});
+
+// Evento para cerrar el modal
+closeModal.addEventListener('click', () => {
+    modal.classList.remove('show');
+});
+
+// Evento para manejar el envío del formulario
+formServicio.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(formServicio);
+    const nuevoServicio = {
+        id: Date.now(), // Generar un ID único
+        nombre: formData.get('nombre'),
+        tipo: formData.get('tipoProcedimiento'),
+        costo: parseFloat(formData.get('costo')),
+        tiempoProcedimiento: formData.get('tiempoEstimadoProcedimiento'),
+        tiempoRecuperacion: formData.get('tiempoEstimadoRecuperacion')
+    };
+
+    if (formServicio.dataset.editId) {
+        // Editar servicio existente
+        const index = servicios.findIndex(s => s.id === parseInt(formServicio.dataset.editId));
+        if (index !== -1) {
+            servicios[index] = { ...servicios[index], ...nuevoServicio };
+        }
+        delete formServicio.dataset.editId;
+    } else {
+        // Agregar nuevo servicio
+        servicios.push(nuevoServicio);
+    }
+
+    renderizarTabla(servicios);
+    modal.classList.remove('show');
+});
+
+// Evento para editar o eliminar servicios
+tablaServicios.addEventListener('click', (e) => {
+    if (e.target.classList.contains('edit-button') || e.target.closest('.edit-button')) {
+        const id = parseInt(e.target.dataset.id || e.target.closest('.edit-button').dataset.id);
+        const servicio = servicios.find(s => s.id === id);
+        if (servicio) {
+            modalTitle.textContent = 'Editar Servicio';
+            formServicio.nombre.value = servicio.nombre;
+            formServicio.tipoProcedimiento.value = servicio.tipo;
+            formServicio.costo.value = servicio.costo;
+            formServicio.tiempoEstimadoProcedimiento.value = servicio.tiempoProcedimiento;
+            formServicio.tiempoEstimadoRecuperacion.value = servicio.tiempoRecuperacion;
+            formServicio.dataset.editId = id;
+            modal.classList.add('show');
+        }
+    } else if (e.target.classList.contains('delete-button') || e.target.closest('.delete-button')) {
+        const id = parseInt(e.target.dataset.id || e.target.closest('.delete-button').dataset.id);
+        if (confirm('¿Estás seguro de que quieres eliminar este servicio?')) {
+            servicios = servicios.filter(s => s.id !== id);
+            renderizarTabla(servicios);
+        }
+    }
+});
+
+// Evento para buscar servicios
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const serviciosFiltrados = servicios.filter(servicio => 
+        servicio.nombre.toLowerCase().includes(searchTerm) ||
+        servicio.tipo.toLowerCase().includes(searchTerm)
+    );
+    renderizarTabla(serviciosFiltrados);
+});
+
+// Cerrar el modal si se hace clic fuera de él
+window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        modal.classList.remove('show');
+    }
+});
