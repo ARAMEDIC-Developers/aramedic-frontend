@@ -29,3 +29,5 @@ git clone https://github.com/ARAMEDIC-Developers/aramedic-frontend.git
 
 
 
+git status
+

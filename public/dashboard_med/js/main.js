@@ -79,14 +79,12 @@ function manejarNavegacion() {
 
 // Función para manejar el menú hamburguesa
 function manejarHamburgerMenu() {
-    const hamburgerMenu = document.getElementById('hamburger-menu');
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
     const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('main-content');
 
     hamburgerMenu.addEventListener('click', (e) => {
         e.preventDefault();
-        sidebar.classList.toggle('compressed');
-        mainContent.classList.toggle('expanded');
+        sidebar.classList.toggle('active');
     });
 }
 
@@ -198,12 +196,31 @@ function editarServicio(id) {
 
 // Función para cerrar sesión (simulada)
 function cerrarSesion() {
-    alert("Cerrando sesión...");
-    window.location.replace("login");
-    window.addEventListener('beforeunload', function() {
-        this.localStorage.clear();
-    })
-    // Aquí iría la lógica real para cerrar sesión,     como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
+    alert("CerrAndo Sesion...")
+    /*/
+    useEffect(()=>{
+        const handleBeforeUnload = (event) => {
+            if (!isFormDatasaved) {
+                event.preventDefault();
+                return event.returnValue = "";
+            }
+        };
+    
+        const handleOnUnload = () => {
+            localStorage.removeItem("formData");
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener("unload", handleOnUnload);
+    
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            window.removeEventListener("unload", handleOnUnload);
+            render("login", { link, oldData: {} });
+        };
+    }, [isFormDatasaved]);
+    /*/
+    // Aquí iría la lógica real para cerrar sesión, como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
 }
 
 // Función para inicializar la aplicación
