@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(require("../rutas/login"));
 app.use(require("../rutas/registroU"));
 app.use(require("../rutas/jmedico"));
-
+app.use(require("../rutas/recuperarcuentaU"));
 
 
 
@@ -36,7 +36,7 @@ app.use(require("../rutas/jmedico"));
 const PORT= process.env.PORT || 3000;
 app.listen(PORT, function(){
     if (PORT==3000) {
-        console.log(" TRIKA Servidor creado http://localhost:3000")
+        console.log("TRIKA Servidor creado http://localhost:3000")
     } else {
         console.log(PORT);
     }

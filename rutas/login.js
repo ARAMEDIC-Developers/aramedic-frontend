@@ -21,8 +21,6 @@ router.post("/login",validateItem,function(req,res){
         });
     }
 
-
-
     const DNI= req.body.dni;
     const contrasena= req.body.contra;
 
