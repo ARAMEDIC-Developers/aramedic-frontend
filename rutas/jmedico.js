@@ -12,16 +12,36 @@ router.get("/dashboard_jmedico",function(req,res){
     res.render("dashboard_medico/calendario", data);
 });
 
+router.get("/dashboard_jmedico/historia_clinica",function(req,res){
+
+    const data = {
+        'link' : link,
+    }
+
+    res.render("dashboard_medico/historia_clinica", data);
+});
+
+router.post("/dashboard_jmedico/historia_clinica",function(req,res){
+
+    const data = {
+        'link' : link,
+    }
+
+    res.json({mensaje: 'guardado correcto'});
+    // res.render("dashboard_medico/historia_clinica", data);
+});
+
 router.get("/dashboard_jmedico/calendario", async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
 
     const data = {
         'total_citas':0,
-        'titulo' : 'pagina de calendario'
+        'titulo' : 'pagina de calendario',
+        'link' : link,
     };
     
-    res.render("dashboard_medico/calendario");
+    res.render("dashboard_medico/calendario", data);
 });
 
 
@@ -54,10 +74,13 @@ router.post("/dashboard_jmedico/test", (req,res) => {
 router.get("/dashboard_jmedico/historias", async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
+    const total_historias = 0;
 
     const data = {
         'total_citas':0,
-        'titulo' : 'pagina de citas'
+        'titulo' : 'pagina de citas',
+        'link' : link,
+        'historias' : total_historias,
     };
     
     res.render("dashboard_medico/historias", data);
@@ -69,7 +92,8 @@ router.get("/dashboard_jmedico/citas", async (req,res) => {
 
     const data = {
         'total_citas':0,
-        'titulo' : 'pagina de citas'
+        'titulo' : 'pagina de citas',
+        'link' : link,
     };
     
     res.render("dashboard_medico/citas", data);
@@ -79,7 +103,8 @@ router.get("/dashboard_jmedico/cuentas", async (req,res) => {
 
     const data = {
         'total_citas':0,
-        'titulo' : 'pagina de citas'
+        'titulo' : 'pagina de citas',
+        'link' : link,
     };
     
     res.render("dashboard_medico/cuentas", data);
@@ -89,7 +114,8 @@ router.get("/dashboard_jmedico/servicios", async (req,res) => {
 
     const data = {
         'total_citas':0,
-        'titulo' : 'pagina de citas'
+        'titulo' : 'pagina de citas',
+        'link' : link,
     };
     
     res.render("dashboard_medico/servicios", data);

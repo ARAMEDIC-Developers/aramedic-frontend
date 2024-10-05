@@ -34,48 +34,48 @@ function actualizarPerfilUsuario() {
 }
 
 // Función para manejar la navegación
-function manejarNavegacion() {
-    const enlaces = document.querySelectorAll("#sidebar a");
-    const secciones = document.querySelectorAll(".dashboard-section");
+// function manejarNavegacion() {
+//     const enlaces = document.querySelectorAll("#sidebar a");
+//     const secciones = document.querySelectorAll(".dashboard-section");
 
-    enlaces.forEach(enlace => {
-        enlace.addEventListener("click", (e) => {
-            e.preventDefault();
-            const targetId = enlace.getAttribute("href").substring(1);
+//     enlaces.forEach(enlace => {
+//         enlace.addEventListener("click", (e) => {
+//             e.preventDefault();
+//             const targetId = enlace.getAttribute("href").substring(1);
 
-            if (targetId === "cerrar-sesion") {
-                cerrarSesion();
-                return;
-            }
+//             if (targetId === "cerrar-sesion") {
+//                 cerrarSesion();
+//                 return;
+//             }
 
-            enlaces.forEach(el => el.classList.remove("active"));
-            enlace.classList.add("active");
+//             enlaces.forEach(el => el.classList.remove("active"));
+//             enlace.classList.add("active");
 
-            secciones.forEach(seccion => {
-                if (seccion.id === targetId) {
-                    seccion.classList.add("active");
-                    // Cargar datos específicos de la sección
-                    switch(targetId) {
-                        case "citas":
-                            mostrarCitas();
-                            break;
-                        case "historias":
-                            mostrarHistoriasClinicas();
-                            break;
-                        case "cuentas":
-                            mostrarCuentas();
-                            break;
-                        case "servicios":
-                            mostrarServicios();
-                            break;
-                    }
-                } else {
-                    seccion.classList.remove("active");
-                }
-            });
-        });
-    });
-}
+//             secciones.forEach(seccion => {
+//                 if (seccion.id === targetId) {
+//                     seccion.classList.add("active");
+//                     // Cargar datos específicos de la sección
+//                     switch(targetId) {
+//                         case "citas":
+//                             mostrarCitas();
+//                             break;
+//                         case "historias":
+//                             mostrarHistoriasClinicas();
+//                             break;
+//                         case "cuentas":
+//                             mostrarCuentas();
+//                             break;
+//                         case "servicios":
+//                             mostrarServicios();
+//                             break;
+//                     }
+//                 } else {
+//                     seccion.classList.remove("active");
+//                 }
+//             });
+//         });
+//     });
+// }
 
 // Función para manejar el menú hamburguesa
 function manejarHamburgerMenu() {
@@ -209,11 +209,11 @@ function cerrarSesion() {
 // Función para inicializar la aplicación
 function inicializarApp() {
     actualizarPerfilUsuario();
-    manejarNavegacion();
+    // manejarNavegacion();
     manejarHamburgerMenu();
     manejarNotificaciones();
     // Mostrar la sección de calendario por defecto
-    document.getElementById("calendario").classList.add("active");
+    // document.getElementById("calendario").classList.add("active");
 }
 
 // Ejecutar funciones al cargar la página

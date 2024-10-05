@@ -12,6 +12,14 @@ router.get("/verificarcorreo", function(req, res) {
     });
 });
 
+router.get("/recuperarcuentaU", function(req, res){
+    res.render("recuperarcuenta", { 
+        link,
+        errors: [], 
+        oldData: {} 
+    });
+});
+
 router.post("/recuperarcuentaU", function(req, res){
     const ema = req.body.email;
     const validar="SELECT * FROM usuario WHERE correo = ?";
