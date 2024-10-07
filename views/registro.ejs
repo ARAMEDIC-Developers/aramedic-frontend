@@ -6,21 +6,7 @@
     <title>Registro</title>
     <link rel="stylesheet" href="/styles-registro.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <style>
-        .error-box {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .error-list {
-            list-style: none;
-            padding-left: 0;
-        }
-    </style>
+
 </head>
 <body>
     <div class="header-text">
@@ -52,6 +38,10 @@
                     <input type="text" name="ape" placeholder="Introduce tus apellidos" value="<%= oldData ? oldData.ape : '' %>">
                 </div>
                 <div class="input-box">
+                    <span class="details">DNI</span>
+                    <input type="text" name="dni" placeholder="Introduce tu DNI" value="<%= oldData ? oldData.dni : '' %>">
+                </div>
+                <div class="input-box">
                     <span class="details">Email</span>
                     <input type="email" name="ema" placeholder="Introduce tu email" value="<%= oldData ? oldData.ema : '' %>">
                 </div>
@@ -60,8 +50,8 @@
                     <input type="text" name="num" placeholder="Introduce tu Número" value="<%= oldData ? oldData.num : '' %>">
                 </div>
                 <div class="input-box">
-                    <span class="details">DNI</span>
-                    <input type="text" name="dni" placeholder="Introduce tu DNI" value="<%= oldData ? oldData.dni : '' %>">
+                    <span class="details">Fecha de Nacimiento</span>
+                    <input type="date" name="fecha" placeholder="Introduce tu fecha de Nacimiento" value="<%= oldData ? oldData.fecha : '' %>">
                 </div>
                 <div class="input-box">
                     <span class="details">Contraseña</span>

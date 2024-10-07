@@ -3,7 +3,7 @@ const router= express.Router();
 const conexion=require("../config/conexion");
 const link= require("../config/link");
 const { validateItem } = require('../validaciones/login');
-const { validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');  
 
 router.get("/login",function(req,res){
     res.render("login", { link, oldData: {} });
@@ -21,12 +21,10 @@ router.post("/login",validateItem,function(req,res){
         });
     }
 
-
-
     const DNI= req.body.dni;
     const contrasena= req.body.contra;
 
-    const validar="SELECT * FROM usuario WHERE dni = ?";
+    const validar="SELECT * FROM usuario WHERE dni = ? ";
     conexion.query(validar,[DNI],async function(error,rows){
         let mensaje;
         if (error) {
@@ -36,6 +34,11 @@ router.post("/login",validateItem,function(req,res){
         if (rows.length<1) {
             mensaje="TRIKA el dni no existe";
             res.render(mensaje,link);
+            // return res.render("login", {
+            //     link,
+            //     mensaje: mensaje,
+            //     oldData: req.body
+            // });
         }  else {
             const user=rows[0];
             const match= contrasena==user.contrasena;
@@ -43,6 +46,11 @@ router.post("/login",validateItem,function(req,res){
             if(!match){
                 mensaje="TRIKA contraseña incorrecta";
                 res.render(mensaje,link);
+                // return res.render("login", {
+                //     link,
+                //     mensaje: mensaje,
+                //     oldData: req.body
+                // });
 
             }else{
                 req.session.login=true;
@@ -57,7 +65,13 @@ router.post("/login",validateItem,function(req,res){
                 req.session.contra=user.contrasena;
                 req.session.rol=user.idrol;
                 console.log(req.session);//comprobar los datos que inician sesion
-                res.redirect("dashboard_jmedico");//{datos:req.session,link}
+
+                if (user.idrol == 1) {
+                    res.redirect("dashboard_paciente");//{datos:req.session,link}
+                } else if (user.idrol == 2) {
+                    res.redirect("dashboard_jmedico");//{datos:req.session,link}
+                }
+                
             }
         }
     });
