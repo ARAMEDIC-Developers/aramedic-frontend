@@ -4,14 +4,14 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 
 //MOSTRAR FORMULARIO DE RECUPERAR CUENTA
-router.get("/verificarcorreo", function(req, res) {
-    res.render("recuperarcuenta", { 
+router.get("/recuperarcuentaU", function(req, res) {
+    res.render("verificarcorreo", { 
         link,
         errors: [], 
         oldData: {} 
     });
 });
-
+/*/
 router.get("/recuperarcuentaU", function(req, res){
     res.render("recuperarcuenta", { 
         link,
@@ -19,6 +19,7 @@ router.get("/recuperarcuentaU", function(req, res){
         oldData: {} 
     });
 });
+/*/
 
 router.post("/recuperarcuentaU", function(req, res){
     const ema = req.body.email;

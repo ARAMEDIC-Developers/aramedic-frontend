@@ -2,12 +2,13 @@ const express = require("express");
 const router= express.Router();
 const conexion=require("../config/conexion");
 const link= require("../config/link");
+const checkLoginPaciente = require('../validaciones/authPaciente');
 
-router.get("/dashboard_paciente",function(req,res){
+router.get("/dashboard_paciente", checkLoginPaciente, function(req,res){
     res.render("dashboard_paciente/calendario",{link});
 });
 
-router.get("/dashboard_pac/calendario", async (req,res) => {
+router.get("/dashboard_pac/calendario", checkLoginPaciente, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
 
@@ -20,7 +21,7 @@ router.get("/dashboard_pac/calendario", async (req,res) => {
 });
 
 
-router.get("/dashboard_jmedico/test", async (req,res) => {
+router.get("/dashboard_jmedico/test", checkLoginPaciente, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
 
@@ -32,7 +33,7 @@ router.get("/dashboard_jmedico/test", async (req,res) => {
     res.render('dashboard_medico/test', data);
 });
 
-router.post("/dashboard_jmedico/test", (req,res) => {
+router.post("/dashboard_jmedico/test", checkLoginPaciente, (req,res) => {
 
     // console.log(req.body);
 

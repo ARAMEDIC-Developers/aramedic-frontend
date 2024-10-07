@@ -2,9 +2,9 @@ const express = require("express");
 const router= express.Router();
 const conexion=require("../config/conexion");
 const link= require("../config/link");
+const checkLoginMedico = require('../validaciones/authMedico');
 
-router.get("/dashboard_jmedico",function(req,res){
-
+router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
     const data = {
         'link' : link,
     }
@@ -12,7 +12,7 @@ router.get("/dashboard_jmedico",function(req,res){
     res.render("dashboard_medico/calendario", data);
 });
 
-router.get("/dashboard_jmedico/historia_clinica",function(req,res){
+router.get("/dashboard_jmedico/historia_clinica", checkLoginMedico, function(req,res){
 
     const data = {
         'link' : link,
@@ -21,7 +21,7 @@ router.get("/dashboard_jmedico/historia_clinica",function(req,res){
     res.render("dashboard_medico/historia_clinica", data);
 });
 
-router.post("/dashboard_jmedico/historia_clinica",function(req,res){
+router.post("/dashboard_jmedico/historia_clinica", checkLoginMedico, function(req,res){
 
     const data = {
         'link' : link,
@@ -31,7 +31,7 @@ router.post("/dashboard_jmedico/historia_clinica",function(req,res){
     // res.render("dashboard_medico/historia_clinica", data);
 });
 
-router.get("/dashboard_jmedico/calendario", async (req,res) => {
+router.get("/dashboard_jmedico/calendario", checkLoginMedico, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
 
@@ -45,7 +45,7 @@ router.get("/dashboard_jmedico/calendario", async (req,res) => {
 });
 
 
-router.get("/dashboard_jmedico/test", async (req,res) => {
+router.get("/dashboard_jmedico/test", checkLoginMedico, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
 
@@ -57,7 +57,7 @@ router.get("/dashboard_jmedico/test", async (req,res) => {
     res.render('dashboard_medico/test', data);
 });
 
-router.post("/dashboard_jmedico/test", (req,res) => {
+router.post("/dashboard_jmedico/test", checkLoginMedico, (req,res) => {
 
     // console.log(req.body);
 
@@ -68,10 +68,7 @@ router.post("/dashboard_jmedico/test", (req,res) => {
     res.json(data);
 });
 
-
-
-
-router.get("/dashboard_jmedico/historias", async (req,res) => {
+router.get("/dashboard_jmedico/historias", checkLoginMedico, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
     const total_historias = 0;
@@ -86,10 +83,9 @@ router.get("/dashboard_jmedico/historias", async (req,res) => {
     res.render("dashboard_medico/historias", data);
 });
 
-router.get("/dashboard_jmedico/citas", async (req,res) => {
+router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
-
     const data = {
         'total_citas':0,
         'titulo' : 'pagina de citas',
@@ -99,7 +95,7 @@ router.get("/dashboard_jmedico/citas", async (req,res) => {
     res.render("dashboard_medico/citas", data);
 });
 
-router.get("/dashboard_jmedico/cuentas", async (req,res) => {
+router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req,res) => {
 
     const data = {
         'total_citas':0,
@@ -110,7 +106,7 @@ router.get("/dashboard_jmedico/cuentas", async (req,res) => {
     res.render("dashboard_medico/cuentas", data);
 });
 
-router.get("/dashboard_jmedico/servicios", async (req,res) => {
+router.get("/dashboard_jmedico/servicios", checkLoginMedico, async (req,res) => {
 
     const data = {
         'total_citas':0,
@@ -121,4 +117,4 @@ router.get("/dashboard_jmedico/servicios", async (req,res) => {
     res.render("dashboard_medico/servicios", data);
 });
 
-module.exports= router;
+module.exports = router;
