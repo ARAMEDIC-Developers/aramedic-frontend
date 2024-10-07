@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Historia Clínica - ARAMEDIC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="<%= link %>dashboard_med/css/styles-historia_clinica.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <div class="header-text">
+            <h1><span class="highlight">ARA</span>MEDIC</h1>
+        </div>
+        <div class="main-content">
+            <div class="container">
+                <h2 class="title">Perfil de Historia Clínica del Paciente</h2>
+                <p>Completa la información del paciente:</p>
+                <form id="patientForm" method="post">
+                    <!-- Información Personal -->
+                    <h3>Información Personal</h3>
+                    <div class="form-group">
+                        <label for="fullName">Nombres y Apellidos:</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthDate">Fecha de Nacimiento:</label>
+                        <input type="date" id="birthDate" name="birthDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Edad:</label>
+                        <input type="number" id="age" name="age" placeholder="Ingresa tu edad" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Género:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Selecciona tu género</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="maritalStatus">Estado Civil:</label>
+                        <select id="maritalStatus" name="maritalStatus" required>
+                            <option value="">Selecciona tu estado civil</option>
+                            <option value="Soltero">Soltero</option>
+                            <option value="Casado">Casado</option>
+                            <option value="Divorciado">Divorciado</option>
+                            <option value="Viudo">Viudo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="occupation">Ocupación:</label>
+                        <input type="text" id="occupation" name="occupation" placeholder="Ingresa tu ocupación" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Teléfono:</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Ingresa tu teléfono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico:</label>
+                        <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Dirección:</label>
+                        <input type="text" id="address" name="address" placeholder="Ingresa tu dirección" required>
+                    </div>
+
+                    <!-- Motivo de Consulta -->
+                    <h3>Motivo de Consulta</h3>
+                    <div class="form-group">
+                        <label for="mainReason">Motivo Principal:</label>
+                        <input type="text" id="mainReason" name="mainReason" placeholder="Ingresa el motivo principal de consulta" required>
+                    </div>
+
+                    <!-- Antecedentes Médicos Personales -->
+                    <h3>Antecedentes Médicos Personales</h3>
+                    <div class="form-group">
+                        <label for="previousDiseases">Enfermedades previas:</label>
+                        <textarea id="previousDiseases" name="previousDiseases" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="allergies">Alergias:</label>
+                        <textarea id="allergies" name="allergies" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="medications">Medicamentos actuales:</label>
+                        <textarea id="medications" name="medications" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="previousSurgeries">Cirugías previas:</label>
+                        <textarea id="previousSurgeries" name="previousSurgeries" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="smoke">¿Fuma?:</label>
+                        <select id="smoke" name="smoke" required>
+                            <option value="no">No</option>
+                            <option value="yes">Sí</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="alcohol">¿Consume alcohol?:</label>
+                        <select id="alcohol" name="alcohol" required>
+                            <option value="no">No</option>
+                            <option value="yes">Sí</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hereditaryDiseases">Enfermedades hereditarias:</label>
+                        <textarea id="hereditaryDiseases" name="hereditaryDiseases" required></textarea>
+                    </div>
+
+                    <!-- Evaluación Física -->
+                    <h3>Evaluación Física</h3>
+                    <div class="form-group">
+                        <label for="weight">Peso (kg):</label>
+                        <input type="number" id="weight" name="weight" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Altura (cm):</label>
+                        <input type="number" id="height" name="height" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bmi">Índice de Masa Corporal (IMC):</label>
+                        <input type="number" id="bmi" name="bmi" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="physicalDescription">Descripción física:</label>
+                        <textarea id="physicalDescription" name="physicalDescription" required></textarea>
+                    </div>
+
+                    <!-- Plan de Tratamiento -->
+                    <h3>Plan de Tratamiento</h3>
+                    <div class="form-group">
+                        <label for="surgery">Cirugía:</label>
+                        <input type="text" id="surgery" name="surgery" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="procedureDescription">Descripción del procedimiento:</label>
+                        <textarea id="procedureDescription" name="procedureDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="risks">Riesgos y complicaciones:</label>
+                        <textarea id="risks" name="risks" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="preCare">Cuidado preoperatorio:</label>
+                        <textarea id="preCare" name="preCare" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="postCare">Cuidado postoperatorio:</label>
+                        <textarea id="postCare" name="postCare" required></textarea>
+                    </div>
+
+                    <!-- Botón para enviar el formulario -->
+                    <div class="form-group button-field">
+                        <button type="submit" class="btn-guardar">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

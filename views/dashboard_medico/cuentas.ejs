@@ -1,0 +1,31 @@
+
+<%- include('../_partials/header') %>
+
+    <div class="dashboard-container">
+        <%- include('../_partials/sidebar') %>
+
+        <!-- Contenido Principal -->
+        <main id="main-content">
+            <%- include('../_partials/sub_header') %>
+            <!-- Lista de Notificaciones -->
+            <%- include('../_partials/notificaciones') %>
+
+
+            <section id="cuentas" >
+                <h2 class="section-title">Cuentas y Trabajadores</h2>
+                <div class="search-bar">
+                    <input type="text" id="buscar-cuenta" placeholder="Buscar cuenta o trabajador...">
+                    <button id="agregar-cuenta" class="btn-primary">Agregar Cuenta</button>
+                </div>
+                <div id="lista-cuentas" class="lista-container"></div>
+            </section>
+
+
+        </main>
+    </div>
+
+    
+    <!-- <script src="/dashboard_med/js/main.js"></script> -->
+
+<%- include('../_partials/footer') %>
+
