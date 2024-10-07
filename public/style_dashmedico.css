@@ -5,7 +5,7 @@
     --background-color: rgba(236, 240, 241, 0.8);
     --text-color: #333;
     --card-bg: rgba(255, 255, 255, 0.9);
-    --sidebar-bg: linear-gradient(180deg, #105d8d 0%, #6eb7fc 100%);
+    --sidebar-bg: linear-gradient(180deg, #353a7f 50%, #353a7f 100%);
     --sidebar-hover: rgba(255, 255, 255, 0.1);
     --input-border: #bdc3c7;
     --input-focus: #3498db;

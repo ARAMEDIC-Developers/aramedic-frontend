@@ -10,16 +10,16 @@
 /* Estilo para el logo de la empresa en la parte superior izquierda */
 .header-text {
     position: absolute;
-    top: 10px; /* Un poco de margen desde la parte superior */
-    left: 10px; /* Un poco de margen desde la parte izquierda */
-    font-size: 15px; /* Tamaño del texto inicial */
+    top: 10px;
+    left: 10px;
+    font-size: 15px;
     font-weight: bold;
     color: white;
-    z-index: 1000; /* Para asegurarlo encima del resto del contenido */
+    z-index: 1000;
 }
 
 .header-text h1 {
-    margin: 0; /* Eliminar márgenes */
+    margin: 0;
 }
 
 .header-text .highlight {
@@ -29,50 +29,42 @@
 /* Ajuste responsivo para el logo */
 @media (max-width: 584px) {
     .header-text {
-        font-size: 14px; /* Reducir el tamaño en pantallas pequeñas */
+        font-size: 14px;
         top: 5px;
         left: 5px;
     }
 }
 
 body {
-    background-image: linear-gradient(
-      to right,
-      #353a7f,
-      rgba(40, 88, 167, 0.7)
-    ),
-    url("/imgs/header.png");
+    background-image: linear-gradient(to right, #353a7f, rgba(40, 88, 167, 0.7)), url("/imgs/header.png");
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
-    min-height: 100vh; /* Cambiado de height a min-height */
+    min-height: 100vh;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px; /* Añadido padding para evitar que el contenido toque los bordes */
+    padding: 20px;
 }
 
-/* Ajustar el ancho y reducir el padding para hacer menos alto */
 .container {
     max-width: 800px;
     width: 100%;
     background: #fff;
-    padding: 15px 30px; /* Menos padding para reducir la altura */
+    padding: 15px 30px;
     border-radius: 5px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Añadido un poco de sombra */
-    overflow: hidden; /* Evitar que el contenido desborde */
-    margin-top: 60px; /* Margen para separar el container del logo */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: 60px;
 }
 
-/* Ajuste responsivo para el container */
 @media (max-width: 584px) {
     .container {
-        margin-top: 80px; /* Más margen en pantallas pequeñas para evitar superposición con el logo */
+        margin-top: 80px;
     }
 }
 
-/* Reducido el tamaño del título */
 .container .title {
     font-size: 22px;
     font-weight: 500;
@@ -93,12 +85,11 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin: 10px 0 12px 0; /* Reducido el margen para compactar el contenido */
+    margin: 10px 0 12px 0;
 }
 
-/* Reducido el tamaño de las entradas de texto */
 form .user-details .input-box {
-    margin-bottom: 10px; /* Reducido para ocupar menos altura */
+    margin-bottom: 10px;
     width: calc(100% / 2 - 20px);
 }
 
@@ -109,12 +100,12 @@ form .user-details .input-box {
 }
 
 .user-details .input-box input {
-    height: 35px; /* Reducido para hacer menos alto */
+    height: 35px;
     width: 100%;
     outline: none;
     border-radius: 5px;
     border: 1px solid #ccc;
-    padding-left: 10px; /* Menos padding */
+    padding-left: 10px;
     font-size: 14px;
     border-bottom-width: 2px;
     transition: all 0.3s ease;
@@ -130,23 +121,22 @@ form .gender-details .gender-title {
     font-weight: 500;
 }
 
-/* Ajustar la separación entre los botones de género */
 form .gender-details .category {
     display: flex;
     justify-content: flex-start;
     gap: 20px;
     width: auto;
-    margin: 10px 0; /* Reducido para compactar */
+    margin: 10px 0;
 }
 
 .gender-details .category label {
     display: flex;
     align-items: center;
-    cursor: pointer; /* Añadir un cursor para indicar que es clickeable */
+    cursor: pointer;
 }
 
 .gender-details .category input[type="radio"] {
-    display: none; /* Oculta el input, pero mantiene su funcionalidad */
+    display: none;
 }
 
 .gender-details .category .dot {
@@ -165,8 +155,8 @@ form .gender-details .category {
 }
 
 form .button {
-    height: 35px; /* Reducido para hacer menos alto */
-    margin: 30px 0; /* Reducido para ocupar menos altura */
+    height: 35px;
+    margin: 30px 0;
 }
 
 form .button input {
@@ -186,12 +176,28 @@ form .button input:hover {
     background: rgb(0, 195, 255);
 }
 
+/* Estilos para la caja de error */
+.error-box {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.error-list {
+    list-style: none;
+    padding-left: 0;
+}
+
 /* Ajustes para pantallas más pequeñas */
 @media (max-width: 584px) {
     .container {
         max-width: 100%;
         padding: 20px;
-        margin: 10px; /* Añadido margen para evitar que toque los bordes */
+        margin: 10px;
     }
 
     form .user-details .input-box {

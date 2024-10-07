@@ -26,6 +26,8 @@ git clone https://github.com/ARAMEDIC-Developers/aramedic-frontend.git
 ### Correr programa: npm run dev
 
 
+git fetch --all
+git reset --hard origin/main
 
-
+git status
 
