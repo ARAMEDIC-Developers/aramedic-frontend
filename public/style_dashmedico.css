@@ -600,15 +600,9 @@ body::before {
   .header-text .highlight {
     color: var(--secondary-color);
   }
+ 
   
-  .main-content {
-    flex-grow: 1;
-    display: flex;
-    justify-content:center;
-    padding-top: 60px;
-  }
-  
-  .container1 {
+  .container {
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
     padding: 30px;
@@ -619,7 +613,7 @@ body::before {
     transition: all 0.3s ease;
   }
   
-  .container1:hover {
+  .container:hover {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     transform: translateY(-5px);
   }

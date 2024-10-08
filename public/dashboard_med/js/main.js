@@ -326,3 +326,5 @@ function hideTodayBtn(){
         todayBtn.style.display = "flex";
     }
 }
+
+//funciones para crud servicios
