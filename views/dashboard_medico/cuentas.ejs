@@ -1,4 +1,3 @@
-
 <%- include('../_partials/header') %>
 <div class="dashboard-container">
     <%- include('../_partials/sidebar') %>
@@ -10,49 +9,48 @@
         <!-- Lista de Notificaciones -->
         <%- include('../_partials/notificaciones') %>
 
-        <!-- Sección de Productos -->
-        <section id="productos">
-            <h2 class="section-title">Listado de Productos</h2>
+        <!-- Sección de Usuarios -->
+        <section id="usuarios">
+            <h2 class="section-title">Listado de Usuarios</h2>
 
             <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <input type="text" id="buscar-producto" placeholder="Código" style="padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 150px; margin-right: 10px;"/>
-                <input type="text" id="buscar-nombre" placeholder="Nombre" style="padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 150px; margin-right: 10px;"/>
+                <input type="text" id="buscar-dni" placeholder="DNI" style="padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 150px; margin-right: 10px;"/>
+                <input type="text" id="buscar-nombre" placeholder="Nombres" style="padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 150px; margin-right: 10px;"/>
                 <button id="buscar-btn" style="padding: 10px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
             </div>
 
-            <!-- Formulario para agregar o editar un producto -->
+            <!-- Formulario para agregar o editar un usuario -->
             <div style="background-color: #e9ecef; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 id="form-title">Agregar Nuevo Producto</h3>
-                <input type="text" id="nuevo-codigo" placeholder="Código" style="padding: 10px; margin-right: 10px;"/>
-                <input type="text" id="nuevo-nombre" placeholder="Nombre" style="padding: 10px; margin-right: 10px;"/>
-                <input type="text" id="nuevo-descripcion" placeholder="Descripción" style="padding: 10px; margin-right: 10px;"/>
-                <input type="number" id="nuevo-precio" placeholder="Precio" style="padding: 10px; margin-right: 10px;"/>
-                <input type="number" id="nuevo-stock" placeholder="Stock" style="padding: 10px; margin-right: 10px;"/>
-                <input type="text" id="nuevo-proveedor" placeholder="Proveedor" style="padding: 10px; margin-right: 10px;"/>
-                <input type="text" id="nuevo-categoria" placeholder="Categoría" style="padding: 10px; margin-right: 10px;"/>
-                <select id="nuevo-estado" style="padding: 10px; margin-right: 10px;">
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo">Inactivo</option>
+                <h3 id="form-title">Agregar Nuevo Usuario</h3>
+                <input type="text" id="nuevo-dni" placeholder="DNI" style="padding: 10px; margin-right: 10px;"/>
+                <input type="text" id="nuevo-nombres" placeholder="Nombres" style="padding: 10px; margin-right: 10px;"/>
+                <input type="text" id="nuevo-apellidos" placeholder="Apellidos" style="padding: 10px; margin-right: 10px;"/>
+                <input type="text" id="nuevo-rol" placeholder="Rol" style="padding: 10px; margin-right: 10px;"/>
+                <input type="date" id="nuevo-fecha-nacimiento" placeholder="Fecha de Nacimiento" style="padding: 10px; margin-right: 10px;"/>
+                <input type="text" id="nuevo-telefono" placeholder="Número telefónico" style="padding: 10px; margin-right: 10px;"/>
+                <select id="nuevo-genero" style="padding: 10px; margin-right: 10px;">
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
                 </select>
-                <button id="agregar-btn" style="padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Agregar Producto</button>
+                <button id="agregar-btn" style="padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Agregar Usuario</button>
             </div>
 
-            <table id="productos-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <table id="usuarios-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                 <thead style="background-color: #007BFF; color: white;">
                     <tr>
-                        <th style="padding: 10px; text-align: left;">Código</th>
-                        <th style="padding: 10px; text-align: left;">Nombre</th>
-                        <th style="padding: 10px; text-align: left;">Descripción</th>
-                        <th style="padding: 10px; text-align: left;">Precio Unitario</th>
-                        <th style="padding: 10px; text-align: left;">Stock</th>
-                        <th style="padding: 10px; text-align: left;">Proveedor</th>
-                        <th style="padding: 10px; text-align: left;">Categoría</th>
-                        <th style="padding: 10px; text-align: left;">Estado</th>
+                        <th style="padding: 10px; text-align: left;">ID Usuario</th>
+                        <th style="padding: 10px; text-align: left;">DNI</th>
+                        <th style="padding: 10px; text-align: left;">Nombres</th>
+                        <th style="padding: 10px; text-align: left;">Apellidos</th>
+                        <th style="padding: 10px; text-align: left;">Rol</th>
+                        <th style="padding: 10px; text-align: left;">Fecha de Nacimiento</th>
+                        <th style="padding: 10px; text-align: left;">Número telefónico</th>
+                        <th style="padding: 10px; text-align: left;">Género</th>
                         <th style="padding: 10px; text-align: left;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Las filas de productos se generarán dinámicamente con JavaScript -->
+                    <!-- Las filas de usuarios se generarán dinámicamente con JavaScript -->
                 </tbody>
             </table>
         </section>
@@ -60,50 +58,51 @@
 </div>
 
 <script>
-    let productos = [
-        { id: 1, codigo: "001", nombre: "Producto A", descripcion: "Descripción del Producto A", precio: 20.00, stock: 50, proveedor: "Proveedor 1", categoria: "Categoría 1", estado: "Activo" },
-        { id: 2, codigo: "002", nombre: "Producto B", descripcion: "Descripción del Producto B", precio: 15.00, stock: 100, proveedor: "Proveedor 2", categoria: "Categoría 2", estado: "Inactivo" },
-        { id: 3, codigo: "003", nombre: "Producto C", descripcion: "Descripción del Producto C", precio: 30.00, stock: 25, proveedor: "Proveedor 3", categoria: "Categoría 1", estado: "Activo" },
-        { id: 4, codigo: "004", nombre: "Producto D", descripcion: "Descripción del Producto D", precio: 40.00, stock: 10, proveedor: "Proveedor 1", categoria: "Categoría 3", estado: "Activo" }
+    let usuarios = [
+        { id: 1, dni: "74972730", nombres: "Gabriel Antonio", apellidos: "Castaneda Luyo", rol: "Paciente", fechaNacimiento: "2004-12-11", telefono: "953059465", genero: "Masculino" },
+        { id: 2, dni: "72095950", nombres: "Amanda Mariana", apellidos: "Obregon Rodriguez", rol: "Paciente", fechaNacimiento: "1994-11-30", telefono: "958644243", genero: "Femenino" },
+        { id: 3, dni: "47454844", nombres: "Roberto Jesus", apellidos: "Rial Palacios", rol: "Paciente", fechaNacimiento: "1989-02-16", telefono: "986276957", genero: "Masculino" },
+        { id: 4, dni: "62346304", nombres: "Juan Daniel", apellidos: "Pallares Cerdan", rol: "Paciente", fechaNacimiento: "2001-02-26", telefono: "996473615", genero: "Masculino" },
+        { id: 5, dni: "19205415", nombres: "María Elisa", apellidos: "Fidalgo Armas", rol: "Paciente", fechaNacimiento: "1998-04-21", telefono: "968498097", genero: "Femenino" }
     ];
 
-    let productoSeleccionado = null;
+    let usuarioSeleccionado = null;
 
     // Función para renderizar la tabla
     function renderTable(filtrar = false) {
-        const tableBody = document.querySelector("#productos-table tbody");
+        const tableBody = document.querySelector("#usuarios-table tbody");
         tableBody.innerHTML = ""; // Limpiar la tabla
 
-        let productosFiltrados = productos;
+        let usuariosFiltrados = usuarios;
 
         // Si se activa el filtro (búsqueda)
         if (filtrar) {
-            const codigoBuscar = document.getElementById('buscar-producto').value;
+            const dniBuscar = document.getElementById('buscar-dni').value;
             const nombreBuscar = document.getElementById('buscar-nombre').value;
 
-            productosFiltrados = productos.filter(producto => {
+            usuariosFiltrados = usuarios.filter(usuario => {
                 return (
-                    (!codigoBuscar || producto.codigo.includes(codigoBuscar)) &&
-                    (!nombreBuscar || producto.nombre.toLowerCase().includes(nombreBuscar.toLowerCase()))
+                    (!dniBuscar || usuario.dni.includes(dniBuscar)) &&
+                    (!nombreBuscar || usuario.nombres.toLowerCase().includes(nombreBuscar.toLowerCase()))
                 );
             });
         }
 
-        productosFiltrados.forEach(producto => {
+        usuariosFiltrados.forEach(usuario => {
             const row = `
                 <tr style="border-bottom: 1px solid #ddd;">
-                    <td style="padding: 10px;">${producto.codigo}</td>
-                    <td style="padding: 10px;">${producto.nombre}</td>
-                    <td style="padding: 10px;">${producto.descripcion}</td>
-                    <td style="padding: 10px;">${producto.precio.toFixed(2)}</td>
-                    <td style="padding: 10px;">${producto.stock}</td>
-                    <td style="padding: 10px;">${producto.proveedor}</td>
-                    <td style="padding: 10px;">${producto.categoria}</td>
-                    <td style="padding: 10px;">${producto.estado}</td>
+                    <td style="padding: 10px;">${usuario.id}</td>
+                    <td style="padding: 10px;">${usuario.dni}</td>
+                    <td style="padding: 10px;">${usuario.nombres}</td>
+                    <td style="padding: 10px;">${usuario.apellidos}</td>
+                    <td style="padding: 10px;">${usuario.rol}</td>
+                    <td style="padding: 10px;">${usuario.fechaNacimiento}</td>
+                    <td style="padding: 10px;">${usuario.telefono}</td>
+                    <td style="padding: 10px;">${usuario.genero}</td>
                     <td style="padding: 10px;">
-                        <button onclick="editarProducto(${producto.id})" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">Editar</button>
-                        <button onclick="verProducto(${producto.id})" style="background-color: #007BFF; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">Ver</button>
-                        <button onclick="eliminarProducto(${producto.id})" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">Eliminar</button>
+                        <button onclick="editarUsuario(${usuario.id})" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">Editar</button>
+                        <button onclick="verUsuario(${usuario.id})" style="background-color: #007BFF; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">Ver</button>
+                        <button onclick="eliminarUsuario(${usuario.id})" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">Eliminar</button>
                     </td>
                 </tr>
             `;
@@ -111,84 +110,79 @@
         });
     }
 
-    // Función para agregar o editar un producto
+    // Función para agregar o editar un usuario
     document.getElementById('agregar-btn').addEventListener('click', function() {
-        const codigo = document.getElementById('nuevo-codigo').value;
-        const nombre = document.getElementById('nuevo-nombre').value;
-        const descripcion = document.getElementById('nuevo-descripcion').value;
-        const precio = parseFloat(document.getElementById('nuevo-precio').value);
-        const stock = parseInt(document.getElementById('nuevo-stock').value);
-        const proveedor = document.getElementById('nuevo-proveedor').value;
-        const categoria = document.getElementById('nuevo-categoria').value;
-        const estado = document.getElementById('nuevo-estado').value;
+        const dni = document.getElementById('nuevo-dni').value;
+        const nombres = document.getElementById('nuevo-nombres').value;
+        const apellidos = document.getElementById('nuevo-apellidos').value;
+        const rol = document.getElementById('nuevo-rol').value;
+        const fechaNacimiento = document.getElementById('nuevo-fecha-nacimiento').value;
+        const telefono = document.getElementById('nuevo-telefono').value;
+        const genero = document.getElementById('nuevo-genero').value;
 
-        if (productoSeleccionado) {
-            // Editar producto
-            productoSeleccionado.codigo = codigo;
-            productoSeleccionado.nombre = nombre;
-            productoSeleccionado.descripcion = descripcion;
-            productoSeleccionado.precio = precio;
-            productoSeleccionado.stock = stock;
-            productoSeleccionado.proveedor = proveedor;
-            productoSeleccionado.categoria = categoria;
-            productoSeleccionado.estado = estado;
-            alert("Producto actualizado");
-            productoSeleccionado = null;
+        if (usuarioSeleccionado) {
+            // Editar usuario
+            usuarioSeleccionado.dni = dni;
+            usuarioSeleccionado.nombres = nombres;
+            usuarioSeleccionado.apellidos = apellidos;
+            usuarioSeleccionado.rol = rol;
+            usuarioSeleccionado.fechaNacimiento = fechaNacimiento;
+            usuarioSeleccionado.telefono = telefono;
+            usuarioSeleccionado.genero = genero;
+            alert("Usuario actualizado");
+            usuarioSeleccionado = null;
         } else {
-            // Agregar nuevo producto
-            const nuevoProducto = {
-                id: productos.length + 1,
-                codigo,
-                nombre,
-                descripcion,
-                precio,
-                stock,
-                proveedor,
-                categoria,
-                estado
+            // Agregar nuevo usuario
+            const nuevoUsuario = {
+                id: usuarios.length + 1,
+                dni,
+                nombres,
+                apellidos,
+                rol,
+                fechaNacimiento,
+                telefono,
+                genero
             };
-            productos.push(nuevoProducto);
-            alert("Producto agregado");
+            usuarios.push(nuevoUsuario);
+            alert("Usuario agregado");
         }
 
         // Limpiar formulario
-        document.getElementById('form-title').innerText = "Agregar Nuevo Producto";
-        document.getElementById('nuevo-codigo').value = "";
-        document.getElementById('nuevo-nombre').value = "";
-        document.getElementById('nuevo-descripcion').value = "";
-        document.getElementById('nuevo-precio').value = "";
-        document.getElementById('nuevo-stock').value = "";
-        document.getElementById('nuevo-proveedor').value = "";
-        document.getElementById('nuevo-categoria').value = "";
-        document.getElementById('nuevo-estado').value = "Activo";
+        document.getElementById('form-title').innerText = "Agregar Nuevo Usuario";
+        document.getElementById('nuevo-dni').value = "";
+        document.getElementById('nuevo-nombres').value = "";
+        document.getElementById('nuevo-apellidos').value = "";
+        document.getElementById('nuevo-rol').value = "";
+        document.getElementById('nuevo-fecha-nacimiento').value = "";
+        document.getElementById('nuevo-telefono').value = "";
+        document.getElementById('nuevo-genero').value = "Masculino";
 
         renderTable(); // Actualizar la tabla
     });
 
-    // Función para editar un producto
-    function editarProducto(id) {
-        productoSeleccionado = productos.find(p => p.id === id);
-        document.getElementById('form-title').innerText = "Editar Producto";
-        document.getElementById('nuevo-codigo').value = productoSeleccionado.codigo;
-        document.getElementById('nuevo-nombre').value = productoSeleccionado.nombre;
-        document.getElementById('nuevo-descripcion').value = productoSeleccionado.descripcion;
-        document.getElementById('nuevo-precio').value = productoSeleccionado.precio;
-        document.getElementById('nuevo-stock').value = productoSeleccionado.stock;
-        document.getElementById('nuevo-proveedor').value = productoSeleccionado.proveedor;
-        document.getElementById('nuevo-categoria').value = productoSeleccionado.categoria;
-        document.getElementById('nuevo-estado').value = productoSeleccionado.estado;
+    // Función para editar un usuario
+    function editarUsuario(id) {
+        usuarioSeleccionado = usuarios.find(u => u.id === id);
+        document.getElementById('form-title').innerText = "Editar Usuario";
+        document.getElementById('nuevo-dni').value = usuarioSeleccionado.dni;
+        document.getElementById('nuevo-nombres').value = usuarioSeleccionado.nombres;
+        document.getElementById('nuevo-apellidos').value = usuarioSeleccionado.apellidos;
+        document.getElementById('nuevo-rol').value = usuarioSeleccionado.rol;
+        document.getElementById('nuevo-fecha-nacimiento').value = usuarioSeleccionado.fechaNacimiento;
+        document.getElementById('nuevo-telefono').value = usuarioSeleccionado.telefono;
+        document.getElementById('nuevo-genero').value = usuarioSeleccionado.genero;
     }
 
-    // Función para ver un producto
-    function verProducto(id) {
-        const producto = productos.find(p => p.id === id);
-        alert(`Viendo producto: ${producto.nombre}`);
+    // Función para ver un usuario
+    function verUsuario(id) {
+        const usuario = usuarios.find(u => u.id === id);
+        alert(`Viendo usuario: ${usuario.nombres} ${usuario.apellidos}`);
     }
 
-    // Función para eliminar un producto
-    function eliminarProducto(id) {
-        productos = productos.filter(p => p.id !== id);
-        alert(`Producto eliminado`);
+    // Función para eliminar un usuario
+    function eliminarUsuario(id) {
+        usuarios = usuarios.filter(u => u.id !== id);
+        alert(`Usuario eliminado`);
         renderTable(); // Volver a renderizar la tabla después de eliminar
     }
 
@@ -200,12 +194,6 @@
     // Inicializar la tabla al cargar la página
     document.addEventListener("DOMContentLoaded", renderTable);
 </script>
-
-
-
-
-    
-    <!-- <script src="/dashboard_med/js/main.js"></script> -->
 
 <%- include('../_partials/footer') %>
 
