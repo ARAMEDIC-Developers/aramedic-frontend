@@ -11,7 +11,7 @@ body {
       to right,
       #fafafc8f,
       rgba(255, 255, 255, 0.521)
-    ),url("/fondo.jpg");
+    ),url("/imgs/fondo.jpg");
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
