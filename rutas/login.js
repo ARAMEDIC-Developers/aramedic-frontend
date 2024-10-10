@@ -1,19 +1,18 @@
 const express = require("express");
-const router= express.Router();
-const conexion=require("../config/conexion");
-const link= require("../config/link");
-const { validateItem } = require('../validaciones/login');
-const { validationResult } = require('express-validator');  
+const router = express.Router();
+const { validateItem, validarDniYContrasena } = require('../validaciones/login');
+const { validationResult } = require('express-validator');
+const link = require("../config/link");
 
-router.get("/login",function(req,res){
+router.get("/login", function(req, res) {
     res.render("login", { link, oldData: {} });
 });
 
-router.post("/login",validateItem,function(req,res){
+router.post("/login", validateItem, async function(req, res) {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        // Mostrar errores en la vista
+        // Mostrar errores de validación
         return res.render("login", {
             link,
             errors: errors.array(),
