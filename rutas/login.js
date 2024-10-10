@@ -5,6 +5,8 @@ const link = require("../config/link");
 const { validateItem } = require('../validaciones/login');
 const { validationResult } = require('express-validator');  
 
+
+
 router.get("/login", function(req, res) {
     res.render("login", { link, oldData: {} });
 });

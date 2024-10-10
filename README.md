@@ -31,3 +31,5 @@ git reset --hard origin/main
 
 git status
 
+### Nueva instalación
+npm install nodemailer
