@@ -31,15 +31,5 @@ git reset --hard origin/main
 
 git status
 
-CREATE TABLE `usuarios_key` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
-  `key` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
-
-
-INSERT INTO usuarios_key(`email`, `key`) VALUES ('deanreyesvallejos@gmail.com','nfF9M9');
-
-insert into `roles`(`nombre`) values ('cliente');
+### Nueva instalación
+npm install nodemailer
