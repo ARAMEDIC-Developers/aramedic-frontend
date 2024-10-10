@@ -3,7 +3,7 @@ let mysql = require("mysql");
 let conexion=mysql.createConnection({
     host:"localhost",
     database:"aramedic",
-    port: 3306, 
+    port: 3307, 
     user:"root",
     password:""
 });
