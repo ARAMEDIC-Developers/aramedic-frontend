@@ -7,6 +7,8 @@ const checkLoginMedico = require('../validaciones/authMedico');
 router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
     const data = {
         'link' : link,
+        'usuario': req.session
+
     }
 
     res.render("dashboard_medico/calendario", data);
@@ -16,6 +18,7 @@ router.get("/dashboard_jmedico/historia_clinica", checkLoginMedico, function(req
 
     const data = {
         'link' : link,
+        'usuario': req.session
     }
 
     res.render("dashboard_medico/historia_clinica", data);
@@ -25,6 +28,7 @@ router.post("/dashboard_jmedico/historia_clinica", checkLoginMedico, function(re
 
     const data = {
         'link' : link,
+        'usuario': req.session
     }
 
     res.json({mensaje: 'guardado correcto'});
@@ -39,6 +43,7 @@ router.get("/dashboard_jmedico/calendario", checkLoginMedico, async (req,res) =>
         'total_citas':0,
         'titulo' : 'pagina de calendario',
         'link' : link,
+        'usuario': req.session
     };
     
     res.render("dashboard_medico/calendario", data);
@@ -51,7 +56,8 @@ router.get("/dashboard_jmedico/test", checkLoginMedico, async (req,res) => {
 
     const data = {
         'total_citas':0,
-        'titulo' : 'pagina de calendario'
+        'titulo' : 'pagina de calendario',
+        'usuario': req.session
     };
     
     res.render('dashboard_medico/test', data);
@@ -78,6 +84,7 @@ router.get("/dashboard_jmedico/historias", checkLoginMedico, async (req,res) => 
         'titulo' : 'pagina de citas',
         'link' : link,
         'historias' : total_historias,
+        'usuario': req.session
     };
     
     res.render("dashboard_medico/historias", data);
@@ -90,6 +97,7 @@ router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req,res) => {
         'total_citas':0,
         'titulo' : 'pagina de citas',
         'link' : link,
+        'usuario': req.session
     };
     
     res.render("dashboard_medico/citas", data);
@@ -101,6 +109,7 @@ router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req,res) => {
         'total_citas':0,
         'titulo' : 'pagina de citas',
         'link' : link,
+        'usuario': req.session
     };
     
     res.render("dashboard_medico/cuentas", data);
@@ -112,6 +121,7 @@ router.get("/dashboard_jmedico/servicios", checkLoginMedico, async (req,res) => 
         'total_citas':0,
         'titulo' : 'pagina de citas',
         'link' : link,
+        'usuario': req.session
     };
     
     res.render("dashboard_medico/servicios", data);
