@@ -6,8 +6,8 @@ const { validateForgotPassword } = require('../validaciones/olvidar_contrasena')
 const { validationResult } = require('express-validator');
 
 // Mostrar el formulario de "Olvidar Contraseña"
-router.get("/olvidar_contrasena", function(req, res) {
-    res.render("olvidar_contrasena", { 
+router.get("/verificarcorreo", function(req, res) {
+    res.render("verificarcorreo", { 
         link, 
         errors: [],  // Sin errores al cargar por primera vez
         oldData: {}  // Sin datos previos en la primera carga
@@ -15,12 +15,12 @@ router.get("/olvidar_contrasena", function(req, res) {
 });
 
 // Procesar el formulario de "Olvidar Contraseña"
-router.post("/olvidar_contrasena", validateForgotPassword, function(req, res) {
+router.post("/verificarcorreo", validateForgotPassword, function(req, res) {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
         // Si hay errores, renderizamos la vista con los errores
-        return res.render("olvidar_contrasena", { 
+        return res.render("verificarcorreo", { 
             link, 
             errors: errors.array(), // Enviamos los errores a la vista
             oldData: req.body  // Los datos ingresados se mantienen
@@ -39,16 +39,21 @@ router.post("/olvidar_contrasena", validateForgotPassword, function(req, res) {
 
         if (rows.length === 0) {
             // Si el correo no está registrado
-            return res.render("olvidar_contrasena", {
+            return res.render("verificarcorreo", {
                 link,
                 errors: [{ msg: "El correo no está registrado" }],
                 oldData: req.body
             });
         }
-
+        else{
+            console.log("Enlace de restablecimiento enviado al correo");
+            return res.render("recuperarcontrasenia", {
+                link,
+                errors: [],
+                oldData: req.body
+            });
+        }
         // Aquí iría la lógica para enviar un enlace de restablecimiento de contraseña al correo
-        console.log("Enlace de restablecimiento enviado al correo");
-        res.send("Enlace de restablecimiento enviado al correo.");
     });
 });
 

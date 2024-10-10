@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificar Correo Electrónico - ARAMEDIC</title>
     <link rel="stylesheet" href="style_verif-correo.css">
+    <style>
+        .error-box {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .error-list {
+            list-style: none;
+            padding-left: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="header-text">
@@ -14,9 +29,18 @@
     <div class="container">
         <h2 class="title">Verificar Correo Electrónico</h2>
         <div class="icon-container">
-            <img src="/imgs/Correo" alt="Correo" class="email-icon">
+            <img src="/imgs/correo.png" alt="Correo" class="email-icon">
         </div>
-        <form action="/recuperarcuentaU" method="POST">
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <div class="error-box">
+                <ul class="error-list">
+                    <% errors.forEach(function(error) { %>
+                        <li><%= error.msg %></li>
+                    <% }); %>
+                </ul>
+            </div>
+        <% } %>
+        <form action="/verificarcorreo" method="POST">
             <label for="email">Introduce tu correo electrónico</label>
             <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
             <button type="submit">Enviar</button>
