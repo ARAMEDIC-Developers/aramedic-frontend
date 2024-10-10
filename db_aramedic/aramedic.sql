@@ -20,6 +20,52 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `aramedic`
 --
+CREATE TABLE `citas_medicas` (
+  `id` int(11) NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL,
+  `nombres_apellidos_paciente` varchar(255) NOT NULL,
+  `tipo_cita` varchar(100) DEFAULT NULL,
+  `motivo` varchar(255) DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `id_empleado` int(11) DEFAULT NULL,
+  `id_paciente` bigint(20) DEFAULT NULL,
+  `id_servicio` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `empleados`
+--
+
+CREATE TABLE `empleados` (
+  `id` int(11) NOT NULL,
+  `dni` int(8) NOT NULL,
+  `nombres_apellidos` varchar(255) NOT NULL,
+  `funcion` varchar(100) DEFAULT NULL,
+  `inicio_servicio` date DEFAULT NULL,
+  `fecha_cumpleanos` date DEFAULT NULL,
+  `tipo_contrato` varchar(50) DEFAULT NULL,
+  `numero_celular` varchar(20) DEFAULT NULL,
+  `correo_electronico` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `horarios`
+--
+
+CREATE TABLE `horarios` (
+  `id_horario` int(11) NOT NULL,
+  `id_medico` bigint(20) DEFAULT NULL,
+  `id_paciente` bigint(20) DEFAULT NULL,
+  `fecha` date DEFAULT NULL,
+  `hora_inicio` time DEFAULT NULL,
+  `hora_fin` time DEFAULT NULL,
+  `tipo_cita` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
