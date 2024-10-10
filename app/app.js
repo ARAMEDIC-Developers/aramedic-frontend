@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method')); // Permite usar métodos PUT y DELETE
 
 
+
 //manejo de sesiones
 app.use(session({
     secret:"tu_contraseña",
@@ -29,7 +30,7 @@ app.use(require("../rutas/registroU"));
 app.use(require("../rutas/jmedico"));
 app.use(require("../rutas/dpaciente"));
 app.use(require("../rutas/recuperarcuentaU"));
-
+app.use(require("./rutas/forgotPassword"));
 
 
 
