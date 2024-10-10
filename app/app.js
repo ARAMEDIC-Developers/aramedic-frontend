@@ -5,7 +5,7 @@ const app = express();
 const methodOverride = require('method-override'); // Para usar métodos PUT y DELETE en formularios
 const router = express.Router();
 const session = require('express-session');
-
+//const olvidarcontraseña = require('./rutas/olvidar_contraseña');
 
 //configuraciones
 app.set("view engine","ejs");//paginas dinamicas
@@ -30,7 +30,7 @@ app.use(require("../rutas/registroU"));
 app.use(require("../rutas/jmedico"));
 app.use(require("../rutas/dpaciente"));
 app.use(require("../rutas/recuperarcuentaU"));
-app.use(require("./rutas/forgotPassword"));
+app.use(require("../rutas/olvidar_contrasena"));
 
 
 

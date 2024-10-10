@@ -4,7 +4,8 @@
   "description": "Instalación de Git",
   "main": "app/app.js",
   "scripts": {
-    "dev": "nodemon --exec node app/app.js"
+    "dev": "nodemon --exec node app/app.js",
+    "start": "node app/app.js"
   },
   "repository": {
     "type": "git",
