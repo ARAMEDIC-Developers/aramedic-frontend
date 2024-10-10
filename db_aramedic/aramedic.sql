@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-10-2024 a las 23:37:18
+-- Tiempo de generación: 11-10-2024 a las 00:21:59
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,13 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `aramedic`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `citas_medicas`
+--
+
 CREATE TABLE `citas_medicas` (
   `id` int(11) NOT NULL,
   `hora_inicio` time NOT NULL,
@@ -291,11 +298,6 @@ ALTER TABLE `medicos`
   MODIFY `idmedico` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `pacientes`
---
-ALTER TABLE `pacientes`
-  MODIFY `idpacientes` bigint(20) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT de la tabla `roles`
 --
