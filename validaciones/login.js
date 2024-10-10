@@ -11,7 +11,28 @@ const validateItem = [
         .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres')
         .matches(/[A-Z]/).withMessage('La contraseña debe contener al menos una letra mayúscula')
         .matches(/[a-z]/).withMessage('La contraseña debe contener al menos una letra minúscula')
-        .matches(/\d/).withMessage('La contraseña debe contener al menos un número'),
+        .matches(/\d/).withMessage('La contraseña debe contener al menos un número')
+        .custom(async (value, { req }) => {
+            // Validar en la base de datos si la contraseña coincide con el DNI
+            const validar = "SELECT * FROM usuario WHERE dni = ?";
+            return new Promise((resolve, reject) => {
+                conexion.query(validar, [req.body.dni], function(error, rows) {
+                    if (error) {
+                        return reject(new Error("Error en el servidor"));
+                    }
+                    if (rows.length < 1) {
+                        // Si el DNI no existe en la base de datos
+                        return reject(new Error("El DNI no está registrado"));
+                    }
+                    const user = rows[0];
+                    if (user.contrasena !== value) {
+                        // Si la contraseña no coincide
+                        return reject(new Error("La contraseña es incorrecta"));
+                    }
+                    resolve(true);
+                });
+            });
+        })
 ];
 
 // Función que valida el DNI y contraseña en la base de datos
