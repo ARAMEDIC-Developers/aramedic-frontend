@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-10-2024 a las 02:23:38
+-- Tiempo de generación: 10-10-2024 a las 23:37:18
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -148,8 +148,8 @@ CREATE TABLE `usuario` (
 INSERT INTO `usuario` (`idusuario`, `dni`, `nombres`, `apellidos`, `fecha_nacimiento`, `num_telefonico`, `genero`, `correo`, `contrasena`, `idrol`) VALUES
 (7, '', '', '', NULL, '', 'Masculino', '', '', 1),
 (8, '', '', '', NULL, '', 'Masculino', '', '', 1),
-(10, '74733226', 'DERECK', 'FERNANDO', NULL, '999999999', 'Masculino', 'dereckmunoz07@gmail.com', '123', 2),
-(11, '72666946', 'Dean Ayrton', 'Reyes Vallejos', NULL, '974617857', 'Masculino', 'deanreyesvallejos@gmail.com', 'fVC8Kn5Vr6v4TY5', 1);
+(10, '74733226', 'DERECK', 'FERNANDO', NULL, '999999999', 'Masculino', 'dereckmunoz07@gmail.com', 'Pecosin0412', 2),
+(11, '72666946', 'Dean Ayrton', 'Reyes Vallejos', NULL, '974617857', 'Masculino', 'deanreyesvallejos@gmail.com', 'ITJ6v2jHRk03NPa', 1);
 
 --
 -- Disparadores `usuario`
@@ -165,6 +165,18 @@ CREATE TRIGGER `role_change_trigger` AFTER UPDATE ON `usuario` FOR EACH ROW BEGI
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios_key`
+--
+
+CREATE TABLE `usuarios_key` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `key` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Índices para tablas volcadas
@@ -217,6 +229,12 @@ ALTER TABLE `usuario`
   ADD KEY `fk_rol_usuario` (`idrol`);
 
 --
+-- Indices de la tabla `usuarios_key`
+--
+ALTER TABLE `usuarios_key`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -236,7 +254,7 @@ ALTER TABLE `pacientes`
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `idrol` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idrol` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `servicios`
@@ -249,6 +267,12 @@ ALTER TABLE `servicios`
 --
 ALTER TABLE `usuario`
   MODIFY `idusuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios_key`
+--
+ALTER TABLE `usuarios_key`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
