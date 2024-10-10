@@ -11,15 +11,6 @@ router.get("/recuperarcuentaU", function(req, res) {
         oldData: {} 
     });
 });
-/*/
-router.get("/recuperarcuentaU", function(req, res){
-    res.render("recuperarcuenta", { 
-        link,
-        errors: [], 
-        oldData: {} 
-    });
-});
-/*/
 
 router.post("/recuperarcuentaU", function(req, res){
     const ema = req.body.email;
