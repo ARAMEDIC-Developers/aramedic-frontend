@@ -32,14 +32,14 @@ router.post("/recuperarcuentaU", function(req, res){
         if (rows.length<1) {
             const mensajesError = [];
             mensajesError.push({ msg: "Error, Email no encontrado" });
-            return res.render("recuperarcuenta", {
+            return res.render("verificarcorreo", {
                 link,
                 errors: mensajesError,
                 oldData: req.body
             });
         }
         else{
-            res.render("correoenviado"), {
+            res.render("recuperarcontraseña"), {
                 link,
                 oldData: {}
             }

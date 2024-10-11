@@ -8,12 +8,12 @@ router.get("/dashboard_paciente", checkLoginPaciente, function(req,res){
     res.render("dashboard_paciente/calendario",{link});
 });
 
-router.get("/dashboard_pac/calendario", checkLoginPaciente, async (req,res) => {
+router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
 
     const data = {
-        'total_citas':0,
+        'total_citas': 0,
         'titulo' : 'pagina de calendario'
     };
     
