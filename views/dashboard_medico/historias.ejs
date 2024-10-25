@@ -1,181 +1,233 @@
-
 <%- include('../_partials/header') %>
 
-    <div class="dashboard-container">
-        <%- include('../_partials/sidebar') %>
+<div class="dashboard-container">
+    <%- include('../_partials/sidebar') %>
 
-        <!-- Contenido Principal -->
-        <main id="main-content">
-            <%- include('../_partials/sub_header') %>
-            <!-- Lista de Notificaciones -->
-            <%- include('../_partials/notificaciones') %>
+    <!-- Contenido Principal -->
+    <main id="main-content">
+        <%- include('../_partials/sub_header') %>
+        <!-- Lista de Notificaciones -->
+        <%- include('../_partials/notificaciones') %>
 
+        <div class="main-content">
+            <h2 class="title">Historia clinica</h2>
 
-            <section id="historias" >
-                <h2 class="section-title">Historias Clínicas</h2>
-                <div class="search-bar">
-                    <input type="text" id="buscar-historia" placeholder="Buscar historia clínica...">
-                    <a href="/dashboard_jmedico/historia_clinica" class="btn-primary">Nueva Historia Clínica</a>
-                </div>
-                <div id="lista-historias" class="lista-container"> </div>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Buscar por DNI, nombre, etc.">
+            </div>
+            <button id="btnAgregarServicio" class="add-button">
+                <i class="fas fa-plus-circle"></i> Añadir Historia
+            </button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Nombre y apellido</th>
+                            <th>Fecha de nacimiento</th>
+                            <th>Edad</th>
+                            <th>Género</th>
+                            <th>Estado civil</th>
+                            <th>Ocupación</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaServicios">
+                        <!-- Los datos de usuarios se insertarán aquí dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
 
-
-
-                <div class="main-content" style="display: none;">
-                    <div class="container">
-                        <h2 class="title">Perfil de Historia Clínica del Paciente</h2>
-                        <p>Completa la información del paciente:</p>
-                        <form id="patientForm" method="post">
-                            <!-- Información Personal -->
-                            <h3>Información Personal</h3>
-                            <div class="form-group">
-                                <label for="fullName">Nombres y Apellidos:</label>
-                                <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="birthDate">Fecha de Nacimiento:</label>
-                                <input type="date" id="birthDate" name="birthDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="age">Edad:</label>
-                                <input type="number" id="age" name="age" placeholder="Ingresa tu edad" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="gender">Género:</label>
-                                <select id="gender" name="gender" required>
-                                    <option value="">Selecciona tu género</option>
-                                    <option value="Masculino">Masculino</option>
-                                    <option value="Femenino">Femenino</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="maritalStatus">Estado Civil:</label>
-                                <select id="maritalStatus" name="maritalStatus" required>
-                                    <option value="">Selecciona tu estado civil</option>
-                                    <option value="Soltero">Soltero</option>
-                                    <option value="Casado">Casado</option>
-                                    <option value="Divorciado">Divorciado</option>
-                                    <option value="Viudo">Viudo</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="occupation">Ocupación:</label>
-                                <input type="text" id="occupation" name="occupation" placeholder="Ingresa tu ocupación" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Teléfono:</label>
-                                <input type="tel" id="phone" name="phone" placeholder="Ingresa tu teléfono" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Correo Electrónico:</label>
-                                <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="address">Dirección:</label>
-                                <input type="text" id="address" name="address" placeholder="Ingresa tu dirección" required>
-                            </div>
-        
-                            <!-- Motivo de Consulta -->
-                            <h3>Motivo de Consulta</h3>
-                            <div class="form-group">
-                                <label for="mainReason">Motivo Principal:</label>
-                                <input type="text" id="mainReason" name="mainReason" placeholder="Ingresa el motivo principal de consulta" required>
-                            </div>
-        
-                            <!-- Antecedentes Médicos Personales -->
-                            <h3>Antecedentes Médicos Personales</h3>
-                            <div class="form-group">
-                                <label for="previousDiseases">Enfermedades previas:</label>
-                                <textarea id="previousDiseases" name="previousDiseases" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="allergies">Alergias:</label>
-                                <textarea id="allergies" name="allergies" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="medications">Medicamentos actuales:</label>
-                                <textarea id="medications" name="medications" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="previousSurgeries">Cirugías previas:</label>
-                                <textarea id="previousSurgeries" name="previousSurgeries" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="smoke">¿Fuma?:</label>
-                                <select id="smoke" name="smoke" required>
-                                    <option value="no">No</option>
-                                    <option value="yes">Sí</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="alcohol">¿Consume alcohol?:</label>
-                                <select id="alcohol" name="alcohol" required>
-                                    <option value="no">No</option>
-                                    <option value="yes">Sí</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="hereditaryDiseases">Enfermedades hereditarias:</label>
-                                <textarea id="hereditaryDiseases" name="hereditaryDiseases" required></textarea>
-                            </div>
-        
-                            <!-- Evaluación Física -->
-                            <h3>Evaluación Física</h3>
-                            <div class="form-group">
-                                <label for="weight">Peso (kg):</label>
-                                <input type="number" id="weight" name="weight" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="height">Altura (cm):</label>
-                                <input type="number" id="height" name="height" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="bmi">Índice de Masa Corporal (IMC):</label>
-                                <input type="number" id="bmi" name="bmi" step="0.1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="physicalDescription">Descripción física:</label>
-                                <textarea id="physicalDescription" name="physicalDescription" required></textarea>
-                            </div>
-        
-                            <!-- Plan de Tratamiento -->
-                            <h3>Plan de Tratamiento</h3>
-                            <div class="form-group">
-                                <label for="surgery">Cirugía:</label>
-                                <input type="text" id="surgery" name="surgery" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="procedureDescription">Descripción del procedimiento:</label>
-                                <textarea id="procedureDescription" name="procedureDescription" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="risks">Riesgos y complicaciones:</label>
-                                <textarea id="risks" name="risks" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="preCare">Cuidado preoperatorio:</label>
-                                <textarea id="preCare" name="preCare" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="postCare">Cuidado postoperatorio:</label>
-                                <textarea id="postCare" name="postCare" required></textarea>
-                            </div>
-        
-                            <!-- Botón para enviar el formulario -->
-                            <div class="form-group button-field">
-                                <button type="submit" class="btn-guardar">Guardar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-
-            </section>
-
-
-        </main>
+<!-- Modal para añadir/editar usuario -->
+<div id="modalServicio" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Añadir Usuario</h2>
+        <form id="formServicio">
+            <div class="form-group">
+                <label for="dni">DNI</label>
+                <input type="text" id="dni" name="dni" required>
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre y Apellido</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+            </div>
+            <div class="form-group">
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" name="edad" required readonly>
+            </div>
+            <div class="form-group">
+                <label for="genero">Género</label>
+                <select id="genero" name="genero" required>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="estadoCivil">Estado Civil</label>
+                <input type="text" id="estadoCivil" name="estadoCivil" required>
+            </div>
+            <div class="form-group">
+                <label for="ocupacion">Ocupación</label>
+                <input type="text" id="ocupacion" name="ocupacion" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" required>
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            <button type="submit" class="btn-guardar">Guardar</button>
+        </form>
     </div>
+</div>
+
+<script>
+    // Datos de ejemplo de usuarios
+    let usuarios = [
+        { id: 1, dni: "12345678", nombre: "Juan Pérez", fechaNacimiento: "1990-03-15", edad: 34, estadoCivil: "Soltero", ocupacion: "Ingeniero", telefono: "987654321", correo: "juan.perez@mail.com", genero: "Masculino" },
+        { id: 2, dni: "87654321", nombre: "María García", fechaNacimiento: "1985-07-22", edad: 39, estadoCivil: "Casada", ocupacion: "Doctora", telefono: "912345678", correo: "maria.garcia@mail.com", genero: "Femenino" }
+    ];
+
+    const tablaServicios = document.getElementById('tablaServicios');
+    const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+    const modal = document.getElementById('modalServicio');
+    const closeModal = document.querySelector('.close');
+    const formServicio = document.getElementById('formServicio');
+    const modalTitle = document.getElementById('modalTitle');
+    const searchInput = document.getElementById('searchInput');
+
+    // Función para renderizar la tabla de usuarios
+    function renderizarTabla(usuariosArray) {
+        tablaServicios.innerHTML = '';
+        usuariosArray.forEach(usuario => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${usuario.dni}</td>
+                <td>${usuario.nombre}</td>
+                <td>${usuario.fechaNacimiento}</td>
+                <td>${usuario.edad}</td>
+                <td>${usuario.genero}</td>
+                <td>${usuario.estadoCivil}</td>
+                <td>${usuario.ocupacion}</td>
+                <td>${usuario.telefono}</td>
+                <td>${usuario.correo}</td>
+                <td>
+                    <button class="edit-button" data-id="${usuario.id}">Editar</button>
+                    <button class="delete-button" data-id="${usuario.id}">Eliminar</button>
+                </td>
+            `;
+            tablaServicios.appendChild(row);
+        });
+    }
+
+    // Inicializar la tabla
+    renderizarTabla(usuarios);
+
+    // Evento para abrir el modal de agregar usuario
+    btnAgregarServicio.addEventListener('click', () => {
+        modalTitle.textContent = 'Añadir Usuario';
+        formServicio.reset();
+        document.getElementById('edad').value = ''; // Resetear campo edad
+        modal.classList.add('show');
+    });
+
+    // Evento para cerrar el modal
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+
+    // Evento para manejar el envío del formulario
+    formServicio.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(formServicio);
+        const nuevoUsuario = {
+            id: Date.now(),
+            dni: formData.get('dni'),
+            nombre: formData.get('nombre'),
+            fechaNacimiento: formData.get('fechaNacimiento'),
+            edad: calcularEdad(formData.get('fechaNacimiento')),
+            estadoCivil: formData.get('estadoCivil'),
+            ocupacion: formData.get('ocupacion'),
+            telefono: formData.get('telefono'),
+            correo: formData.get('correo'),
+            genero: formData.get('genero')
+        };
+
+        if (formServicio.dataset.editId) {
+            const index = usuarios.findIndex(u => u.id === parseInt(formServicio.dataset.editId));
+            if (index !== -1) {
+                usuarios[index] = { ...usuarios[index], ...nuevoUsuario };
+            }
+            delete formServicio.dataset.editId;
+        } else {
+            usuarios.push(nuevoUsuario);
+        }
+
+        renderizarTabla(usuarios);
+        modal.classList.remove('show');
+    });
+
+    // Evento para editar o eliminar usuarios
+    tablaServicios.addEventListener('click', (e) => {
+        if (e.target.classList.contains('edit-button')) {
+            const id = parseInt(e.target.dataset.id);
+            const usuario = usuarios.find(u => u.id === id);
+            if (usuario) {
+                modalTitle.textContent = 'Editar Usuario';
+                formServicio.dni.value = usuario.dni;
+                formServicio.nombre.value = usuario.nombre;
+                formServicio.fechaNacimiento.value = usuario.fechaNacimiento;
+                formServicio.estadoCivil.value = usuario.estadoCivil;
+                formServicio.ocupacion.value = usuario.ocupacion;
+                formServicio.telefono.value = usuario.telefono;
+                formServicio.correo.value = usuario.correo;
+                formServicio.genero.value = usuario.genero;
+                formServicio.dataset.editId = id;
+                document.getElementById('edad').value = calcularEdad(usuario.fechaNacimiento); // Calcular edad al editar
+                modal.classList.add('show');
+            }
+        } else if (e.target.classList.contains('delete-button')) {
+            const id = parseInt(e.target.dataset.id);
+            usuarios = usuarios.filter(u => u.id !== id);
+            renderizarTabla(usuarios);
+        }
+    });
+
+    // Función para calcular la edad a partir de la fecha de nacimiento
+    function calcularEdad(fechaNacimiento) {
+        const nacimiento = new Date(fechaNacimiento);
+        const hoy = new Date();
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+        if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+            edad--;
+        }
+        return edad;
+    }
+
+    // Filtros de búsqueda
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredUsuarios = usuarios.filter(usuario =>
+            usuario.dni.includes(searchTerm) ||
+            usuario.nombre.toLowerCase().includes(searchTerm) ||
+            usuario.correo.toLowerCase().includes(searchTerm)
+        );
+        renderizarTabla(filteredUsuarios);
+    });
+</script>
 
 <%- include('../_partials/footer') %>
-

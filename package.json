@@ -19,11 +19,12 @@
   "homepage": "https://github.com/ARAMEDIC-Developers/aramedic-frontend#readme",
   "dependencies": {
     "ejs": "^3.1.10",
-    "express": "^4.21.0",
+    "express": "^4.21.1",
     "express-session": "^1.18.0",
     "express-validator": "^7.2.0",
     "method-override": "^3.0.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.9.15"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
