@@ -31,6 +31,38 @@ router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res)
     res.render("dashboard_paciente/calendario", data);
 });
 
+router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
+    // const citas = database.Historias('select * from historias');
+
+    const data = {
+        'usuario': req.session,
+        'link' : link,
+    };
+    
+    res.render("dashboard_paciente/citas", data);
+});
+
+router.get("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) => {
+    //TRAER HISTORIA DE LA BD
+
+    const data = {
+        'usuario': req.session,
+        'link' : link,
+    };
+    
+    res.render("dashboard_paciente/historias", data);
+});
+
+router.post("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) => {
+    //ENVIAR HISTORIA A LA BD
+    const data = {
+        'usuario': req.session,
+        'link' : link,
+    };
+    
+    res.render("dashboard_paciente/calendario", data);
+});
+
 
 router.get("/dashboard_paciente/test", checkLoginPaciente, async (req,res) => {
     // traer citas de la base de datos
