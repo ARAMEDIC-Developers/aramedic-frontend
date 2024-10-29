@@ -4,11 +4,35 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 const checkLoginPaciente = require('../validaciones/authPaciente');
 
+
+
 router.get("/dashboard_paciente", checkLoginPaciente, function(req,res){
-    res.render("dashboard_paciente/calendario",{link});
+    const data = {
+        'total_citas':0,
+        'titulo' : 'pagina de calendario',
+        'usuario': req.session,
+        'link' : link,
+    };
+    res.render("dashboard_paciente/calendario", data);
+    
 });
 
 router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res) => {
+    // traer citas de la base de datos
+    // const citas = database.Citas('select * from citas');
+
+    const data = {
+        'total_citas':0,
+        'titulo' : 'pagina de calendario',
+        'usuario': req.session,
+        'link' : link,
+    };
+    
+    res.render("dashboard_paciente/calendario", data);
+});
+
+
+router.get("/dashboard_paciente/test", checkLoginPaciente, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
 
@@ -17,23 +41,10 @@ router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res)
         'titulo' : 'pagina de calendario'
     };
     
-    res.render("dashboard_medico/calendario");
+    res.render('dashboard_paciente/test', data);
 });
 
-
-router.get("/dashboard_jmedico/test", checkLoginPaciente, async (req,res) => {
-    // traer citas de la base de datos
-    // const citas = database.Citas('select * from citas');
-
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de calendario'
-    };
-    
-    res.render('dashboard_medico/test', data);
-});
-
-router.post("/dashboard_jmedico/test", checkLoginPaciente, (req,res) => {
+router.post("/dashboard_paciente/test", checkLoginPaciente, (req,res) => {
 
     // console.log(req.body);
 
