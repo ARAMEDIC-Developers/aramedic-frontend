@@ -76,14 +76,4 @@ router.get("/logout", function(req, res) {
     res.redirect("/login");
 });
 
-// Mostrar u ocultar la contraseña
-const passwordField = document.querySelector("#password");
-const eyeIcon = document.querySelector(".eye-icon");
-
-eyeIcon.addEventListener("click", () => {
-    const isPassword = passwordField.getAttribute("type") === "password";
-    passwordField.setAttribute("type", isPassword ? "text" : "password");
-    eyeIcon.classList.toggle("bx-show");
-    eyeIcon.classList.toggle("bx-hide");
-});
 module.exports = router;
