@@ -22,7 +22,7 @@
                     <h3>Información Personal</h3>
                     <div class="form-group">
                         <label for="fullName">Nombres y Apellidos:</label>
-                        <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" value="<%= paciente.nombre %>" required>
+                        <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" value="<%= paciente.nombres %>" required>
                     </div>
                     <div class="form-group">
                         <label for="age">Edad:</label>
@@ -32,18 +32,18 @@
                         <label for="gender">Género:</label>
                         <select id="gender" name="gender" required>
                             <option value="">Selecciona tu género</option>
-                            <option value="Masculino" <%= paciente.genero === 'Masculino' ? 'selected' : '' %>>Masculino</option>
-                            <option value="Femenino" <%= paciente.genero === 'Femenino' ? 'selected' : '' %>>Femenino</option>
-                            <option value="Otro" <%= paciente.genero === 'Otro' ? 'selected' : '' %>>Otro</option>
+                            <option value="0" <%= paciente.genero === 0 ? 'selected' : '' %>>Masculino</option>
+                            <option value="1" <%= paciente.genero === 1 ? 'selected' : '' %>>Femenino</option>
+                            <option value="2" <%= paciente.genero === 2 ? 'selected' : '' %>>Otro</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="maritalStatus">Estado Civil:</label>
                         <select id="maritalStatus" name="maritalStatus" required>
-                            <option value="Soltero" <%= paciente.estado_civil === 'Soltero' ? 'selected' : '' %>>Soltero</option>
-                            <option value="Casado" <%= paciente.estado_civil === 'Casado' ? 'selected' : '' %>>Casado</option>
-                            <option value="Divorciado" <%= paciente.estado_civil === 'Divorciado' ? 'selected' : '' %>>Divorciado</option>
-                            <option value="Viudo" <%= paciente.estado_civil === 'Viudo' ? 'selected' : '' %>>Viudo</option>
+                            <option value="0" <%= paciente.estado_civil === 0 ? 'selected' : '' %>>Soltero</option>
+                            <option value="1" <%= paciente.estado_civil === 1 ? 'selected' : '' %>>Casado</option>
+                            <option value="2" <%= paciente.estado_civil === 2 ? 'selected' : '' %>>Divorciado</option>
+                            <option value="3" <%= paciente.estado_civil === 3 ? 'selected' : '' %>>Viudo</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -56,7 +56,7 @@
                     </div>
                     <div class="form-group">
                         <label for="email">Correo Electrónico:</label>
-                        <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" value="<%= paciente.email %>" required>
+                        <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" value="<%= paciente.correo %>" required>
                     </div>
                     <div class="form-group">
                         <label for="address">Dirección:</label>
@@ -91,15 +91,15 @@
                     <div class="form-group">
                         <label for="smoke">¿Fuma?:</label>
                         <select id="smoke" name="smoke" required>
-                            <option value="no" <%= paciente.fuma === 'No' ? 'selected' : '' %>>No</option>
-                            <option value="yes" <%= paciente.fuma === 'Sí' ? 'selected' : '' %>>Sí</option>
+                            <option value="0" <%= paciente.fuma === 0 ? 'selected' : '' %>>No</option>
+                            <option value="1" <%= paciente.fuma === 1 ? 'selected' : '' %>>Sí</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="alcohol">¿Consume alcohol?:</label>
                         <select id="alcohol" name="alcohol" required>
-                            <option value="no" <%= paciente.alcohol === 'No' ? 'selected' : '' %>>No</option>
-                            <option value="yes" <%= paciente.alcohol === 'Sí' ? 'selected' : '' %>>Sí</option>
+                            <option value="0" <%= paciente.consume_alcohol === 0 ? 'selected' : '' %>>No</option>
+                            <option value="1" <%= paciente.consume_alcohol === 1 ? 'selected' : '' %>>Sí</option>
                         </select>
                     </div>
                     <div class="form-group">
