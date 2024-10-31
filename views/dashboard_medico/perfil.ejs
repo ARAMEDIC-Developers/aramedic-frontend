@@ -1,0 +1,35 @@
+<%- include('../_partials/header') %>
+
+<div class="dashboard-container">
+    <%- include('../_partials/sidebar') %>
+
+    <main id="main-content">
+        <h2>Editar Perfil</h2>
+        
+        <form action="/dashboard_jmedico/editarPerfil" method="POST">
+            <label for="nom">Nombre:</label>
+            <input type="text" id="nom" name="nom" value="<%= user.nombres %>">
+
+            <label for="ape">Apellido:</label>
+            <input type="text" id="ape" name="ape" value="<%= user.apellidos %>">
+
+            <label for="ema">Correo Electrónico:</label>
+            <input type="email" id="ema" name="ema" value="<%= user.correo %>">
+
+            <label for="num">Número de Teléfono:</label>
+            <input type="text" id="num" name="num" value="<%= user.num_telefonico %>">
+
+            <label for="gender">Género:</label>
+            <select id="gender" name="gender">
+                <option value="masculino" <%= user.genero === 'masculino' ? 'selected' : '' %>>Masculino</option>
+                <option value="femenino" <%= user.genero === 'femenino' ? 'selected' : '' %>>Femenino</option>
+                <option value="otro" <%= user.genero === 'otro' ? 'selected' : '' %>>Otro</option>
+            </select>
+
+            <button type="submit">Guardar Cambios</button>
+            <a href="/dashboard_jmedico/perfil">Cancelar</a>
+        </form>
+    </main>
+</div>
+
+<%- include('../_partials/footer') %>
