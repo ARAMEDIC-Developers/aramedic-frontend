@@ -53,8 +53,7 @@ router.get("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) 
                 return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
             }
         else if(rows < 1){
-            console.log('Ingresar nuevos datos');
-            window.alert('USUARIO NO TIENE PICHULA');
+            window.alert('USUARIO AGREGADO ANTES DEL PROCEDURE');
             //MOSTAR INGRESO DE DATOS
         }
         else{
@@ -64,8 +63,6 @@ router.get("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) 
                 'link' : link,
                 'paciente' : paciente
             };
-            //ENVIAR DATOS A LA VISTA (TO BE)
-            console.log(paciente);
             res.render("dashboard_paciente/historias", data)
         }
     })
