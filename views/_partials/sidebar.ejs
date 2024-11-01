@@ -1,0 +1,50 @@
+        <!-- Sidebar para navegación -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-icons">
+                    <a href="#menu" id="hamburger-menu" class="icon-link hamburger-menu" aria-label="Menu">
+                        <i class="fas fa-bars"></i>
+                    </a>
+                    <a href="#notificaciones" class="icon-link notification-bell" aria-label="Notificaciones">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </a>
+                    <a href="#perfil" class="icon-link" aria-label="Perfil de usuario">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                </div>
+                <img src="/imgs/Medico.jpg" alt="Logo de la clínica" class="clinic-logo">
+                <% if (usuario.rol==1) { %>
+                    
+                    <div class="doctor-info">
+                        <p class="doctor-name"><%= usuario.nom %> <%= usuario.ape %></p>
+                        <p class="doctor-email"><%= usuario.cor %></p>                        
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="/dashboard_paciente/calendario"><i class="fas fa-calendar"></i> Ver Calendario</a></li>
+                        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                     
+                    </ul>
+                    
+                <% } else { %>
+                    <div class="doctor-info">
+                        <p class="doctor-name">Dr <%= usuario.nom %> <%= usuario.ape %></p>
+                        <p class="doctor-email"><%= usuario.cor %></p>                        
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="/dashboard_jmedico/calendario"><i class="fas fa-calendar"></i> Ver Calendario</a></li>
+                        <li><a href="/dashboard_jmedico/citas"><i class="fas fa-calendar-check"></i> Citas médicas</a></li>
+                        <li><a href="/dashboard_jmedico/historias"><i class="fas fa-file-medical"></i> Historias clínicas</a></li>
+                        <li><a href="/dashboard_jmedico/cuentas"><i class="fas fa-users"></i> Cuentas y trabajadores</a></li>
+                        <li><a href="/dashboard_jmedico/servicios"><i class="fas fa-briefcase-medical"></i> Servicios</a></li>
+                        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                    </ul>
+                    
+                <% } %>
+               
+            </div>
+
+       <!-- Implementar validación y protección de rutas según tipo de usuario -->
+                
+
+        </nav>

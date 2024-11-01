@@ -1,0 +1,115 @@
+<%- include('../_partials/header') %>
+<div class="dashboard-container">
+    <%- include('../_partials/sidebar') %>
+
+    <!-- Contenido Principal -->
+    <main id="main-content">
+        <%- include('../_partials/sub_header') %>
+
+        <!-- Lista de Notificaciones -->
+        <%- include('../_partials/notificaciones') %>
+
+        <!-- Sección de Usuarios -->
+        <section id="usuarios">
+            <h2 class="section-title">Listado de Usuarios</h2>
+
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <input type="text" id="buscar-dni" placeholder="DNI" style="padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 150px; margin-right: 10px;"/>
+                <input type="text" id="buscar-nombre" placeholder="Nombres" style="padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 150px; margin-right: 10px;"/>
+                <button id="buscar-btn" style="padding: 10px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
+            </div>
+
+            <!-- Formulario para agregar o editar un usuario -->
+            <div style="background-color: #e9ecef; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 id="form-title">Agregar Nuevo Usuario</h3>
+                <input type="text" id="nuevo-dni" placeholder="DNI" style="padding: 10px; margin-right: 10px;"/>
+                <input type="text" id="nuevo-nombres" placeholder="Nombres" style="padding: 10px; margin-right: 10px;"/>
+                <input type="text" id="nuevo-apellidos" placeholder="Apellidos" style="padding: 10px; margin-right: 10px;"/>
+                <input type="text" id="nuevo-rol" placeholder="Rol" style="padding: 10px; margin-right: 10px;"/>
+                <input type="date" id="nuevo-fecha-nacimiento" placeholder="Fecha de Nacimiento" style="padding: 10px; margin-right: 10px;"/>
+                <input type="text" id="nuevo-telefono" placeholder="Número telefónico" style="padding: 10px; margin-right: 10px;"/>
+                <select id="nuevo-genero" style="padding: 10px; margin-right: 10px;">
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
+                <button id="agregar-btn" style="padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Agregar Usuario</button>
+            </div>
+
+            <table id="usuarios-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead style="background-color: #007BFF; color: white;">
+                    <tr>
+                        <th style="padding: 10px; text-align: left;">ID Usuario</th>
+                        <th style="padding: 10px; text-align: left;">DNI</th>
+                        <th style="padding: 10px; text-align: left;">Nombres</th>
+                        <th style="padding: 10px; text-align: left;">Apellidos</th>
+                        <th style="padding: 10px; text-align: left;">Rol</th>
+                        <th style="padding: 10px; text-align: left;">Fecha de Nacimiento</th>
+                        <th style="padding: 10px; text-align: left;">Número telefónico</th>
+                        <th style="padding: 10px; text-align: left;">Género</th>
+                        <th style="padding: 10px; text-align: left;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% usuarios.forEach(usuario => { %>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 10px;"><%= usuario.idusuario %></td>
+                            <td style="padding: 10px;"><%= usuario.dni %></td>
+                            <td style="padding: 10px;"><%= usuario.nombres %></td>
+                            <td style="padding: 10px;"><%= usuario.apellidos %></td>
+                            <td style="padding: 10px;"><%= usuario.idrol %></td>
+                            <td style="padding: 10px;"><%= usuario.fecha_nacimiento %></td>
+                            <td style="padding: 10px;"><%= usuario.num_telefonico %></td>
+                            <td style="padding: 10px;"><%= usuario.genero %></td>
+                            <td style="padding: 10px;">
+                                <!-- Aquí puedes agregar botones para editar o eliminar el usuario -->
+                                <button style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
+                                <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.getElementById("buscar-btn").addEventListener("click", async function() {
+        const dni = document.getElementById("buscar-dni").value; // Obtener el valor del input de DNI
+        const response = await fetch(`/dashboard_jmedico/cuentas/buscar?dni=${dni}`);
+        const usuarios = await response.json(); // Obtener los usuarios filtrados
+
+        const tableBody = document.querySelector("#usuarios-table tbody");
+        tableBody.innerHTML = ""; // Limpiar la tabla
+
+        // Renderizar los usuarios en la tabla
+        usuarios.forEach(usuario => {
+            const row = document.createElement("tr");
+            row.style.borderBottom = "1px solid #ddd";
+            row.innerHTML = `
+                <td style="padding: 10px;">${usuario.idusuario}</td>
+                <td style="padding: 10px;">${usuario.dni}</td>
+                <td style="padding: 10px;">${usuario.nombres}</td>
+                <td style="padding: 10px;">${usuario.apellidos}</td>
+                <td style="padding: 10px;">${usuario.idrol}</td>
+                <td style="padding: 10px;">${usuario.fecha_nacimiento}</td>
+                <td style="padding: 10px;">${usuario.num_telefonico}</td>
+                <td style="padding: 10px;">${usuario.genero}</td>
+                <td style="padding: 10px;">
+                    <button style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
+                    <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Si no se encuentran usuarios, mostrar un mensaje
+        if (usuarios.length === 0) {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td colspan="9" style="padding: 10px; text-align: center;">No se encontraron usuarios.</td>`;
+            tableBody.appendChild(row);
+        }
+    });
+</script>
+
+<%- include('../_partials/footer') %>

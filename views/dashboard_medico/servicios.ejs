@@ -1,0 +1,156 @@
+<%- include('../_partials/header') %>
+
+<div class="dashboard-container">
+    <%- include('../_partials/sidebar') %>
+
+    <!-- Contenido Principal -->
+    <main id="main-content">
+        <%- include('../_partials/sub_header') %>
+        <!-- Lista de Notificaciones -->
+        <%- include('../_partials/notificaciones') %>
+
+        <div class="main-content">
+            <h2 class="title">Gestión de Servicios</h2>
+
+            <!-- Barra de Búsqueda -->
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Buscar servicios...">
+            </div>
+            <button id="btnAgregarServicio" class="add-button">
+                <i class="fas fa-plus-circle"></i> Añadir Servicio
+            </button>
+
+            <!-- Tabla de Servicios -->
+            <div class="table-container">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead style="background-color: #007BFF; color: white;">
+                        <tr>
+                            <th style="padding: 10px; text-align: left;">Nombre</th>
+                            <th style="padding: 10px; text-align: left;">Tipo</th>
+                            <th style="padding: 10px; text-align: left;">Costo</th>
+                            <th style="padding: 10px; text-align: left;">Tiempo Procedimiento</th>
+                            <th style="padding: 10px; text-align: left;">Tiempo Recuperación</th>
+                            <th style="padding: 10px; text-align: left;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaServicios">
+                        <% servicios.forEach(servicio => { %>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 10px;"><%= servicio.nombre_servicio %></td>
+                                <td style="padding: 10px;"><%= servicio.tipo_procedimiento %></td>
+                                <td style="padding: 10px;"><%= servicio.costo %></td>
+                                <td style="padding: 10px;"><%= servicio.tiempo_estimado %></td>
+                                <td style="padding: 10px;"><%= servicio.tiempo_recuperacion %></td>
+                                <td style="padding: 10px;">
+                                    <button style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
+                                    <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal para añadir/editar servicio -->
+<div id="modalServicio" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Añadir Servicio</h2>
+        <form id="formServicio">
+            <div class="form-group">
+                <label for="nombre">Nombre del Servicio</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="tipoProcedimiento">Tipo de Procedimiento</label>
+                <select id="tipoProcedimiento" name="tipoProcedimiento" required>
+                    <option value="">Seleccione el tipo</option>
+                    <option value="Consulta">Consulta</option>
+                    <option value="Cirugía">Cirugía</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="costo">Costo</label>
+                <input type="number" id="costo" name="costo" required>
+            </div>
+            <div class="form-group">
+                <label for="tiempoEstimadoProcedimiento">Tiempo Estimado de Procedimiento</label>
+                <input type="text" id="tiempoEstimadoProcedimiento" name="tiempoEstimadoProcedimiento" required>
+            </div>
+            <div class="form-group">
+                <label for="tiempoEstimadoRecuperacion">Tiempo Estimado de Recuperación</label>
+                <input type="text" id="tiempoEstimadoRecuperacion" name="tiempoEstimadoRecuperacion" required>
+            </div>
+            <button type="submit" class="btn-guardar">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const tablaServicios = document.getElementById("tablaServicios");
+    const btnAgregarServicio = document.getElementById("btnAgregarServicio");
+    const modal = document.getElementById("modalServicio");
+    const closeModal = document.querySelector(".close");
+    const formServicio = document.getElementById("formServicio");
+
+    // Funcionalidad de búsqueda en tiempo real
+    searchInput.addEventListener("input", async function () {
+        const nombre = searchInput.value.trim();
+        
+        try {
+            const response = await fetch(`/dashboard_jmedico/servicios/buscar?nombre=${encodeURIComponent(nombre)}`);
+            const servicios = await response.json();
+
+            // Limpia la tabla
+            tablaServicios.innerHTML = "";
+
+            // Muestra los resultados
+            servicios.forEach(servicio => {
+                const row = `
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">${servicio.nombre_servicio}</td>
+                        <td style="padding: 10px;">${servicio.tipo_procedimiento}</td>
+                        <td style="padding: 10px;">${servicio.costo}</td>
+                        <td style="padding: 10px;">${servicio.tiempo_estimado}</td>
+                        <td style="padding: 10px;">${servicio.tiempo_recuperacion}</td>
+                        <td style="padding: 10px;">
+                            <button style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
+                            <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+                tablaServicios.insertAdjacentHTML("beforeend", row);
+            });
+        } catch (error) {
+            console.error("Error al buscar servicios:", error);
+        }
+    });
+
+    // Mostrar el modal al presionar "Añadir Servicio"
+    btnAgregarServicio.addEventListener("click", () => {
+        document.getElementById("modalTitle").textContent = "Añadir Servicio";
+        formServicio.reset();
+        modal.classList.add("show");
+    });
+
+    // Cerrar el modal al presionar la "X"
+    closeModal.addEventListener("click", () => {
+        modal.classList.remove("show");
+    });
+
+    // Cerrar el modal al hacer clic fuera del contenido del modal
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.classList.remove("show");
+        }
+    });
+});
+</script>
+
+<%- include('../_partials/footer') %>
