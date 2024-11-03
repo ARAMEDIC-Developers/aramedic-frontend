@@ -4,6 +4,7 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 const { validateCreate } = require('../validaciones/registroU');
 const { validationResult } = require('express-validator');
+const { NULL } = require("mysql/lib/protocol/constants/types");
 
 // Mostrar el formulario de registro
 router.get("/registroU", function(req, res) {
@@ -27,7 +28,19 @@ router.post("/registroU", validateCreate, (req, res) => {
     }
 
     const { nom, ape, ema, num, dni, contra, confirm_contra, gender } = req.body;
+    let genderBool;
     const idrolPaciente =1;
+    switch(gender){
+        case 'Masculino':
+            genderBool=0;
+            break;
+        case 'Femenino':
+            genderBool=1;
+            break;
+        default:
+            genderBool=2;
+            break;
+    }
 
     // Verificar si el DNI, correo o número de celular ya existen
     const verificarUsuario = "SELECT * FROM usuarios WHERE dni = ? OR correo = ? OR num_telefonico = ?";
@@ -62,9 +75,24 @@ router.post("/registroU", validateCreate, (req, res) => {
                 res.redirect(link+"login");
             }
         });
+        const obteneridUser='SELECT idusuario FROM `usuario` WHERE DNI = ?';
+        conexion.query(obteneridUser, dni, (error, rows)=>{
+            if(error){
+                console.log(error)
+            }
+            else{
+                const iduser = rows[0].idusuario;
+                const procedure='CALL create_medical_history(?, ?, ?, ?, ?, ?)';
+                conexion.query(procedure, [iduser, nom, ape, num, genderBool, ema], function(error){
+                    if(error){
+                        console.log(error)
+                    }
+                    else{
+                        console.log('TRIKA AGREGADO HISTORIA')
+                    }
+                })
+            }
+        });
     });
 });
-
 module.exports = router;
-
-

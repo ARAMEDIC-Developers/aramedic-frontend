@@ -44,13 +44,28 @@ router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
 
 router.get("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) => {
     //TRAER HISTORIA DE LA BD
-
-    const data = {
-        'usuario': req.session,
-        'link' : link,
-    };
-    
-    res.render("dashboard_paciente/historias", data);
+    const idusuario = req.session.idusu;
+    const historia = 'SELECT * FROM pacientes WHERE idpacientes=?';
+    conexion.query(historia, idusuario,async function(error,rows){
+        if (error) 
+            {
+                console.log("TRIKA error en la consulta de verificación", error);
+                return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
+            }
+        else if(rows < 1){
+            window.alert('USUARIO AGREGADO ANTES DEL PROCEDURE');
+            //MOSTAR INGRESO DE DATOS
+        }
+        else{
+            const paciente = rows[0];
+            const data = {
+                'usuario': req.session,
+                'link' : link,
+                'paciente' : paciente
+            };
+            res.render("dashboard_paciente/historias", data)
+        }
+    })
 });
 
 router.post("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) => {
