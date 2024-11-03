@@ -30,7 +30,7 @@ router.post("/registroU", validateCreate, (req, res) => {
     const idrolPaciente =1;
 
     // Verificar si el DNI, correo o número de celular ya existen
-    const verificarUsuario = "SELECT * FROM usuario WHERE dni = ? OR correo = ? OR num_telefonico = ?";
+    const verificarUsuario = "SELECT * FROM usuarios WHERE dni = ? OR correo = ? OR num_telefonico = ?";
     conexion.query(verificarUsuario, [dni, ema, num], (error, rows) => {
         if (error) {
             console.log("TRIKA error en la consulta de verificación", error);
@@ -52,7 +52,7 @@ router.post("/registroU", validateCreate, (req, res) => {
         }
 
         // Si no hay errores, insertar el nuevo usuario en la base de datos
-        const insertar="INSERT INTO usuario (DNI,nombres,apellidos,num_telefonico,genero,correo,contrasena,idrol) VALUES ('"+dni+"','"+nom+"','"+ape+"','"+num+"','"+gender+"','"+ema+"','"+contra+"','"+idrolPaciente+"')";
+        const insertar="INSERT INTO usuarios (nombre_usuario, contrasena, rol_id, correo, dni, num_telefonico) VALUES ('"+nom+"','"+contra+"', '"+idrolPaciente+"','"+ema+"','"+dni+"','"+num+"')"//,'"+ema+"','"+contra+"','"+idrolPaciente+"')";
         conexion.query(insertar,function(error){
             if (error) {
                 console.log("TRIKA error");

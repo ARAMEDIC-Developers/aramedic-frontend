@@ -26,7 +26,7 @@ router.post("/login", validateItem, function(req, res) {
     const DNI = req.body.dni;
     const contrasena = req.body.contra;
 
-    const validar = "SELECT * FROM usuario WHERE dni = ?";
+    const validar = "SELECT * FROM usuarios WHERE dni = ?";
     conexion.query(validar, [DNI], async function(error, rows) {
         let mensaje;
         if (error) {
@@ -48,22 +48,19 @@ router.post("/login", validateItem, function(req, res) {
             } else {
                 // Inicio de sesión exitoso, crear la sesión del usuario
                 req.session.login = true;
-                req.session.idusu = user.idusuario;
+                req.session.idusu = user.id;
                 req.session.dn = user.dni;
-                req.session.nom = user.nombres;
-                req.session.ape = user.apellidos;
-                req.session.naci = user.fecha_nacimiento;
+                req.session.nom = user.nombre_usuario;
                 req.session.tel = user.num_telefonico;
-                req.session.gen = user.genero;
                 req.session.cor = user.correo;
                 req.session.contra = user.contrasena;
-                req.session.rol = user.idrol;
+                req.session.rol = user.rol_id;
                 console.log(req.session); // Comprobar los datos de sesión
 
                 // Redirigir según el rol del usuario
-                if (user.idrol == 1) {
+                if (user.rol_id == 1) {
                     res.redirect("dashboard_paciente");
-                } else if (user.idrol == 2) {
+                } else if (user.rol_id == 2) {
                     res.redirect("dashboard_jmedico");
                 }
             }

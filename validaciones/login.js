@@ -14,7 +14,7 @@ const validateItem = [
         .matches(/\d/).withMessage('La contraseña debe contener al menos un número')
         .custom(async (value, { req }) => {
             // Validar en la base de datos si la contraseña coincide con el DNI
-            const validar = "SELECT * FROM usuario WHERE dni = ?";
+            const validar = "SELECT * FROM usuarios WHERE dni = ?";
             return new Promise((resolve, reject) => {
                 conexion.query(validar, [req.body.dni], function(error, rows) {
                     if (error) {
@@ -37,7 +37,7 @@ const validateItem = [
 
 // Función que valida el DNI y contraseña en la base de datos
 const validarDniYContrasena = async (dni, contrasena, req, res) => {
-    const validar = "SELECT * FROM usuario WHERE dni = ?";
+    const validar = "SELECT * FROM usuarios WHERE dni = ?";
     conexion.query(validar, [dni], async function(error, rows) {
         if (error) {
             console.log("TRIKA error consulta validar", error);
