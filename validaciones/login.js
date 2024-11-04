@@ -70,7 +70,6 @@ const validarDniYContrasena = async (dni, contrasena, req, res) => {
                 req.session.idusu = user.idusuario;
                 req.session.dn = user.dni;
                 req.session.nom = user.nombres;
-                req.session.ape = user.apellidos;
                 req.session.naci = user.fecha_nacimiento;
                 req.session.tel = user.num_telefonico;
                 req.session.gen = user.genero;

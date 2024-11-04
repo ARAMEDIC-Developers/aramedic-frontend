@@ -21,12 +21,20 @@
                     <!-- Información Personal -->
                     <h3>Información Personal</h3>
                     <div class="form-group">
-                        <label for="fullName">Nombres y Apellidos:</label>
-                        <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" value="<%= paciente.nombres %>" required>
+                        <label for="fullName">Nombre del paciente:</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" value="<%= paciente.nombre_paciente %>" required>
                     </div>
                     <div class="form-group">
-                        <label for="age">Edad:</label>
-                        <input type="number" id="age" name="age" placeholder="Ingresa tu edad" value="<%= paciente.edad %>" required>
+                        <label for="fullName">Apellido del paciente:</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" value="<%= paciente.apellido_paciente %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullName">Nombre del medico:</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="Ingresa nombres y apellidos" value="<%= paciente.nombre_medico %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Fecha:</label>
+                        <input type="datetime" id="age" name="age" placeholder="Ingresa tu edad" value="<%= paciente.fecha %>" required>
                     </div>
                     <div class="form-group">
                         <label for="gender">Género:</label>
@@ -47,7 +55,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="occupation">Ocupación:</label>
+                        <label for="occupation">Observaciones:</label>
                         <input type="text" id="occupation" name="occupation" placeholder="Ingresa tu ocupación" value="<%= paciente.ocupacion %>" required>
                     </div>
                     <div class="form-group">
@@ -55,7 +63,7 @@
                         <input type="tel" id="phone" name="phone" placeholder="Ingresa tu teléfono" value="<%= paciente.telefono %>" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Correo Electrónico:</label>
+                        <label for="email">Diagnostico:</label>
                         <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" value="<%= paciente.correo %>" required>
                     </div>
                     <div class="form-group">
@@ -123,7 +131,7 @@
                     </div>
                     <div class="form-group">
                         <label for="physicalDescription">Descripción física:</label>
-                        <textarea id="physicalDescription" name="physicalDescription" required><%= paciente.descripcion_fisica %></textarea>
+                        <textarea id="physicalDescription" name="physicalDescription" required><%= paciente.descripcion %></textarea>
                     </div>
 
                     <!-- Plan de Tratamiento -->

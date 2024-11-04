@@ -53,6 +53,7 @@ router.post("/login", validateItem, function(req, res) {
                 req.session.nom = user.nombre_usuario;
                 req.session.tel = user.num_telefonico;
                 req.session.cor = user.correo;
+                req.session.pac = user.paciente_id;
                 req.session.contra = user.contrasena;
                 req.session.rol = user.rol_id;
                 console.log(req.session); // Comprobar los datos de sesión

@@ -44,25 +44,26 @@ router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
 
 router.get("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) => {
     //TRAER HISTORIA DE LA BD
-    const idusuario = req.session.idusu;
-    const historia = 'SELECT * FROM pacientes WHERE idpacientes=?';
-    conexion.query(historia, idusuario,async function(error,rows){
+    const idusuario = req.session.pac;
+    const historia = 'SELECT h.id, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, m.nombre AS nombre_medico, m.especialidad_id AS especialidad_id, h.fecha, h.diagnostico FROM historial_medico h JOIN pacientes p ON h.paciente_id= p.id JOIN medicos m ON h.medico_id = m.id WHERE h.id = 7;';
+    conexion.query(historia, async function(error,rows){
         if (error) 
             {
                 console.log("TRIKA error en la consulta de verificación", error);
-                return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
+                return res.status(500).send(error);
             }
         else if(rows < 1){
-            window.alert('USUARIO AGREGADO ANTES DEL PROCEDURE');
+            console.log('ERROR')
             //MOSTAR INGRESO DE DATOS
         }
         else{
-            const paciente = rows[0];
+            const historial_medico = rows[0];
             const data = {
                 'usuario': req.session,
                 'link' : link,
-                'paciente' : paciente
+                'paciente' : historial_medico
             };
+            console.log(historial_medico)
             res.render("dashboard_paciente/historias", data)
         }
     })
@@ -101,6 +102,4 @@ router.post("/dashboard_paciente/test", checkLoginPaciente, (req,res) => {
     
     res.json(data);
 });
-
-
 module.exports= router;
