@@ -5,8 +5,6 @@ const link = require("../config/link");
 const { validateItem } = require('../validaciones/login');
 const { validationResult } = require('express-validator');  
 
-
-
 router.get("/login", function(req, res) {
     res.render("login", { link, oldData: {} });
 });
@@ -26,7 +24,7 @@ router.post("/login", validateItem, function(req, res) {
     const DNI = req.body.dni;
     const contrasena = req.body.contra;
 
-    const validar = "SELECT * FROM usuario WHERE dni = ?";
+    const validar = "SELECT * FROM medicos WHERE dni = ?";
     conexion.query(validar, [DNI], async function(error, rows) {
         let mensaje;
         if (error) {
@@ -48,12 +46,12 @@ router.post("/login", validateItem, function(req, res) {
             } else {
                 // Inicio de sesión exitoso, crear la sesión del usuario
                 req.session.login = true;
-                req.session.idusu = user.idusuario;
+                req.session.idusu = user.id;
                 req.session.dn = user.dni;
                 req.session.nom = user.nombres;
                 req.session.ape = user.apellidos;
                 req.session.naci = user.fecha_nacimiento;
-                req.session.tel = user.num_telefonico;
+                req.session.tel = user.telefono;
                 req.session.gen = user.genero;
                 req.session.cor = user.correo;
                 req.session.contra = user.contrasena;

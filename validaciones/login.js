@@ -14,7 +14,7 @@ const validateItem = [
         .matches(/\d/).withMessage('La contraseña debe contener al menos un número')
         .custom(async (value, { req }) => {
             // Validar en la base de datos si la contraseña coincide con el DNI
-            const validar = "SELECT * FROM usuario WHERE dni = ?";
+            const validar = "SELECT * FROM medicos WHERE dni = ?";
             return new Promise((resolve, reject) => {
                 conexion.query(validar, [req.body.dni], function(error, rows) {
                     if (error) {
@@ -37,7 +37,7 @@ const validateItem = [
 
 // Función que valida el DNI y contraseña en la base de datos
 const validarDniYContrasena = async (dni, contrasena, req, res) => {
-    const validar = "SELECT * FROM usuario WHERE dni = ?";
+    const validar = "SELECT * FROM medicos WHERE dni = ?";
     conexion.query(validar, [dni], async function(error, rows) {
         if (error) {
             console.log("TRIKA error consulta validar", error);
@@ -67,12 +67,12 @@ const validarDniYContrasena = async (dni, contrasena, req, res) => {
             } else {
                 // Si todo es correcto, iniciar sesión
                 req.session.login = true;
-                req.session.idusu = user.idusuario;
+                req.session.idusu = user.id;
                 req.session.dn = user.dni;
                 req.session.nom = user.nombres;
                 req.session.ape = user.apellidos;
                 req.session.naci = user.fecha_nacimiento;
-                req.session.tel = user.num_telefonico;
+                req.session.tel = user.telefono;
                 req.session.gen = user.genero;
                 req.session.cor = user.correo;
                 req.session.contra = user.contrasena;
@@ -82,7 +82,6 @@ const validarDniYContrasena = async (dni, contrasena, req, res) => {
                 // Redirigir directamente al dashboard aquí
                 return res.redirect("dashboard_jmedico");
             }
-           
         }
     });
 };

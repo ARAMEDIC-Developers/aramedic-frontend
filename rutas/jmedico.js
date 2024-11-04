@@ -105,7 +105,7 @@ router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req,res) => {
 
 router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req, res) => {
     try {
-        const usuarios = await conexion.query("SELECT idusuario, dni, nombres, apellidos, DATE_FORMAT(fecha_nacimiento, '%Y-%m-%d') AS fecha_nacimiento, num_telefonico, genero, idrol FROM usuario");
+        const usuarios = await conexion.query("SELECT idusuario, dni, nombres, apellidos, DATE_FORMAT(fecha_nacimiento, '%Y-%m-%d') AS fecha_nacimiento, num_telefonico, genero, idrol FROM medicos");
         const data = {
             'link': link,
             'usuario': req.session,
