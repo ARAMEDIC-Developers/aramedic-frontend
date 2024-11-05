@@ -202,8 +202,153 @@ function cerrarSesion() {
     // Aquí iría la lógica real para cerrar sesión,     como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
 }
 
+
+
+function handleMobileNavigation() {
+    const mobileHamburger = document.querySelector('.mobile-nav-icons .fa-bars').parentElement;
+    const mobileSidebar = document.querySelector('.mobile-sidebar');
+    const mobileSidebarClose = document.querySelector('.mobile-sidebar-close');
+    const mobileMenuItems = document.querySelectorAll('.mobile-sidebar .sidebar-menu a');
+
+    mobileHamburger.addEventListener('click', (e) => {
+        e.preventDefault();
+        mobileSidebar.classList.add('open');
+    });
+
+    mobileSidebarClose.addEventListener('click', () => {
+        mobileSidebar.classList.remove('open');
+    });
+
+    // Cerrar el sidebar móvil al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!mobileSidebar.contains(e.target) && !mobileHamburger.contains(e.target) && mobileSidebar.classList.contains('open')) {
+            mobileSidebar.classList.remove('open');
+        }
+    });
+
+    // Manejar clics en los elementos del menú móvil
+    mobileMenuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = item.getAttribute('href').substring(1);
+
+            // Cerrar el sidebar móvil
+            mobileSidebar.classList.remove('open');
+
+            // Manejar la acción de cerrar sesión
+            if (targetId === 'cerrar-sesion') {
+                cerrarSesion();
+                return;
+            }
+
+            // Mostrar la sección correspondiente
+            const secciones = document.querySelectorAll('.dashboard-section');
+            secciones.forEach(seccion => {
+                if (seccion.id === targetId) {
+                    seccion.classList.add('active');
+                    // Cargar datos específicos de la sección
+                    switch(targetId) {
+                        case "citas":
+                            mostrarCitas();
+                            break;
+                        case "historias":
+                            mostrarHistoriasClinicas();
+                            break;
+                        case "cuentas":
+                            mostrarCuentas();
+                            break;
+                        case "servicios":
+                            mostrarServicios();
+                            break;
+                    }
+                } else {
+                    seccion.classList.remove('active');
+                }
+            });
+
+            // Actualizar el mensaje de bienvenida
+            const welcomeMessage = document.getElementById('welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.textContent = `Sección: ${item.querySelector('span').textContent}`;
+            }
+        });
+    });
+}
+
+
+function handleMobileNavigation() {
+    const mobileHamburger = document.querySelector('.mobile-nav-icons .fa-bars').parentElement;
+    const mobileSidebar = document.querySelector('.mobile-sidebar');
+    const mobileSidebarClose = document.querySelector('.mobile-sidebar-close');
+    const mobileMenuItems = document.querySelectorAll('.mobile-sidebar .sidebar-menu a');
+
+    mobileHamburger.addEventListener('click', (e) => {
+        e.preventDefault();
+        mobileSidebar.classList.add('open');
+    });
+
+    mobileSidebarClose.addEventListener('click', () => {
+        mobileSidebar.classList.remove('open');
+    });
+
+    // Cerrar el sidebar móvil al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!mobileSidebar.contains(e.target) && !mobileHamburger.contains(e.target) && mobileSidebar.classList.contains('open')) {
+            mobileSidebar.classList.remove('open');
+        }
+    });
+
+    // Manejar clics en los elementos del menú móvil
+    mobileMenuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = item.getAttribute('href').substring(1);
+
+            // Cerrar el sidebar móvil
+            mobileSidebar.classList.remove('open');
+
+            // Manejar la acción de cerrar sesión
+            if (targetId === 'cerrar-sesion') {
+                cerrarSesion();
+                return;
+            }
+
+            // Mostrar la sección correspondiente
+            const secciones = document.querySelectorAll('.dashboard-section');
+            secciones.forEach(seccion => {
+                if (seccion.id === targetId) {
+                    seccion.classList.add('active');
+                    // Cargar datos específicos de la sección
+                    switch(targetId) {
+                        case "citas":
+                            mostrarCitas();
+                            break;
+                        case "historias":
+                            mostrarHistoriasClinicas();
+                            break;
+                        case "cuentas":
+                            mostrarCuentas();
+                            break;
+                        case "servicios":
+                            mostrarServicios();
+                            break;
+                    }
+                } else {
+                    seccion.classList.remove('active');
+                }
+            });
+
+            // Actualizar el mensaje de bienvenida
+            const welcomeMessage = document.getElementById('welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.textContent = `Sección: ${item.querySelector('span').textContent}`;
+            }
+        });
+    });
+}
 // Función para inicializar la aplicación
 function inicializarApp() {
+    handleMobileNavigation();
     actualizarPerfilUsuario();
     // manejarNavegacion();
     manejarHamburgerMenu();
@@ -248,7 +393,6 @@ let currentYear = date.getFullYear();
 //function to render days
 function renderCalendar(){
 
-
     date.setDate(1);
     const firstDay = new Date(currentYear, currentMonth, 1);
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
@@ -264,7 +408,6 @@ function renderCalendar(){
     for(let x= firstDay.getDay(); x > 0; x--){
         days += `<div class="day prev">${prevLastDayDate -x + 1}</div>`
     }
-
 
     for (let i = 1; i<=lastDayDate; i++){
         if(
@@ -282,12 +425,8 @@ function renderCalendar(){
         days += `<div class="day next">${j}</div>`;
     }
 
-
     hideTodayBtn();
     daysContainer.innerHTML=days;
-
-
-
 }
 
 renderCalendar();
