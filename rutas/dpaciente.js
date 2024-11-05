@@ -43,7 +43,7 @@ router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
 router.get("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) => {
     //TRAER HISTORIA DE LA BD
     const idusuario = req.session.pac;
-    const historia = 'SELECT h.id, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, m.nombre AS nombre_medico, m.especialidad_id AS especialidad_id, h.fecha, h.diagnostico FROM historial_medico h JOIN pacientes p ON h.paciente_id= p.id JOIN medicos m ON h.medico_id = m.id WHERE h.paciente_id = ?;';
+    const historia = 'SELECT h.id, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, m.nombre AS nombre_medico, m.especialidad_id AS especialidad_id, h.fecha, h.diagnostico, h.tratamiento, h.observaciones FROM historial_medico h JOIN pacientes p ON h.paciente_id= p.id JOIN medicos m ON h.medico_id = m.id WHERE h.paciente_id = ?;';
     conexion.query(historia, idusuario, async function(error,rows){
         if (error) 
             {
