@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 05-11-2024 a las 00:27:18
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 06-11-2024 a las 23:40:27
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.1.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,18 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `clinica`
 --
+
+DELIMITER $$
+--
+-- Procedimientos
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `login_procedure` (IN `idrol` INT, IN `iduser` INT)   IF (idrol = 1) THEN
+SELECT u.id, u.dni, p.nombre, p.telefono, p.email, u.paciente_id, u.contrasena, u.rol_id FROM usuarios u INNER JOIN pacientes p WHERE p.id=u.paciente_id AND p.id = iduser;
+ELSEIF (idrol = 2) THEN
+SELECT u.id, u.dni, m.nombre, m.telefono, m.email, u.medico_id, u.contrasena, u.rol_id FROM usuarios u INNER JOIN medicos m WHERE m.id=u.medico_id AND m.id = iduser;
+END IF$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -208,25 +220,22 @@ INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`) VALUES
 
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
-  `nombre_usuario` varchar(50) NOT NULL,
   `contrasena` varchar(255) NOT NULL,
   `rol_id` int(11) NOT NULL,
   `paciente_id` int(11) DEFAULT NULL,
   `medico_id` int(11) DEFAULT NULL,
-  `correo` varchar(60) DEFAULT NULL,
-  `dni` varchar(8) DEFAULT NULL,
-  `num_telefonico` mediumtext DEFAULT NULL
+  `dni` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombre_usuario`, `contrasena`, `rol_id`, `paciente_id`, `medico_id`, `correo`, `dni`, `num_telefonico`) VALUES
-(1, 'juan_paciente', 'contrasena_segura123', 1, 1, NULL, '202210515', '74972730', '983459106'),
-(2, 'dr.juarez', 'Asd123123', 2, NULL, 2, '2015@urp.edu.pe', '75565656', '956567567'),
-(3, 'admin', 'contrasena_segura789', 3, NULL, NULL, NULL, NULL, NULL),
-(5, 'Gabriel Antonio', 'Asd123123', 1, 2, NULL, 'jesus.lluen@urp.edu.pe', '16780921', '960320644');
+INSERT INTO `usuarios` (`id`, `contrasena`, `rol_id`, `paciente_id`, `medico_id`, `dni`) VALUES
+(1, 'contrasena_segura123', 1, 1, NULL, '74972730'),
+(2, 'Asd123123', 2, NULL, 2, '75565656'),
+(3, 'contrasena_segura789', 3, NULL, NULL, NULL),
+(5, 'Asd123123', 1, 2, NULL, '16780921');
 
 --
 -- Índices para tablas volcadas
@@ -293,7 +302,6 @@ ALTER TABLE `servicios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nombre_usuario` (`nombre_usuario`),
   ADD KEY `paciente_id` (`paciente_id`),
   ADD KEY `medico_id` (`medico_id`),
   ADD KEY `rol` (`rol_id`);

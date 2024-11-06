@@ -62,11 +62,8 @@
                     <input type="password" name="confirm_contra" placeholder="Confirmar tu contraseña">
                 </div>
                 <div class="input-box">
-                    <span class="details">Género</span>
-                    <select name="gender" id="gender">
-                        <option value="Masculino" <%= oldData && oldData.gender === 'Masculino' ? 'selected' : '' %>>Masculino</option>
-                        <option value="Femenino" <%= oldData && oldData.gender === 'Femenino' ? 'selected' : '' %>>Femenino</option>
-                    </select>
+                    <span class="details">Dirección</span>
+                    <input type="text" name="dire" placeholder="Introduce tu Dirección" value="<%= oldData ? oldData.dire : '' %>">
                 </div>
             </div>
             <div class="button">
