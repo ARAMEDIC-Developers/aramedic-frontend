@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citas Médicas - ARAMEDIC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style_citasmedicas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <div class="header-text">
+            <h1><span class="highlight">ARA</span>MEDIC</h1>
+        </div>
+        <div class="main-content">
+            <h2>Bienvenido a Aramedic</h2>
+            <div class="container">
+                <h3>Citas Médicas</h3>
+                <div class="search-add">
+                    <input type="text" placeholder="Buscar citas..." class="search-input">
+                    <button class="add-button">Añadir Cita</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Paciente</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Servicio</th>
+                            <th>Doctor</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>12345678</td>
+                            <td>Juan Pérez</td>
+                            <td>2023-06-15</td>
+                            <td>09:00</td>
+                            <td>Consulta General</td>
+                            <td>Dr. García</td>
+                            <td>Programada</td>
+                            <td>
+                                <button class="action-button edit">Editar</button>
+                                <button class="action-button delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>87654321</td>
+                            <td>María García</td>
+                            <td>2023-06-16</td>
+                            <td>10:30</td>
+                            <td>Biopsia</td>
+                            <td>Dra. Rodríguez</td>
+                            <td>Confirmada</td>
+                            <td>
+                                <button class="action-button edit">Editar</button>
+                                <button class="action-button delete">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

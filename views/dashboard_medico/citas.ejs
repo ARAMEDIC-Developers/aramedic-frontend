@@ -1,27 +1,369 @@
-
 <%- include('../_partials/header') %>
 
-    <div class="dashboard-container">
-        <%- include('../_partials/sidebar') %>
+<div class="dashboard-container">
+    <%- include('../_partials/sidebar') %>
 
-        <!-- Contenido Principal -->
-        <main id="main-content">
-            <%- include('../_partials/sub_header') %>
-            <!-- Lista de Notificaciones -->
-            <%- include('../_partials/notificaciones') %>
-
-            <section id="citas" >
-                <h2 class="section-title">Citas Médicas</h2>
-                <div class="search-bar">
-                    <input type="text" id="buscar-cita" placeholder="Buscar cita...">
-                    <button id="agregar-cita" class="btn-primary">Agendar Cita</button>
+    <main id="main-content">
+        <%- include('../_partials/sub_header') %>
+        <%- include('../_partials/notificaciones') %>
+    
+        <div class="main-content">
+            <h2 class="section-title">Gestión de Citas Médicas</h2>
+            
+            <div class="controls-container">  
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar citas..." class="search-input">
                 </div>
-                <div id="lista-citas" class="lista-container"></div>
-            </section>
+                <button id="btnAgregarCita" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i> Añadir Cita
+                </button>
+            </div>
 
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Paciente</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Servicio</th>
+                            <th>Doctor</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCitas">
+                        <!-- Las citas se insertarán aquí dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
 
-        </main>
+<!-- Modal para añadir/editar cita -->
+<div id="modalCita" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Añadir Cita</h2>
+        <form id="formCita">
+            <div class="form-group">
+                <label for="dni">DNI del Paciente</label>
+                <input type="text" id="dni" name="dni" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="paciente">Nombre del Paciente</label>
+                <input type="text" id="paciente" name="paciente" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="hora">Hora</label>
+                <input type="time" id="hora" name="hora" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="servicio">Servicio</label>
+                <select id="servicio" name="servicio" required class="form-control">
+                    <option value="">Seleccione el servicio</option>
+                    <option value="Consulta General">Consulta General</option>
+                    <option value="Biopsia">Biopsia</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="doctor">Doctor</label>
+                <input type="text" id="doctor" name="doctor" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required class="form-control">
+                    <option value="">Seleccione el estado</option>
+                    <option value="Programada">Programada</option>
+                    <option value="Confirmada">Confirmada</option>
+                    <option value="Cancelada">Cancelada</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </form>
     </div>
+</div>
+
+<style>
+.table-responsive {
+    overflow-x: auto;
+}
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+.table th {
+    background-color: #579dcc;
+    font-weight: bold;
+    color: white;
+}
+.table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 2px;
+    transition: all 0.2s ease-in-out;
+}
+.btn:hover {
+    transform: scale(1.05);
+    filter: brightness(0.9);
+}
+.btn-primary {
+    background-color: #28a745;
+    color: white;
+}
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 0.875rem;
+}
+.search-input {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    width: 200px;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+.modal.show {
+    display: block;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+.controls-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.search-container {
+    position: relative;
+}
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+.search-input {
+    padding-left: 30px;
+}
+</style>
+
+<script>
+    // Datos de ejemplo
+    let citas = [
+        { id: 1, dni: "12345678", paciente: "Juan Pérez", fecha: "2023-06-15", hora: "09:00", servicio: "Consulta General", doctor: "Dr. García", estado: "Programada" },
+        { id: 2, dni: "87654321", paciente: "María García", fecha: "2023-06-16", hora: "10:30", servicio: "Biopsia", doctor: "Dra. Rodríguez", estado: "Confirmada" },
+    ];
+
+    // Elementos del DOM
+    const tablaCitas = document.getElementById('tablaCitas');
+    const btnAgregarCita = document.getElementById('btnAgregarCita');
+    const modal = document.getElementById('modalCita');
+    const closeModal = document.querySelector('.close');
+    const formCita = document.getElementById('formCita');
+    const modalTitle = document.getElementById('modalTitle');
+    const searchInput = document.getElementById('searchInput');
+
+    // Función para renderizar la tabla de citas
+    function renderizarTabla(citasArray) {
+        tablaCitas.innerHTML = '';
+        citasArray.forEach(cita => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${cita.dni}</td>
+                <td>${cita.paciente}</td>
+                <td>${cita.fecha}</td>
+                <td>${cita.hora}</td>
+                <td>${cita.servicio}</td>
+                <td>${cita.doctor}</td>
+                <td>${cita.estado}</td>
+                <td>
+                    <button class="btn btn-info btn-sm view-button" data-id="${cita.id}">
+                        <i class="fas fa-eye"></i> Ver
+                    </button>
+                    <button class="btn btn-warning btn-sm edit-button" data-id="${cita.id}">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="btn btn-danger btn-sm delete-button" data-id="${cita.id}">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </button>
+                </td>
+            `;
+            tablaCitas.appendChild(row);
+        });
+    }
+
+    // Función para ver una cita
+    function verCita(id) {
+        const cita = citas.find(c => c.id === id);
+        if (cita) {
+            alert(`
+                Detalles de la Cita:
+                DNI: ${cita.dni}
+                Paciente: ${cita.paciente}
+                Fecha: ${cita.fecha}
+                Hora: ${cita.hora}
+                Servicio: ${cita.servicio}
+                Doctor: ${cita.doctor}
+                Estado: ${cita.estado}
+            `);
+        }
+    }
+
+    // Inicializar la tabla
+    renderizarTabla(citas);
+
+    // Evento para abrir el modal de agregar cita
+    btnAgregarCita.addEventListener('click', () => {
+        modalTitle.textContent = 'Añadir Cita';
+        formCita.reset();
+        modal.classList.add('show');
+    });
+
+    // Evento para cerrar el modal
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+
+    // Evento para manejar el envío del formulario
+    formCita.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(formCita);
+        const nuevaCita = {
+            id: Date.now(),
+            dni: formData.get('dni'),
+            paciente: formData.get('paciente'),
+            fecha: formData.get('fecha'),
+            hora: formData.get('hora'),
+            servicio: formData.get('servicio'),
+            doctor: formData.get('doctor'),
+            estado: formData.get('estado')
+        };
+
+        if (formCita.dataset.editId) {
+            const index = citas.findIndex(c => c.id === parseInt(formCita.dataset.editId));
+            if (index !== -1) {
+                citas[index] = { ...citas[index], ...nuevaCita };
+            }
+            delete formCita.dataset.editId;
+        } else {
+            citas.push(nuevaCita);
+        }
+
+        renderizarTabla(citas);
+        modal.classList.remove('show');
+    });
+
+    // Evento para editar, eliminar o ver citas
+    tablaCitas.addEventListener('click', (e) => {
+        if (e.target.classList.contains('view-button') || e.target.closest('.view-button')) {
+            const id = parseInt(e.target.dataset.id || e.target.closest('.view-button').dataset.id);
+            verCita(id);
+        } else if (e.target.classList.contains('edit-button') || e.target.closest('.edit-button')) {
+            const id = parseInt(e.target.dataset.id || e.target.closest('.edit-button').dataset.id);
+            const cita = citas.find(c => c.id === id);
+            if (cita) {
+                modalTitle.textContent = 'Editar Cita';
+                formCita.dni.value = cita.dni;
+                formCita.paciente.value = cita.paciente;
+                formCita.fecha.value = cita.fecha;
+                formCita.hora.value = cita.hora;
+                formCita.servicio.value = cita.servicio;
+                formCita.doctor.value = cita.doctor;
+                formCita.estado.value = cita.estado;
+                formCita.dataset.editId = id;
+                modal.classList.add('show');
+            }
+        } else if (e.target.classList.contains('delete-button') || e.target.closest('.delete-button')) {
+            const id = parseInt(e.target.dataset.id || e.target.closest('.delete-button').dataset.id);
+            if (confirm('¿Estás seguro de que quieres eliminar esta cita?')) {
+                citas = citas.filter(c => c.id !== id);
+                renderizarTabla(citas);
+            }
+        }
+    });
+
+    // Evento para buscar citas
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const citasFiltradas = citas.filter(cita => 
+            cita.dni.toLowerCase().includes(searchTerm) ||
+            cita.paciente.toLowerCase().includes(searchTerm) ||
+            cita.servicio.toLowerCase().includes(searchTerm) ||
+            cita.doctor.toLowerCase().includes(searchTerm)
+        );
+        renderizarTabla(citasFiltradas);
+    });
+
+    // Cerrar el modal si se hace clic fuera de él
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('show');
+        }
+    });
+</script>
 
 <%- include('../_partials/footer') %>
-
