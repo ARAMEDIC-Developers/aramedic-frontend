@@ -25,32 +25,28 @@
                         <tr>
                             <th>DNI</th>
                             <th>Nombre y apellido</th>
-                            <th>Fecha de nacimiento</th>
-                            <th>Edad</th>
                             <th>Teléfono</th>
                             <th>Email</th>
-                            <th>Descripción</th>
-                            <th>Diagnostico</th>
-                            <th>Tratamiento</th>
+                            <th>Motivo de Consulta</th>
+                            <th>Cirugía</th>
+                            <th>Procedimiento</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tablaServicios">
                         <!-- Los datos de usuarios se insertarán aquí dinámicamente -->
-                        <% if (paciente && paciente.length > 0) { %>
-                            <% paciente.forEach(function(historia) { %>
+                        <% if (historias && historias.length > 0) { %>
+                            <% historias.forEach(function(historia) { %>
                                 <tr>
-                                    <td><%= historia.dni_paciente %></td>
+                                    <td><%= historia.dni %></td>
                                     <td><%= historia.nombre_paciente %> <%= historia.apellido_paciente %></td>
-                                    <td><%= historia.fecha_paciente %></td>
-                                    <td><%= new Date().getFullYear() - new Date(historia.fecha_paciente).getFullYear() %></td> <!-- Calculando edad -->
-                                    <td><%= historia.paciente_telefono || 'No especificado' %></td> <!-- Ajusta si tienes género -->
-                                    <td><%= historia.paciente_email || 'No especificado' %></td>
-                                    <td><%= historia.descripcion || 'No especificado' %></td>
-                                    <td><%= historia.diagnostico %></td>
-                                    <td><%= historia.tratamiento %></td>
+                                    <td><%= historia.telefono || 'No especificado' %></td>
+                                    <td><%= historia.email || 'No especificado' %></td>
+                                    <td><%= historia.motivo || 'No especificado' %></td>
+                                    <td><%= historia.cirugia || 'No especificado' %></td>
+                                    <td><%= historia.procedimiento || 'No especificado' %></td>
                                     <td>
-                                        <!-- Aquí puedes agregar botones para editar o ver más detalles -->
+                                        <!-- Botones para editar o eliminar historia -->
                                         <form action="/dashboard_jmedico/historia_clinica" method="GET" style="display: inline;">
                                             <input type="hidden" name="historiaId" value="<%= historia.id %>">
                                             <button type="submit" class="btn-editar" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">
@@ -63,7 +59,7 @@
                             <% }); %>
                         <% } else { %>
                             <tr>
-                                <td colspan="10">No se encontraron registros.</td>
+                                <td colspan="8">No se encontraron registros.</td>
                             </tr>
                         <% } %>
                     </tbody>

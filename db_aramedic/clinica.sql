@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 06-11-2024 a las 23:40:27
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.1.17
+-- Servidor: 127.0.0.1:3306
+-- Tiempo de generación: 09-11-2024 a las 00:12:21
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -86,11 +86,23 @@ INSERT INTO `especialidades` (`id`, `nombre`) VALUES
 CREATE TABLE `historial_medico` (
   `id` int(11) NOT NULL,
   `paciente_id` int(11) NOT NULL,
-  `fecha` date NOT NULL,
-  `descripcion` text NOT NULL,
-  `diagnostico` text DEFAULT NULL,
-  `tratamiento` text DEFAULT NULL,
-  `observaciones` text DEFAULT NULL,
+  `motivo` text NOT NULL,
+  `enfermedades_previas` text DEFAULT NULL,
+  `alergias` text DEFAULT NULL,
+  `medicamentos_actuales` text DEFAULT NULL,
+  `cirugias_previas` text DEFAULT NULL,
+  `fuma` tinyint(1) DEFAULT 0,
+  `consume_alcohol` tinyint(1) NOT NULL DEFAULT 0,
+  `enfermedades_hereditarias` text DEFAULT NULL,
+  `peso` double DEFAULT NULL,
+  `altura` double DEFAULT NULL,
+  `imc` double DEFAULT NULL,
+  `descripcion_fisica` text DEFAULT NULL,
+  `cirugia` text DEFAULT NULL,
+  `procedimiento` text DEFAULT NULL,
+  `riesgos` text DEFAULT NULL,
+  `cuidado_preoperativo` text DEFAULT NULL,
+  `cuidado_postoperativo` text DEFAULT NULL,
   `medico_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -98,9 +110,9 @@ CREATE TABLE `historial_medico` (
 -- Volcado de datos para la tabla `historial_medico`
 --
 
-INSERT INTO `historial_medico` (`id`, `paciente_id`, `fecha`, `descripcion`, `diagnostico`, `tratamiento`, `observaciones`, `medico_id`) VALUES
-(7, 2, '2024-02-10', 'Chequeo de rutina con análisis de sangre y orina.', 'Sin anomalías', 'N/A', 'N/A', 1),
-(8, 1, '2024-01-15', 'Consulta inicial debido a dolor abdominal.', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 2);
+INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`) VALUES
+(1, 2, 'Chequeo de rutina con análisis de sangre y orina.', 'Sin anomalías', 'N/A', 'N/A', '', 1, 0, '', 80, 165, 2.5, '', '', '', '', '', '', 2),
+(2, 1, 'Consulta inicial debido a dolor abdominal.', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', '', 0, 0, '', 0, 0, 0, '', '', '', '', '', '', 2);
 
 -- --------------------------------------------------------
 
@@ -157,6 +169,9 @@ CREATE TABLE `pacientes` (
   `nombre` varchar(100) NOT NULL,
   `apellido` varchar(100) NOT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
+  `genero` tinyint(2) NOT NULL,
+  `estado_civil` text NOT NULL,
+  `ocupacion` text NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `direccion` varchar(255) DEFAULT NULL
@@ -166,9 +181,9 @@ CREATE TABLE `pacientes` (
 -- Volcado de datos para la tabla `pacientes`
 --
 
-INSERT INTO `pacientes` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `telefono`, `email`, `direccion`) VALUES
-(1, 'Juan', 'Pérez', '1985-05-10', '555123456', 'juan.perez@example.com', 'Calle 123, Ciudad'),
-(2, 'Maria', 'Gomez', '1990-11-25', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad');
+INSERT INTO `pacientes` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `genero`, `estado_civil`, `ocupacion`, `telefono`, `email`, `direccion`) VALUES
+(1, 'Juan', 'Pérez', '1985-05-10', 0, '', '', '555123456', 'juan.perez@example.com', 'Calle 123, Ciudad'),
+(2, 'Maria', 'Gomez', '1990-11-25', 1, '', '', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad');
 
 -- --------------------------------------------------------
 
@@ -220,22 +235,22 @@ INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`) VALUES
 
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
+  `dni` varchar(8) DEFAULT NULL,
   `contrasena` varchar(255) NOT NULL,
   `rol_id` int(11) NOT NULL,
   `paciente_id` int(11) DEFAULT NULL,
-  `medico_id` int(11) DEFAULT NULL,
-  `dni` varchar(8) DEFAULT NULL
+  `medico_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `contrasena`, `rol_id`, `paciente_id`, `medico_id`, `dni`) VALUES
-(1, 'contrasena_segura123', 1, 1, NULL, '74972730'),
-(2, 'Asd123123', 2, NULL, 2, '75565656'),
-(3, 'contrasena_segura789', 3, NULL, NULL, NULL),
-(5, 'Asd123123', 1, 2, NULL, '16780921');
+INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`, `paciente_id`, `medico_id`) VALUES
+(1, '74972730', 'contrasena_segura123', 1, 1, NULL),
+(2, '75565656', 'Asd123123', 2, NULL, 2),
+(3, NULL, 'contrasena_segura789', 3, NULL, NULL),
+(4, '16780921', 'Asd123123', 1, 2, NULL);
 
 --
 -- Índices para tablas volcadas

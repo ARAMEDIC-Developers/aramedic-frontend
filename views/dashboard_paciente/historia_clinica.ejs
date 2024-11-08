@@ -45,6 +45,14 @@
                                         } %>" readonly>
                     </div>
                     <div class="form-group">
+                        <label for="telefono">Estado Civil:</label>
+                        <input type="text" id="estadoCivil" name="estadoCivil" value="<%= historia.estado_civil %>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Ocupación:</label>
+                        <input type="text" id="ocupacion" name="ocupacion" value="<%= historia.ocupacion %>" readonly>
+                    </div>
+                    <div class="form-group">
                         <label for="telefono">Teléfono:</label>
                         <input type="text" id="telefono" name="telefono" value="<%= historia.telefono %>" readonly>
                     </div>
@@ -138,7 +146,7 @@
                     </div>
 
                     <!-- Botón para regresar -->
-                    <button type="button" onclick="location.href='/dashboard_jmedico/historias'">Regresar</button>
+                    <button type="button" onclick="location.href='/dashboard_paciente'">Regresar</button>
                 </form>
             </div>
         </div>
