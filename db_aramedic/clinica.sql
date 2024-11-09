@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 09-11-2024 a las 00:12:21
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 09-11-2024 a las 03:19:40
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.1.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -252,6 +252,18 @@ INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`, `paciente_id`, `med
 (3, NULL, 'contrasena_segura789', 3, NULL, NULL),
 (4, '16780921', 'Asd123123', 1, 2, NULL);
 
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios_key`
+--
+
+CREATE TABLE `usuarios_key` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `key` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Índices para tablas volcadas
 --
@@ -322,6 +334,12 @@ ALTER TABLE `usuarios`
   ADD KEY `rol` (`rol_id`);
 
 --
+-- Indices de la tabla `usuarios_key`
+--
+ALTER TABLE `usuarios_key`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -359,7 +377,7 @@ ALTER TABLE `medico_servicio`
 -- AUTO_INCREMENT de la tabla `pacientes`
 --
 ALTER TABLE `pacientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -377,7 +395,13 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios_key`
+--
+ALTER TABLE `usuarios_key`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas

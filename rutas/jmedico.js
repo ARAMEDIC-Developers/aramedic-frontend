@@ -37,7 +37,6 @@ router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
                 'link' : link,
                 'historias' : historial_medico
             };
-            console.log(historial_medico)
             res.render("dashboard_medico/historias", data);
         }
     })
@@ -122,26 +121,8 @@ router.post("/dashboard_jmedico/test", checkLoginMedico, (req,res) => {
     
     res.json(data);
 });
-/*/
-router.get("/dashboard_jmedico/historias", checkLoginMedico, async (req,res) => {
-    // traer citas de la base de datos
-    // const citas = database.Citas('select * from citas');
-    const total_historias = 0;
-
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de citas',
-        'link' : link,
-        'historias' : total_historias,
-        'usuario': req.session
-    };
-    
-    res.render("dashboard_medico/historias", data);
-});
-/*/
 router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req,res) => {
-    // traer citas de la base de datos
-    // const citas = database.Citas('select * from citas');
+    
     const data = {
         'total_citas':0,
         'titulo' : 'pagina de citas',

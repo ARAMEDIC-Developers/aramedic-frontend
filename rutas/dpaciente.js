@@ -70,7 +70,6 @@ router.get("/dashboard_paciente/historia_clinica", checkLoginPaciente, async (re
                 'link' : link,
                 'historia' : historial_medico
             };
-            console.log(historial_medico)
             res.render("dashboard_paciente/historia_clinica", data)
         }
     })

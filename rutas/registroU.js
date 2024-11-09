@@ -4,7 +4,6 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 const { validateCreate } = require('../validaciones/registroU');
 const { validationResult } = require('express-validator');
-const { NULL } = require("mysql/lib/protocol/constants/types");
 
 // Mostrar el formulario de registro
 router.get("/registroU", function(req, res) {
@@ -26,8 +25,9 @@ router.post("/registroU", validateCreate, (req, res) => {
             oldData: req.body // Enviamos los datos ingresados para que se mantengan
         });
     }
+ 
+    const { nom, ape, ema, num, dni, fecha, gender, dire, contra, confirm_contra} = req.body;
 
-    const { nom, ape, ema, num, dni, fecha, contra, confirm_contra, dire } = req.body;
     const idrolPaciente =1;
 
     // Verificar si el DNI, correo o número de celular ya existen
@@ -51,14 +51,13 @@ router.post("/registroU", validateCreate, (req, res) => {
         }
 
         // Si no hay errores, insertar el nuevo usuario en la base de datos
-        const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, telefono, email, direccion) VALUES (?, ?, ?, ?, ?, ?)";
-        conexion.query(insertarPaciente, [nom, ape, fecha, num, ema, dire], (error, result) => {
+        const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, genero, telefono, email, direccion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        conexion.query(insertarPaciente, [nom, ape, fecha, gender, num, ema, dire], (error, result) => {
             if (error) {
                 console.log("TRIKA error al insertar paciente", error);
                 return res.status(500).send("Error al registrar el paciente");
             }
-
-            const pac_id = result.insertId;  // Aquí obtenemos el ID del paciente insertado
+            const pac_id = result.insertId; 
             const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id, paciente_id) VALUES (?, ?, ?, ?)";
             conexion.query(insertarUsuario, [dni, contra, idrolPaciente, pac_id], (error, result) => {
                 if (error) {
