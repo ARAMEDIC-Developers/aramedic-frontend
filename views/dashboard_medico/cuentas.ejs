@@ -1,108 +1,137 @@
 <%- include('../_partials/header') %>
+
 <div class="dashboard-container">
     <%- include('../_partials/sidebar') %>
 
     <!-- Contenido Principal -->
     <main id="main-content">
         <%- include('../_partials/sub_header') %>
-
-        <!-- Lista de Notificaciones -->
         <%- include('../_partials/notificaciones') %>
 
-        <!-- Sección de Usuarios -->
         <section id="usuarios">
             <h2 class="section-title">Listado de Usuarios</h2>
 
-            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <input type="text" id="buscar-dni" placeholder="DNI" style="padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 150px; margin-right: 10px;"/>
-                <input type="text" id="buscar-nombre" placeholder="Nombres" style="padding: 10px; border: 1px solid #ced4da; border-radius: 4px; width: 150px; margin-right: 10px;"/>
-                <button id="buscar-btn" style="padding: 10px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
+            <!-- Barra de búsqueda -->
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="NOMBRE">
             </div>
 
-            <!-- Formulario para agregar o editar un usuario -->
-            <div style="background-color: #e9ecef; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 id="form-title">Agregar Nuevo Usuario</h3>
-                <input type="text" id="nuevo-dni" placeholder="DNI" style="padding: 10px; margin-right: 10px;"/>
-                <input type="text" id="nuevo-nombres" placeholder="Nombres" style="padding: 10px; margin-right: 10px;"/>
-                <input type="text" id="nuevo-apellidos" placeholder="Apellidos" style="padding: 10px; margin-right: 10px;"/>
-                <input type="text" id="nuevo-rol" placeholder="Rol" style="padding: 10px; margin-right: 10px;"/>
-                <input type="date" id="nuevo-fecha-nacimiento" placeholder="Fecha de Nacimiento" style="padding: 10px; margin-right: 10px;"/>
-                <input type="text" id="nuevo-telefono" placeholder="Número telefónico" style="padding: 10px; margin-right: 10px;"/>
-                <select id="nuevo-genero" style="padding: 10px; margin-right: 10px;">
-                    <option value="Masculino">Masculino</option>
-                    <option value="Femenino">Femenino</option>
-                </select>
-                <button id="agregar-btn" style="padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Agregar Usuario</button>
-            </div>
+            <!-- Botón para agregar usuario -->
+            <button id="btnAgregarUsuario" class="add-button">
+                <i class="fas fa-plus-circle"></i> Agregar Usuario
+            </button>
 
+            <!-- Tabla de Usuarios -->
             <table id="usuarios-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                 <thead style="background-color: #007BFF; color: white;">
                     <tr>
-                        <th style="padding: 10px; text-align: left;">ID Usuario</th>
-                        <th style="padding: 10px; text-align: left;">DNI</th>
-                        <th style="padding: 10px; text-align: left;">Nombres</th>
-                        <th style="padding: 10px; text-align: left;">Apellidos</th>
+                        <th style="padding: 10px; text-align: left;">ID</th>
+                        <th style="padding: 10px; text-align: left;">Nombre de Usuario</th>
+                        <th style="padding: 10px; text-align: left;">Contraseña</th>
                         <th style="padding: 10px; text-align: left;">Rol</th>
-                        <th style="padding: 10px; text-align: left;">Fecha de Nacimiento</th>
-                        <th style="padding: 10px; text-align: left;">Número telefónico</th>
-                        <th style="padding: 10px; text-align: left;">Género</th>
+                        <th style="padding: 10px; text-align: left;">Paciente ID</th>
+                        <th style="padding: 10px; text-align: left;">Médico ID</th>
+                        <th style="padding: 10px; text-align: left;">Administrador ID</th>
                         <th style="padding: 10px; text-align: left;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Las filas de usuarios se generarán dinámicamente con JavaScript -->
+                    <!-- Filas de usuarios generadas dinámicamente con JavaScript -->
                 </tbody>
             </table>
         </section>
     </main>
 </div>
 
+<!-- Modal para añadir/editar usuario -->
+<div id="modalUsuario" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Agregar Usuario</h2>
+        <form id="formUsuario">
+            <div class="form-group">
+                <label for="nombreUsuario">Nombre de Usuario</label>
+                <input type="text" id="nombreUsuario" name="nombreUsuario" required>
+            </div>
+            <div class="form-group">
+                <label for="contrasena">Contraseña</label>
+                <div style="position: relative;">
+                    <input type="password" id="contrasena" name="contrasena" required style="padding-right: 30px;">
+                    <i class="fas fa-eye toggle-password" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="rol">Rol</label>
+                <select id="rol" name="rol" required>
+                    <option value="paciente">Paciente</option>
+                    <option value="medico">Médico</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="pacienteId">Paciente ID</label>
+                <input type="number" id="pacienteId" name="pacienteId">
+            </div>
+            <div class="form-group">
+                <label for="medicoId">Médico ID</label>
+                <input type="number" id="medicoId" name="medicoId">
+            </div>
+            <div class="form-group">
+                <label for="administradorId">Administrador ID</label>
+                <input type="number" id="administradorId" name="administradorId">
+            </div>
+            <button type="submit" class="btn-guardar">Guardar</button>
+        </form>
+    </div>
+</div>
+
 <script>
     let usuarios = [
-        { id: 1, dni: "74972730", nombres: "Gabriel Antonio", apellidos: "Castaneda Luyo", rol: "Paciente", fechaNacimiento: "2004-12-11", telefono: "953059465", genero: "Masculino" },
-        { id: 2, dni: "72095950", nombres: "Amanda Mariana", apellidos: "Obregon Rodriguez", rol: "Paciente", fechaNacimiento: "1994-11-30", telefono: "958644243", genero: "Femenino" },
-        { id: 3, dni: "47454844", nombres: "Roberto Jesus", apellidos: "Rial Palacios", rol: "Paciente", fechaNacimiento: "1989-02-16", telefono: "986276957", genero: "Masculino" },
-        { id: 4, dni: "62346304", nombres: "Juan Daniel", apellidos: "Pallares Cerdan", rol: "Paciente", fechaNacimiento: "2001-02-26", telefono: "996473615", genero: "Masculino" },
-        { id: 5, dni: "19205415", nombres: "María Elisa", apellidos: "Fidalgo Armas", rol: "Paciente", fechaNacimiento: "1998-04-21", telefono: "968498097", genero: "Femenino" }
+        { id: 1, nombreUsuario: "juan_paciente", contrasena: "contrasena_segura123", rol: "paciente", pacienteId: 1, medicoId: null, administradorId: null },
+        { id: 2, nombreUsuario: "dr.juarez", contrasena: "contrasena_segura456", rol: "medico", pacienteId: null, medicoId: 2, administradorId: null },
+        { id: 3, nombreUsuario: "admin", contrasena: "contrasena_segura789", rol: "admin", pacienteId: null, medicoId: null, administradorId: 3 }
     ];
 
-    let usuarioSeleccionado = null;
+    const tableBody = document.querySelector("#usuarios-table tbody");
+    const searchInput = document.getElementById('searchInput');
+    const btnAgregarUsuario = document.getElementById('btnAgregarUsuario');
+    const modal = document.getElementById('modalUsuario');
+    const closeModal = document.querySelector('.close');
+    const formUsuario = document.getElementById('formUsuario');
+    const modalTitle = document.getElementById('modalTitle');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('contrasena');
 
-    // Función para renderizar la tabla
-    function renderTable(filtrar = false) {
-        const tableBody = document.querySelector("#usuarios-table tbody");
-        tableBody.innerHTML = ""; // Limpiar la tabla
-
-        let usuariosFiltrados = usuarios;
-
-        // Si se activa el filtro (búsqueda)
-        if (filtrar) {
-            const dniBuscar = document.getElementById('buscar-dni').value;
-            const nombreBuscar = document.getElementById('buscar-nombre').value;
-
-            usuariosFiltrados = usuarios.filter(usuario => {
-                return (
-                    (!dniBuscar || usuario.dni.includes(dniBuscar)) &&
-                    (!nombreBuscar || usuario.nombres.toLowerCase().includes(nombreBuscar.toLowerCase()))
-                );
-            });
+    // Alternar visibilidad de la contraseña
+    togglePassword.addEventListener('click', () => {
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            togglePassword.classList.remove('fa-eye');
+            togglePassword.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            togglePassword.classList.remove('fa-eye-slash');
+            togglePassword.classList.add('fa-eye');
         }
+    });
 
-        usuariosFiltrados.forEach(usuario => {
+    // Renderizar la tabla de usuarios con contraseña oculta
+    function renderTable(data) {
+        tableBody.innerHTML = "";
+        data.forEach(usuario => {
             const row = `
                 <tr style="border-bottom: 1px solid #ddd;">
                     <td style="padding: 10px;">${usuario.id}</td>
-                    <td style="padding: 10px;">${usuario.dni}</td>
-                    <td style="padding: 10px;">${usuario.nombres}</td>
-                    <td style="padding: 10px;">${usuario.apellidos}</td>
+                    <td style="padding: 10px;">${usuario.nombreUsuario}</td>
+                    <td style="padding: 10px;">********</td>
                     <td style="padding: 10px;">${usuario.rol}</td>
-                    <td style="padding: 10px;">${usuario.fechaNacimiento}</td>
-                    <td style="padding: 10px;">${usuario.telefono}</td>
-                    <td style="padding: 10px;">${usuario.genero}</td>
+                    <td style="padding: 10px;">${usuario.pacienteId ?? '-'}</td>
+                    <td style="padding: 10px;">${usuario.medicoId ?? '-'}</td>
+                    <td style="padding: 10px;">${usuario.administradorId ?? '-'}</td>
                     <td style="padding: 10px;">
-                        <button onclick="editarUsuario(${usuario.id})" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">Editar</button>
-                        <button onclick="verUsuario(${usuario.id})" style="background-color: #007BFF; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">Ver</button>
-                        <button onclick="eliminarUsuario(${usuario.id})" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">Eliminar</button>
+                        <button onclick="editarUsuario(${usuario.id})" style="background-color: #28a745; color: white; border: none; padding: 10px 10px; cursor: pointer; margin-right: 5px;"class="edit-button">Editar</button>
+                        <button onclick="eliminarUsuario(${usuario.id})" style="background-color: #dc3545; color: white; border: none; padding: 10px 10px; cursor: pointer;"class="delete-button">Eliminar</button>
                     </td>
                 </tr>
             `;
@@ -110,90 +139,78 @@
         });
     }
 
-    // Función para agregar o editar un usuario
-    document.getElementById('agregar-btn').addEventListener('click', function() {
-        const dni = document.getElementById('nuevo-dni').value;
-        const nombres = document.getElementById('nuevo-nombres').value;
-        const apellidos = document.getElementById('nuevo-apellidos').value;
-        const rol = document.getElementById('nuevo-rol').value;
-        const fechaNacimiento = document.getElementById('nuevo-fecha-nacimiento').value;
-        const telefono = document.getElementById('nuevo-telefono').value;
-        const genero = document.getElementById('nuevo-genero').value;
+    renderTable(usuarios);
 
-        if (usuarioSeleccionado) {
-            // Editar usuario
-            usuarioSeleccionado.dni = dni;
-            usuarioSeleccionado.nombres = nombres;
-            usuarioSeleccionado.apellidos = apellidos;
-            usuarioSeleccionado.rol = rol;
-            usuarioSeleccionado.fechaNacimiento = fechaNacimiento;
-            usuarioSeleccionado.telefono = telefono;
-            usuarioSeleccionado.genero = genero;
-            alert("Usuario actualizado");
-            usuarioSeleccionado = null;
+    btnAgregarUsuario.addEventListener('click', () => {
+        modalTitle.textContent = 'Agregar Usuario';
+        formUsuario.reset();
+        delete formUsuario.dataset.editId;
+        modal.classList.add('show');
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+
+    formUsuario.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(formUsuario);
+        
+        // Obtener el próximo ID basado en el máximo ID actual en la lista
+        const newId = usuarios.length > 0 ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
+        
+        const nuevoUsuario = {
+            id: newId,
+            nombreUsuario: formData.get('nombreUsuario'),
+            contrasena: formData.get('contrasena'),
+            rol: formData.get('rol'),
+            pacienteId: formData.get('pacienteId') || null,
+            medicoId: formData.get('medicoId') || null,
+            administradorId: formData.get('administradorId') || null
+        };
+
+        if (formUsuario.dataset.editId) {
+            const index = usuarios.findIndex(u => u.id === parseInt(formUsuario.dataset.editId));
+            if (index !== -1) {
+                usuarios[index] = { ...usuarios[index], ...nuevoUsuario };
+            }
+            delete formUsuario.dataset.editId;
         } else {
-            // Agregar nuevo usuario
-            const nuevoUsuario = {
-                id: usuarios.length + 1,
-                dni,
-                nombres,
-                apellidos,
-                rol,
-                fechaNacimiento,
-                telefono,
-                genero
-            };
             usuarios.push(nuevoUsuario);
-            alert("Usuario agregado");
         }
 
-        // Limpiar formulario
-        document.getElementById('form-title').innerText = "Agregar Nuevo Usuario";
-        document.getElementById('nuevo-dni').value = "";
-        document.getElementById('nuevo-nombres').value = "";
-        document.getElementById('nuevo-apellidos').value = "";
-        document.getElementById('nuevo-rol').value = "";
-        document.getElementById('nuevo-fecha-nacimiento').value = "";
-        document.getElementById('nuevo-telefono').value = "";
-        document.getElementById('nuevo-genero').value = "Masculino";
-
-        renderTable(); // Actualizar la tabla
+        renderTable(usuarios);
+        modal.classList.remove('show');
     });
 
-    // Función para editar un usuario
     function editarUsuario(id) {
-        usuarioSeleccionado = usuarios.find(u => u.id === id);
-        document.getElementById('form-title').innerText = "Editar Usuario";
-        document.getElementById('nuevo-dni').value = usuarioSeleccionado.dni;
-        document.getElementById('nuevo-nombres').value = usuarioSeleccionado.nombres;
-        document.getElementById('nuevo-apellidos').value = usuarioSeleccionado.apellidos;
-        document.getElementById('nuevo-rol').value = usuarioSeleccionado.rol;
-        document.getElementById('nuevo-fecha-nacimiento').value = usuarioSeleccionado.fechaNacimiento;
-        document.getElementById('nuevo-telefono').value = usuarioSeleccionado.telefono;
-        document.getElementById('nuevo-genero').value = usuarioSeleccionado.genero;
-    }
-
-    // Función para ver un usuario
-    function verUsuario(id) {
         const usuario = usuarios.find(u => u.id === id);
-        alert(`Viendo usuario: ${usuario.nombres} ${usuario.apellidos}`);
+        if (usuario) {
+            modalTitle.textContent = 'Editar Usuario';
+            formUsuario.nombreUsuario.value = usuario.nombreUsuario;
+            formUsuario.contrasena.value = usuario.contrasena;
+            formUsuario.rol.value = usuario.rol;
+            formUsuario.pacienteId.value = usuario.pacienteId || '';
+            formUsuario.medicoId.value = usuario.medicoId || '';
+            formUsuario.administradorId.value = usuario.administradorId || '';
+            formUsuario.dataset.editId = id;
+            modal.classList.add('show');
+        }
     }
 
-    // Función para eliminar un usuario
     function eliminarUsuario(id) {
         usuarios = usuarios.filter(u => u.id !== id);
-        alert(`Usuario eliminado`);
-        renderTable(); // Volver a renderizar la tabla después de eliminar
+        renderTable(usuarios);
     }
 
-    // Función de búsqueda
-    document.getElementById('buscar-btn').addEventListener('click', function() {
-        renderTable(true); // Filtrar la tabla al buscar
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredUsuarios = usuarios.filter(usuario =>
+            usuario.nombreUsuario.toLowerCase().includes(searchTerm) ||
+            usuario.rol.toLowerCase().includes(searchTerm)
+        );
+        renderTable(filteredUsuarios);
     });
-
-    // Inicializar la tabla al cargar la página
-    document.addEventListener("DOMContentLoaded", renderTable);
 </script>
 
 <%- include('../_partials/footer') %>
-
