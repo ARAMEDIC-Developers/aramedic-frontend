@@ -34,30 +34,27 @@ router.get("/cambiar_password", function(req, res){
         {
             const mensajesError = [];
             mensajesError.push({ msg: "Error, Email no encontrado" });
-            return res.render("recuperarcuenta", {
+            return res.render("verificarcorreo", {
                 link,
                 errors: mensajesError,
                 oldData: req.body
             });
         }
         else{
-
             const user = rows[0];
             const email = user.email;
             const data = {
                 'link' : link,
                 'email': email
-        
             }
-
-            res.render("recuperarcontraseña", data);       }
+            res.render("recuperarcontraseña", data);       
+        }
     })
-
 });
 
 router.post("/cambiar_password", function(req, res){
     const ema = req.body.email;
-    const validar="SELECT * FROM usuario WHERE `correo` = ?";
+    const validar="SELECT * FROM pacientes WHERE `email` = ?";
     conexion.query(validar,[ema],async function(error,rows){
         if (error)
         {
@@ -68,7 +65,7 @@ router.post("/cambiar_password", function(req, res){
         {
             const mensajesError = [];
             mensajesError.push({ msg: "Error, Email no encontrado" });
-            return res.render("recuperarcuenta", {
+            return res.render("verificarcorreo", {
                 link,
                 errors: mensajesError,
                 oldData: req.body
@@ -76,19 +73,18 @@ router.post("/cambiar_password", function(req, res){
         }
         else
         {
-
             const password = req.body.password;
-
-            const updateQuery = "UPDATE usuario SET `contrasena` = ? WHERE `correo` = ?";
-
+            const updateQuery = `UPDATE usuarios u
+                                    JOIN pacientes p ON u.paciente_id = p.id
+                                    SET contrasena = ?
+                                    WHERE p.email = ?
+            `;
             conexion.query(updateQuery, [password, ema], function (error) {
                 if (error) {
                     console.log("TRIKA error");
                     throw error;
                 } else {
-
                     const deleteKey = "DELETE FROM usuarios_key WHERE `email` = ?";
-
                     conexion.query(deleteKey, [ema], function (error) {
                         if (error) {
                             console.log("TRIKA error al eliminar");
@@ -97,7 +93,6 @@ router.post("/cambiar_password", function(req, res){
                             console.log("key eliminado de DB");
                         }
                     });
-
                     console.log("TRIKA datos almacenados correctamente");
                     res.redirect("login");
                 }
@@ -106,12 +101,9 @@ router.post("/cambiar_password", function(req, res){
     })
 })
 
-
-
-
 router.post("/recuperarcuentaU", function(req, res){
     const ema = req.body.email;
-    const validar="SELECT * FROM usuario WHERE correo = ?";
+    const validar="SELECT * FROM pacientes WHERE email = ?";
     conexion.query(validar,[ema],async function(error,rows){
         if (error)
         {
@@ -122,7 +114,7 @@ router.post("/recuperarcuentaU", function(req, res){
         {
             const mensajesError = [];
             mensajesError.push({ msg: "Error, Email no encontrado" });
-            return res.render("recuperarcuenta", {
+            return res.render("verificarcorreo", {
                 link,
                 errors: mensajesError,
                 oldData: req.body
@@ -130,7 +122,6 @@ router.post("/recuperarcuentaU", function(req, res){
         }
         else
         {
-
             const key = generatePublicKey();
             const email = req.body.email;
 
@@ -141,7 +132,6 @@ router.post("/recuperarcuentaU", function(req, res){
                     pass: 'mqlg gcfb bgkl phij' 
                 }
             });
-
             // Email options
             const mailOptions = {
                 from: 'aramedicperu@gmail.com', 
@@ -155,13 +145,11 @@ router.post("/recuperarcuentaU", function(req, res){
                 <a href="http://localhost:3000/cambiar_password?key=${key}" > Cambiar contraseña</a>
                 `
             };
-
             // Send email
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
                     return console.log('Error occurred: ' + error.message);
                 }
-
                 const insertar="INSERT INTO usuarios_key(`email`, `key`) VALUES ('"+email+"','"+key+"')";
                 conexion.query(insertar,function(error){
                     if (error) {
@@ -171,10 +159,8 @@ router.post("/recuperarcuentaU", function(req, res){
                         console.log("TRIKA datos almacenados correctamente");
                     }
                 });
-
                 console.log('Email sent: ' + info.response);
             });
-
             res.render("correoenviado"), {
                 link,
                 oldData: {}
@@ -182,5 +168,4 @@ router.post("/recuperarcuentaU", function(req, res){
         }
     })
 })
-
 module.exports = router;

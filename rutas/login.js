@@ -26,7 +26,7 @@ router.post("/login", validateItem, function(req, res) {
     const DNI = req.body.dni;
     const contrasena = req.body.contra;
 
-    const validar = "SELECT * FROM usuario WHERE dni = ?";
+    const validar = "SELECT * FROM usuarios WHERE dni = ?";
     conexion.query(validar, [DNI], async function(error, rows) {
         let mensaje;
         if (error) {
@@ -38,34 +38,55 @@ router.post("/login", validateItem, function(req, res) {
             // Renderizar la vista de login con mensaje de error
             res.render("login", { mensaje, link, oldData: req.body });
         } else {
-            const user = rows[0];
-            const match = contrasena == user.contrasena;
-
-            if (!match) {
-                // Contraseña incorrecta, mostrar mensaje de error
-                mensaje = "La contraseña ingresada es incorrecta.";
-                res.render("login", { mensaje, link, oldData: req.body });
-            } else {
-                // Inicio de sesión exitoso, crear la sesión del usuario
-                req.session.login = true;
-                req.session.idusu = user.idusuario;
-                req.session.dn = user.dni;
-                req.session.nom = user.nombres;
-                req.session.ape = user.apellidos;
-                req.session.naci = user.fecha_nacimiento;
-                req.session.tel = user.num_telefonico;
-                req.session.gen = user.genero;
-                req.session.cor = user.correo;
-                req.session.contra = user.contrasena;
-                req.session.rol = user.idrol;
-                console.log(req.session); // Comprobar los datos de sesión
-
-                // Redirigir según el rol del usuario
-                if (user.idrol == 1) {
-                    res.redirect("dashboard_paciente");
-                } else if (user.idrol == 2) {
-                    res.redirect("dashboard_jmedico");
-                }
+            const usuario = rows[0]
+            const loginQuery = "CALL login_procedure(?, ?)"
+            if(usuario.paciente_id){
+                conexion.query(loginQuery, [usuario.rol_id, usuario.paciente_id], function(error, result){
+                    const paciente = result[0][0];
+                    const match = contrasena == usuario.contrasena;
+                    if (!match) {
+                        // Contraseña incorrecta, mostrar mensaje de error
+                        mensaje = "La contraseña ingresada es incorrecta.";
+                        res.render("login", { mensaje, link, oldData: req.body });
+                    } else {
+                        // Inicio de sesión exitoso, crear la sesión del usuario
+                        req.session.login = true;
+                        req.session.idusu = paciente.id;
+                        req.session.dn = paciente.dni;
+                        req.session.nom = paciente.nombre;  
+                        req.session.tel = paciente.telefono;
+                        req.session.cor = paciente.email;
+                        req.session.pac = paciente.paciente_id;
+                        req.session.contra = paciente.contrasena;
+                        req.session.rol = paciente.rol_id;
+                        console.log(req.session); // Comprobar los datos de sesión
+                        res.redirect("dashboard_paciente");
+                    }
+                })
+            }
+            else{
+                conexion.query(loginQuery, [usuario.rol_id, usuario.medico_id], async function(error, result){
+                    const medico = result[0][0];
+                    const match = contrasena == usuario.contrasena;
+                    if (!match) {
+                        // Contraseña incorrecta, mostrar mensaje de error
+                        mensaje = "La contraseña ingresada es incorrecta.";
+                        res.render("login", { mensaje, link, oldData: req.body });
+                    } else {
+                        // Inicio de sesión exitoso, crear la sesión del usuario
+                        req.session.login = true;
+                        req.session.idusu = medico.id;
+                        req.session.dn = medico.dni;
+                        req.session.nom = medico.nombre;  
+                        req.session.tel = medico.telefono;
+                        req.session.cor = medico.email;
+                        req.session.med = medico.medico_id;
+                        req.session.contra = medico.contrasena;
+                        req.session.rol = medico.rol_id;
+                        console.log(req.session); // Comprobar los datos de sesión
+                        res.redirect("dashboard_jmedico");
+                    }
+                })
             }
         }
     });
@@ -75,5 +96,4 @@ router.get("/logout", function(req, res) {
     req.session.destroy();
     res.redirect("/login");
 });
-
 module.exports = router;
