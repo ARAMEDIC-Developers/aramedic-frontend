@@ -1,0 +1,75 @@
+<%- include('../_partials/header') %>
+
+<div class="dashboard-container">
+    <%- include('../_partials/sidebar') %>
+
+    <!-- Contenido Principal -->
+    <main id="main-content">
+        <%- include('../_partials/sub_header') %>
+        <!-- Lista de Notificaciones -->
+        <%- include('../_partials/notificaciones') %>
+
+        <div class="main-content">
+            <h2 class="title">Historia clínica</h2>
+
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Buscar por DNI, nombre, etc.">
+            </div>
+            <button id="btnAgregarServicio" class="add-button">
+                <i class="fas fa-plus-circle"></i> Añadir Historia
+            </button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Nombre y apellido</th>
+                            <th>Fecha de nacimiento</th>
+                            <th>Edad</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Descripción</th>
+                            <th>Diagnostico</th>
+                            <th>Tratamiento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaServicios">
+                        <!-- Los datos de usuarios se insertarán aquí dinámicamente -->
+                        <% if (paciente && paciente.length > 0) { %>
+                            <% paciente.forEach(function(historia) { %>
+                                <tr>
+                                    <td><%= historia.dni_paciente %></td>
+                                    <td><%= historia.nombre_paciente %> <%= historia.apellido_paciente %></td>
+                                    <td><%= historia.fecha_paciente %></td>
+                                    <td><%= new Date().getFullYear() - new Date(historia.fecha_paciente).getFullYear() %></td> <!-- Calculando edad -->
+                                    <td><%= historia.paciente_telefono || 'No especificado' %></td> <!-- Ajusta si tienes género -->
+                                    <td><%= historia.paciente_email || 'No especificado' %></td>
+                                    <td><%= historia.descripcion || 'No especificado' %></td>
+                                    <td><%= historia.diagnostico %></td>
+                                    <td><%= historia.tratamiento %></td>
+                                    <td>
+                                        <!-- Aquí puedes agregar botones para editar o ver más detalles -->
+                                        <form action="/dashboard_jmedico/historia_clinica" method="GET" style="display: inline;">
+                                            <input type="hidden" name="historiaId" value="<%= historia.id %>">
+                                            <button type="submit" class="btn-editar" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">
+                                                Editar
+                                            </button>
+                                        </form>
+                                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">Eliminar</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="10">No se encontraron registros.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+<%- include('../_partials/footer') %>

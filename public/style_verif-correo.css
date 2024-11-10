@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-image: linear-gradient(
+      to right,
+      #353a7f,
+      rgba(40, 88, 167, 0.7)
+    ),
+    url('/imgs/header.png');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.header-text {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+    z-index: 1000;
+}
+
+.header-text h1 {
+    margin: 0;
+}
+
+.header-text .highlight {
+    color: orange;
+}
+
+.container {
+    max-width: 1200px;
+    width: 90%;
+    background: #fff;
+    padding: 60px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 48px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+.icon-container {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.email-icon {
+    width: 120px;
+    height: 120px;
+}
+
+.email-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+.submit-btn {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 40px;
+    }
+    
+    .title {
+        font-size: 36px;
+    }
+    
+    .email-icon {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .input-group input, .submit-btn {
+        font-size: 16px;
+        padding: 15px;
+    }
+}
