@@ -1,62 +1,64 @@
-
 <%- include('../_partials/header') %>
 
-    <div class="dashboard-container">
-        <%- include('../_partials/sidebar') %>
+<div class="dashboard-container">
+    <%- include('../_partials/sidebar') %>
 
-        <!-- Contenido Principal -->
-        <main id="main-content">
-            <header class="dashboard-header">
-                <div class="header-content">
-                    <h1 id="welcome-message" class="welcome-message">Bienvenido a ARAMEDIC</h1>
-                </div>
-                <div id="user-profile" class="user-profile">
-                    <!-- El contenido se llenará dinámicamente con JavaScript -->
-                </div>
-            </header>
-
-            <!-- Lista de Notificaciones -->
-            <div id="notifications-panel" class="notifications-panel">
-                <h3>Notificaciones</h3>
-                <ul class="notifications-list">
-                    <li class="notification-item">
-                        <i class="fas fa-user-clock"></i>
-                        <div class="notification-content">
-                            <p>Nueva cita programada con Juan Pérez</p>
-                            <span class="notification-time">Hace 5 minutos</span>
-                        </div>
-                    </li>
-                    <li class="notification-item">
-                        <i class="fas fa-file-medical-alt"></i>
-                        <div class="notification-content">
-                            <p>Actualización en la historia clínica de María Gómez</p>
-                            <span class="notification-time">Hace 2 horas</span>
-                        </div>
-                    </li>
-                    <li class="notification-item">
-                        <i class="fas fa-calendar-alt"></i>
-                        <div class="notification-content">
-                            <p>Recordatorio: Conferencia médica mañana</p>
-                            <span class="notification-time">Hace 1 día</span>
-                        </div>
-                    </li>
-                </ul>
+    <!-- Contenido Principal -->
+    <main id="main-content">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1 id="welcome-message" class="welcome-message">Bienvenido a ARAMEDIC</h1>
             </div>
+            <div id="user-profile" class="user-profile">
+                <!-- El contenido se llenará dinámicamente con JavaScript -->
+            </div>
+        </header>
 
+        <!-- Lista de Notificaciones -->
+        <div id="notifications-panel" class="notifications-panel">
+            <h3>Notificaciones</h3>
+            <ul class="notifications-list">
+                <li class="notification-item">
+                    <i class="fas fa-user-clock"></i>
+                    <div class="notification-content">
+                        <p>Nueva cita programada con Juan Pérez</p>
+                        <span class="notification-time">Hace 5 minutos</span>
+                    </div>
+                </li>
+                <li class="notification-item">
+                    <i class="fas fa-file-medical-alt"></i>
+                    <div class="notification-content">
+                        <p>Actualización en la historia clínica de María Gómez</p>
+                        <span class="notification-time">Hace 2 horas</span>
+                    </div>
+                </li>
+                <li class="notification-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div class="notification-content">
+                        <p>Recordatorio: Conferencia médica mañana</p>
+                        <span class="notification-time">Hace 1 día</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
 
-            <section id="servicios" >
-                <h2 class="section-title">Servicios</h2>
-                <div class="search-bar">
-                    <input type="text" id="buscar-servicio" placeholder="Buscar servicio...">
-                    <button id="agregar-servicio" class="btn-primary">Agregar Servicio</button>
-                </div>
-                <div id="lista-servicios" class="lista-container"></div>
-            </section>
-
-
-        </main>
-    </div>
-
+        <section id="servicios">
+            <h2 class="section-title">Servicios</h2>
+            <div class="search-bar">
+                <input type="text" id="buscar-servicio" placeholder="Buscar servicio...">
+                <button id="agregar-servicio" class="btn-primary">Agregar Servicio</button>
+            </div>
+            <!-- Formulario para agregar un nuevo servicio -->
+            <div id="form-servicio" class="form-servicio">
+                <input type="text" id="nombre-servicio" placeholder="Nombre del Servicio">
+                <input type="text" id="duracion-servicio" placeholder="Duración (e.g., 30 min)">
+                <input type="text" id="precio-servicio" placeholder="Precio (e.g., $50)">
+                <button id="guardar-servicio" class="btn-primary">Guardar</button>
+            </div>
+            <div id="lista-servicios" class="lista-container"></div>
+        </section>
+    </main>
+</div>
 
 <!-- <script src="/dashboard_med/js/main.js"></script> -->
 <script>
@@ -67,10 +69,48 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     axios.post('http://localhost:3000/dashboard_jmedico/test', formData , config)
-        .then( response => {
+        .then(response => {
             console.log(response.data)
-        })
-        
+        });
+
+    // Mostrar servicios por defecto
+    mostrarServicios();
+
+    // Evento para guardar un nuevo servicio
+    document.getElementById("guardar-servicio").addEventListener("click", () => {
+        const nombreServicio = document.getElementById("nombre-servicio").value.trim();
+        const duracionServicio = document.getElementById("duracion-servicio").value.trim();
+        const precioServicio = document.getElementById("precio-servicio").value.trim();
+
+        if (nombreServicio && duracionServicio && precioServicio) {
+            // Si todos los campos están llenos, agregar el servicio
+            agregarServicio(nombreServicio, duracionServicio, precioServicio);
+            limpiarFormulario();
+        } else {
+            // Si algún campo está vacío, mostrar una alerta
+            alert("Por favor, complete todos los campos.");
+        }
+    });
+
+    function agregarServicio(nombre, duracion, precio) {
+        const listaServicios = document.getElementById("lista-servicios");
+        const servicioCard = document.createElement("div");
+        servicioCard.className = "servicio-card";
+        servicioCard.innerHTML = `
+            <h3>${nombre}</h3>
+            <p><strong>Duración:</strong> ${duracion}</p>
+            <p><strong>Precio:</strong> ${precio}</p>
+            <button class="btn-primary" onclick="editarServicio()">Editar</button>
+        `;
+        listaServicios.appendChild(servicioCard);
+    }
+
+    function limpiarFormulario() {
+        document.getElementById("nombre-servicio").value = "";
+        document.getElementById("duracion-servicio").value = "";
+        document.getElementById("precio-servicio").value = "";
+    }
+
     function mostrarServicios() {
         const listaServicios = document.getElementById("lista-servicios");
         listaServicios.innerHTML = `
@@ -78,18 +118,17 @@ window.addEventListener('DOMContentLoaded', () => {
                 <h3>Consulta General</h3>
                 <p><strong>Duración:</strong> 30 min</p>
                 <p><strong>Precio:</strong> $50</p>
-                <button class="btn-primary" onclick="editarServicio(1)">Editar</button>
+                <button class="btn-primary" onclick="editarServicio()">Editar</button>
             </div>
             <div class="servicio-card">
                 <h3>Examen de Laboratorio</h3>
                 <p><strong>Duración:</strong> 1 hora</p>
                 <p><strong>Precio:</strong> $100</p>
-                <button class="btn-primary" onclick="editarServicio(2)">Editar</button>
+                <button class="btn-primary" onclick="editarServicio()">Editar</button>
             </div>
         `;
     }
 
-})
+});
 </script>
 <%- include('../_partials/footer') %>
-
