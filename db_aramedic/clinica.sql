@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-11-2024 a las 23:40:27
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.1.17
+-- Tiempo de generación: 11-11-2024 a las 05:16:53
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -197,20 +197,25 @@ INSERT INTO `rol` (`id`, `nombre_rol`) VALUES
 --
 
 CREATE TABLE `servicios` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
+  `idservicio` int(11) NOT NULL,
+  `nombre_servicio` varchar(100) DEFAULT NULL,
   `descripcion` text DEFAULT NULL,
-  `costo` decimal(10,2) NOT NULL
+  `costo` decimal(10,2) NOT NULL,
+  `tipo_procedimiento` varchar(100) DEFAULT NULL,
+  `tiempo_estimado` varchar(100) DEFAULT NULL,
+  `tiempo_recuperacion` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `servicios`
 --
 
-INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`) VALUES
-(1, 'Consulta General', 'Consulta general con el médico', 50.00),
-(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00),
-(3, 'Radiografía', 'Radiografía de diagnóstico', 75.00);
+INSERT INTO `servicios` (`idservicio`, `nombre_servicio`, `descripcion`, `costo`, `tipo_procedimiento`, `tiempo_estimado`, `tiempo_recuperacion`) VALUES
+(1, 'Consulta General', 'Consulta general con el médico', 50.00, 'nose', '20', '10'),
+(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, 'nose', '15', '30'),
+(3, 'Radiografía', 'Radiografía de diagnóstico', 75.00, 'ayaya', '12 min', '14 min'),
+(4, 'Revision anal', NULL, 7777.00, 'manual', '30 min', '24 horas'),
+(5, 'qjnfwefj', NULL, 20.00, 'wefqefqfqe', '15', '78');
 
 -- --------------------------------------------------------
 
@@ -235,7 +240,8 @@ INSERT INTO `usuarios` (`id`, `contrasena`, `rol_id`, `paciente_id`, `medico_id`
 (1, 'contrasena_segura123', 1, 1, NULL, '74972730'),
 (2, 'Asd123123', 2, NULL, 2, '75565656'),
 (3, 'contrasena_segura789', 3, NULL, NULL, NULL),
-(5, 'Asd123123', 1, 2, NULL, '16780921');
+(5, 'Asd123123', 1, 2, NULL, '16780921'),
+(6, 'Pecosin0412', 2, NULL, 2, '76633598');
 
 --
 -- Índices para tablas volcadas
@@ -295,7 +301,7 @@ ALTER TABLE `rol`
 -- Indices de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`idservicio`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -356,13 +362,13 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idservicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas
@@ -374,7 +380,7 @@ ALTER TABLE `usuarios`
 ALTER TABLE `citas`
   ADD CONSTRAINT `citas_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `pacientes` (`id`),
   ADD CONSTRAINT `citas_ibfk_2` FOREIGN KEY (`medico_id`) REFERENCES `medicos` (`id`),
-  ADD CONSTRAINT `citas_ibfk_3` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`);
+  ADD CONSTRAINT `citas_ibfk_3` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`idservicio`);
 
 --
 -- Filtros para la tabla `historial_medico`
@@ -394,7 +400,7 @@ ALTER TABLE `medicos`
 --
 ALTER TABLE `medico_servicio`
   ADD CONSTRAINT `medico_servicio_ibfk_1` FOREIGN KEY (`medico_id`) REFERENCES `medicos` (`id`),
-  ADD CONSTRAINT `medico_servicio_ibfk_2` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`);
+  ADD CONSTRAINT `medico_servicio_ibfk_2` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`idservicio`);
 
 --
 -- Filtros para la tabla `usuarios`
