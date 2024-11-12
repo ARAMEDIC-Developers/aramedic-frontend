@@ -27,8 +27,6 @@ router.post("/registroU", validateCreate, (req, res) => {
         });
     }
  
-    const { nom, ape, ema, num, dni, fecha, gender, dire, contra, confirm_contra} = req.body;
-
     const { nom, ape, ema, num, dni, fecha, contra, confirm_contra, dire } = req.body;
     const idrolPaciente =1;
 
