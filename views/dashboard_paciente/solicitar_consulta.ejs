@@ -1,0 +1,227 @@
+
+<%- include('../_partials/header') %>
+
+    <div class="dashboard-container">
+        <%- include('../_partials/sidebar') %>
+
+        <!-- Contenido Principal -->
+        <main id="main-content">
+            <%- include('../_partials/sub_header') %>
+            <!-- Lista de Notificaciones -->
+            <%- include('../_partials/notificaciones') %>
+
+            <%- include('../_partials/modal') %>
+
+            <section id="calendario" >
+                <h2 class="section-title">Calendario</h2>
+                <!-- Contenido del calendario -->
+                <div class="container">
+                    <div class="calendar">
+                        <div class="header">
+                            <div class="month"></div>
+                            <div class="btns">
+                                <div class="btn today-btn">
+                                    <i class="fas fa-calendar-day"></i>
+                                </div>
+                                <div class="btn prev-btn">
+                                    <i class="fas fa-chevron-left"></i>
+                                </div>
+                                <div class="btn next-btn">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weekdays">
+                            <div class="day">Dom</div>
+                            <div class="day">Lun</div>
+                            <div class="day">Mar</div>
+                            <div class="day">Mie</div>
+                            <div class="day">Jue</div>
+                            <div class="day">Vie</div>
+                            <div class="day">Sab</div>
+                        </div>
+                        <div class="days">
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+        </main>
+    </div>
+
+    <script>
+        const modalCalendario = document.getElementById("myModal");
+        const closeModalCalendarioBtn = document.getElementsByClassName("close-calentario")[0];
+
+        let hora = "";
+        let fecha = "";
+
+        function openModalCalendario(date) {
+            fecha = date;
+            const currentDate = new Date(date);
+
+            // Formatear la fecha en el formato deseado (por ejemplo, DD/MM/YYYY)
+            const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${
+                (currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
+            
+            // Mostrar la fecha formateada en el modal
+            document.getElementById('current-date-modal').innerText = formattedDate;
+            modalCalendario.classList.add('active');
+        }
+
+        function closeModalCalentario() {
+            modalCalendario.classList.remove('active');
+        }
+
+        function saveModalCalentar(){
+            Swal.fire({
+            title: "Do you want to save the changes?",
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: "Save",
+            denyButtonText: `Don't save`
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    fetchSaveCita();
+                } 
+            });
+        }
+
+        function sendWhatsapp (phone, fecha, hora) {
+            // Crear mensaje con formato
+            const message = `
+            Buenos días, doctor. Me gustaría agendar una consulta médica para el día ${fecha} a las ${hora}. ¿Le parece conveniente esa hora?`.trim();
+
+            // Limpiar y formatear el número de teléfono
+            const cleanPhone = phone.replace(/\D/g, '');
+
+            // Crear la URL de WhatsApp
+            const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+
+            // Abrir en una nueva ventana
+            window.open(whatsappUrl, '_blank');
+        }
+
+        async function fetchSaveCita(){
+            if(hora.trim().length === 0){
+                Swal.fire({
+                    title: "The Internet?",
+                    text: "That thing is still around?",
+                    icon: "warning"
+                });
+                return;
+            }
+
+            const lastDate = new Date(fecha);
+
+            // Dividir `hora` en horas, minutos y segundos (asumiendo que `hora` tiene formato "HH:mm" o "HH:mm:ss")
+            const [hours, minutes, seconds = 0] = hora.split(":").map(Number);
+
+            // Crear `dataTime` usando los valores específicos
+            const dataTime = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate(), hours, minutes, seconds);
+
+            // Obtener los valores de `dataTime`
+            const year = dataTime.getFullYear();
+            const month = dataTime.getMonth() + 1; // Sumar 1 porque `getMonth()` devuelve un valor de 0 a 11
+            const date = dataTime.getDate();
+            const formattedHours = String(dataTime.getHours()).padStart(2, '0'); // Formato de dos dígitos
+            const formattedMinutes = String(dataTime.getMinutes()).padStart(2, '0');
+            const formattedSeconds = String(dataTime.getSeconds()).padStart(2, '0');
+
+            const registrarfecha = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`
+            const registrarhora = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`
+
+            // Construir el objeto `data`
+            const data = {                
+                "paciente_id": 1, 
+                "medico_id": 1, 
+                "servicio_id": 1,
+                "fecha": registrarfecha, // Formato AAAA-MM-DD
+                "hora": registrarhora, // Formato HH:mm:ss
+                "estado": "confirmada"
+            };
+
+            try{
+                const response = await fetch('/registro-cita', {  // Cambia '/ruta-del-servidor' por tu URL de destino
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                    });
+
+                    closeModalCalentario();
+
+                    Swal.fire({
+                    title: "The Internet?",
+                    text: "good",
+                    icon: "success"
+                }).then(()=>{
+                    sendWhatsapp("+51974617857", registrarfecha, registrarhora)
+                });
+            }catch(error){
+                Swal.fire({
+                    title: "The Internet?",
+                    text: "paso algo",
+                    icon: "error"
+                });
+            }finally{
+                hora = fecha = "";
+                // Obtén todos los botones en la cuadrícula de fechas
+            const buttons = document.querySelectorAll('.date-item');
+            
+            // Remueve la clase 'active' de todos los botones
+            buttons.forEach(button => button.classList.remove('active'));
+            }
+        }
+
+        function selectModalTimeGrid(event) {
+            // Obtén todos los botones en la cuadrícula de fechas
+            const buttons = document.querySelectorAll('.date-item');
+            
+            // Remueve la clase 'active' de todos los botones
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Añade la clase 'active' al botón que fue clicado
+            const selectedButton = event.target;
+            selectedButton.classList.add('active');
+
+            // Obtén el ID y el valor (texto) del botón seleccionado
+            const buttonId = selectedButton.id;
+            const buttonValue = selectedButton.textContent;
+
+            hora = buttonValue;
+
+            // Muestra el ID y el valor en la consola (o úsalo como necesites)
+            console.log("ID del botón seleccionado:", buttonId);
+            console.log("Valor del botón seleccionado:", buttonValue);
+        }
+        
+        // Asocia la función al evento de clic de cada botón
+        document.querySelectorAll('.date-item').forEach(button => {
+            button.addEventListener('click', selectModalTimeGrid);
+        });
+
+        // Cerrar el modal cuando se hace clic en la X
+        closeModalCalendarioBtn.onclick = closeModalCalentario;
+
+        // Cerrar el modal cuando se hace clic fuera de él
+        window.onclick = function(event) {
+            if (event.target == modalCalendario) {
+                closeModalCalentario();
+            }
+        }
+
+        // Cerrar el modal con la tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModalCalentario();
+            }
+        });
+    </script>
+
+<%- include('../_partials/footer_pac') %>
+

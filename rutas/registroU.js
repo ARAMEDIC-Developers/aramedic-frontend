@@ -18,7 +18,7 @@ router.get("/registroU", function(req, res) {
 });
 
 // Procesar el formulario de registro
-router.post("/registroU", validateCreate, (req, res) => {
+router.post("/registroU", validateCreate, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // Si hay errores, renderizamos la vista 'registro' con los errores y datos anteriores
@@ -28,22 +28,22 @@ router.post("/registroU", validateCreate, (req, res) => {
             oldData: req.body // Enviamos los datos ingresados para que se mantengan
         });
     }
- 
-    const { nom, ape, ema, num, dni, fecha, contra, confirm_contra, dire } = req.body;
-    const idrolPaciente =1;
 
-    // Verificar si el DNI, correo o número de celular ya existen
-    const verificarUsuario = "SELECT * FROM usuarios WHERE dni = ?";
-    conexion.query(verificarUsuario, [dni], (error, rows) => {
-        if (error) {
-            console.log("TRIKA error en la consulta de verificación", error);
-            return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
-        }
+    let connection = null;
+    try{
 
-        if (rows.length > 0) {
-            // Si ya existe un usuario con el DNI
+        connection = await conec.beginTransaction();
+
+        const { nom, ape, ema, num, dni, fecha, contra, confirm_contra, dire } = req.body;
+        const idrolPaciente =1;
+
+        const  verificarUsuario = await conec.execute(connection, 'SELECT * FROM usuarios WHERE dni = ?', [
+            dni
+        ]);
+
+        if(verificarUsuario.length !== 0){
             const mensajesError = [];
-            if (rows.some(row => row.dni === dni)) mensajesError.push({ msg: "El DNI ya está registrado" });
+            mensajesError.push({ msg: "El DNI ya está registrado" });
 
             return res.render("registro", {
                 link,
@@ -52,55 +52,46 @@ router.post("/registroU", validateCreate, (req, res) => {
             });
         }
 
-        // Si no hay errores, insertar el nuevo usuario en la base de datos
-        const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, telefono, email, direccion) VALUES (?, ?, ?, ?, ?, ?)";
-        conexion.query(insertarPaciente, [nom, ape, fecha, num, ema, dire], (error, result) => {
-            if (error) {
-                console.log("TRIKA error al insertar paciente", error);
-                return res.status(500).send("Error al registrar el paciente");
-            }
+        const result = await conec.execute(connection, `
+            INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, telefono, email, direccion) VALUES (?, ?, ?, ?, ?, ?)`, [
+                nom,
+                ape, 
+                fecha,
+                num,
+                ema, 
+                dire
+            ]);
 
-            const pac_id = result.insertId;  // Aquí obtenemos el ID del paciente insertado
-            const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id, paciente_id) VALUES (?, ?, ?, ?)";
-            conexion.query(insertarUsuario, [dni, contra, idrolPaciente, pac_id], (error, result) => {
-                if (error) {
-                    console.log("TRIKA error al insertar usuario", error);
-                    return res.status(500).send("Error al registrar el usuario");
-                }
-            console.log("TRIKA datos almacenados correctamente");
-            res.redirect(link + "login");
+            await conec.execute(connection, `
+                INSERT INTO usuarios (dni, contrasena, rol_id, paciente_id) VALUES (?, ?, ?, ?)`, [
+                    dni, 
+                    contra, 
+                    idrolPaciente, 
+                    result.insertId
+                ]);        
+
+        await conec.commit(connection);
+        res.redirect(link + "login");
+    }catch(error){
+        if (connection != null) {
+            await conec.rollback(connection);
+        }
+        console.log(error)
+        const mensajesError = [];
+            mensajesError.push({ msg: "Error en el servidor" });
+
+            return res.render("registro", {
+                link,
+                errors: mensajesError,
+                oldData: req.body
             });
-        });
-        /*/
-        const obteneridUser='SELECT idusuario FROM `usuario` WHERE DNI = ?';
-        conexion.query(obteneridUser, dni, (error, rows)=>{
-            if(error){
-                console.log(error)
-            }
-            else{
-                const iduser = rows[0].idusuario;
-                const procedure='CALL create_medical_history(?, ?, ?, ?, ?, ?)';
-                conexion.query(procedure, [iduser, nom, ape, num, genderBool, ema], function(error){
-                    if(error){
-                        console.log(error)
-                    }
-                    else{
-                        console.log('TRIKA AGREGADO HISTORIA')
-                    }
-                })
-            }
-        });
-        /*/
-    });
+    }
 });
 
 // Ruta para registrar cita
 router.post("/registro-cita",async (req, res) =>{
     let connection = null;
     try {
-
-        console.log(req.body)
-
         connection = await conec.beginTransaction();
 
         await conec.execute(connection, `

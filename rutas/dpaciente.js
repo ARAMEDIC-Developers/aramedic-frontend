@@ -29,6 +29,21 @@ router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res)
     res.render("dashboard_paciente/calendario", data);
 });
 
+router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req,res) => {
+    // traer citas de la base de datos
+    // const citas = database.Citas('select * from citas');
+
+    const data = {
+        'total_citas':0,
+        'titulo' : 'pagina de calendario',
+        'usuario': req.session,
+        'link' : link,
+    };
+    
+    res.render("dashboard_paciente/solicitar_consulta", data);
+});
+
+
 router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
     // const citas = database.Historias('select * from historias');
 
