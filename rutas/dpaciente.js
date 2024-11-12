@@ -4,7 +4,7 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 const checkLoginPaciente = require('../validaciones/authPaciente');
 
-router.get("/dashboard_paciente", checkLoginPaciente, function(req,res){
+router.get("/dashboard_paciente", function(req,res){
     const data = {
         'total_citas':0,
         'titulo' : 'pagina de calendario',

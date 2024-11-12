@@ -1,9 +1,11 @@
 const express = require("express");
 const router= express.Router();
-const conexion=require("../config/conexion");
+const Conexion = require("../config/connection");
 const link= require("../config/link");
 const { validateCreate } = require('../validaciones/registroU');
 const { validationResult } = require('express-validator');
+
+const conec = new Conexion();
 
 // Mostrar el formulario de registro
 router.get("/registroU", function(req, res) {
@@ -90,4 +92,37 @@ router.post("/registroU", validateCreate, (req, res) => {
         /*/
     });
 });
+
+// Ruta para registrar cita
+router.post("/registro-cita",async (req, res) =>{
+    let connection = null;
+    try {
+
+        console.log(req.body)
+
+        connection = await conec.beginTransaction();
+
+        await conec.execute(connection, `
+            INSERT INTO citas(
+            paciente_id, 
+            medico_id, 
+            servicio_id,
+            fecha,
+            hora,
+            estado) 
+            VALUES (?,?,?,?,?,?)`, Object.values(req.body));
+
+        await conec.commit(connection);
+
+        res.status(201).send("prabando ruta");
+    } catch (error) {
+        if (connection != null) {
+            await conec.rollback(connection);
+        }
+        console.log(error)
+        return res.status(500).send("error en registrar")
+    }
+   
+});
+
 module.exports = router;
