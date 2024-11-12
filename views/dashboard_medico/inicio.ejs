@@ -1,4 +1,3 @@
-
 <%- include('../_partials/header') %>
 
     <div class="dashboard-container">
@@ -50,25 +49,8 @@
 
             </section>
 
-            <section id="citas" class="dashboard-section">
-                <h2 class="section-title">Citas Médicas</h2>
-                <div class="search-bar">
-                    <input type="text" id="buscar-cita" placeholder="Buscar cita...">
-                    <button id="agregar-cita" class="btn-primary">Agendar Cita</button>
-                </div>
-                <div id="lista-citas" class="lista-container"></div>
-            </section>
 
-            <section id="historias" class="dashboard-section">
-                <h2 class="section-title">Historias Clínicas</h2>
-                <div class="search-bar">
-                    <input type="text" id="buscar-historia" placeholder="Buscar historia clínica...">
-                    <button id="nueva-historia" class="btn-primary">Nueva Historia Clínica</button>
-                </div>
-                <div id="lista-historias" class="lista-container"></div>
-            </section>
-
-            <section id="cuentas" class="dashboard-section">
+            <section id="cuentas" >
                 <h2 class="section-title">Cuentas y Trabajadores</h2>
                 <div class="search-bar">
                     <input type="text" id="buscar-cuenta" placeholder="Buscar cuenta o trabajador...">
@@ -77,16 +59,11 @@
                 <div id="lista-cuentas" class="lista-container"></div>
             </section>
 
-            <section id="servicios" class="dashboard-section">
-                <h2 class="section-title">Servicios</h2>
-                <div class="search-bar">
-                    <input type="text" id="buscar-servicio" placeholder="Buscar servicio...">
-                    <button id="agregar-servicio" class="btn-primary">Agregar Servicio</button>
-                </div>
-                <div id="lista-servicios" class="lista-container"></div>
-            </section>
+
         </main>
     </div>
 
-<%- include('../_partials/footer') %>
+    
+    <!-- <script src="/dashboard_med/js/main.js"></script> -->
 
+<%- include('../_partials/footer') %>

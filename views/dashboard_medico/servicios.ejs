@@ -5,87 +5,62 @@
 
     <!-- Contenido Principal -->
     <main id="main-content">
-        <%- include('../_partials/sub_header') %>
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1 id="welcome-message" class="welcome-message">Bienvenido a ARAMEDIC</h1>
+            </div>
+            <div id="user-profile" class="user-profile">
+                <!-- El contenido se llenará dinámicamente con JavaScript -->
+            </div>
+        </header>
+
         <!-- Lista de Notificaciones -->
-        <%- include('../_partials/notificaciones') %>
-
-        <div class="main-content">
-            <h2 class="title">Gestión de Servicios</h2>
-
-            <!-- Barra de Búsqueda -->
-            <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" placeholder="Buscar servicios...">
-            </div>
-            <button id="btnAgregarServicio" class="add-button">
-                <i class="fas fa-plus-circle"></i> Añadir Servicio
-            </button>
-
-            <!-- Tabla de Servicios -->
-            <div class="table-container">
-                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                    <thead style="background-color: #007BFF; color: white;">
-                        <tr>
-                            <th style="padding: 10px; text-align: left;">Nombre</th>
-                            <th style="padding: 10px; text-align: left;">Tipo</th>
-                            <th style="padding: 10px; text-align: left;">Costo</th>
-                            <th style="padding: 10px; text-align: left;">Tiempo Procedimiento</th>
-                            <th style="padding: 10px; text-align: left;">Tiempo Recuperación</th>
-                            <th style="padding: 10px; text-align: left;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaServicios">
-                        <% servicios.forEach(servicio => { %>
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 10px;"><%= servicio.nombre_servicio %></td>
-                                <td style="padding: 10px;"><%= servicio.tipo_procedimiento %></td>
-                                <td style="padding: 10px;"><%= servicio.costo %></td>
-                                <td style="padding: 10px;"><%= servicio.tiempo_estimado %></td>
-                                <td style="padding: 10px;"><%= servicio.tiempo_recuperacion %></td>
-                                <td style="padding: 10px;">
-                                    <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
-                                    <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
+        <div id="notifications-panel" class="notifications-panel">
+            <h3>Notificaciones</h3>
+            <ul class="notifications-list">
+                <li class="notification-item">
+                    <i class="fas fa-user-clock"></i>
+                    <div class="notification-content">
+                        <p>Nueva cita programada con Juan Pérez</p>
+                        <span class="notification-time">Hace 5 minutos</span>
+                    </div>
+                </li>
+                <li class="notification-item">
+                    <i class="fas fa-file-medical-alt"></i>
+                    <div class="notification-content">
+                        <p>Actualización en la historia clínica de María Gómez</p>
+                        <span class="notification-time">Hace 2 horas</span>
+                    </div>
+                </li>
+                <li class="notification-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div class="notification-content">
+                        <p>Recordatorio: Conferencia médica mañana</p>
+                        <span class="notification-time">Hace 1 día</span>
+                    </div>
+                </li>
+            </ul>
         </div>
+
+        <section id="servicios">
+            <h2 class="section-title">Servicios</h2>
+            <div class="search-bar">
+                <input type="text" id="buscar-servicio" placeholder="Buscar servicio...">
+                <button id="agregar-servicio" class="btn-primary">Agregar Servicio</button>
+            </div>
+            <!-- Formulario para agregar un nuevo servicio -->
+            <div id="form-servicio" class="form-servicio">
+                <input type="text" id="nombre-servicio" placeholder="Nombre del Servicio">
+                <input type="text" id="duracion-servicio" placeholder="Duración (e.g., 30 min)">
+                <input type="text" id="precio-servicio" placeholder="Precio (e.g., $50)">
+                <button id="guardar-servicio" class="btn-primary">Guardar</button>
+            </div>
+            <div id="lista-servicios" class="lista-container"></div>
+        </section>
     </main>
 </div>
 
-<!-- Modal para añadir/editar servicio -->
-<div id="modalServicio" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2 id="modalTitle">Añadir Servicio</h2>
-        <form id="formServicio">
-            <div class="form-group">
-                <label for="nombre">Nombre del Servicio</label>
-                <input type="text" id="nombre" name="nombre" required>
-            </div>
-            <div class="form-group">
-                <label for="tipoProcedimiento">Tipo de Procedimiento</label>
-                <input type="text" id="tipoProcedimiento" name="tipoProcedimiento" required>
-            </div>
-            <div class="form-group">
-                <label for="costo">Costo</label>
-                <input type="number" id="costo" name="costo" required>
-            </div>
-            <div class="form-group">
-                <label for="tiempoEstimadoProcedimiento">Tiempo Estimado de Procedimiento</label>
-                <input type="text" id="tiempoEstimadoProcedimiento" name="tiempoEstimadoProcedimiento" required>
-            </div>
-            <div class="form-group">
-                <label for="tiempoEstimadoRecuperacion">Tiempo Estimado de Recuperación</label>
-                <input type="text" id="tiempoEstimadoRecuperacion" name="tiempoEstimadoRecuperacion" required>
-            </div>
-            <button type="button" id="btnGuardar" class="btn-guardar">Guardar</button>
-        </form>
-    </div>
-</div>
-
+<!-- <script src="/dashboard_med/js/main.js"></script> -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("searchInput");
@@ -208,4 +183,71 @@
     </script>
     
 
+    const formData = {
+        username: 'jose'
+    }
+
+    axios.post('http://localhost:3000/dashboard_jmedico/test', formData , config)
+        .then(response => {
+            console.log(response.data)
+        });
+
+    // Mostrar servicios por defecto
+    mostrarServicios();
+
+    // Evento para guardar un nuevo servicio
+    document.getElementById("guardar-servicio").addEventListener("click", () => {
+        const nombreServicio = document.getElementById("nombre-servicio").value.trim();
+        const duracionServicio = document.getElementById("duracion-servicio").value.trim();
+        const precioServicio = document.getElementById("precio-servicio").value.trim();
+
+        if (nombreServicio && duracionServicio && precioServicio) {
+            // Si todos los campos están llenos, agregar el servicio
+            agregarServicio(nombreServicio, duracionServicio, precioServicio);
+            limpiarFormulario();
+        } else {
+            // Si algún campo está vacío, mostrar una alerta
+            alert("Por favor, complete todos los campos.");
+        }
+    });
+
+    function agregarServicio(nombre, duracion, precio) {
+        const listaServicios = document.getElementById("lista-servicios");
+        const servicioCard = document.createElement("div");
+        servicioCard.className = "servicio-card";
+        servicioCard.innerHTML = `
+            <h3>${nombre}</h3>
+            <p><strong>Duración:</strong> ${duracion}</p>
+            <p><strong>Precio:</strong> ${precio}</p>
+            <button class="btn-primary" onclick="editarServicio()">Editar</button>
+        `;
+        listaServicios.appendChild(servicioCard);
+    }
+
+    function limpiarFormulario() {
+        document.getElementById("nombre-servicio").value = "";
+        document.getElementById("duracion-servicio").value = "";
+        document.getElementById("precio-servicio").value = "";
+    }
+
+    function mostrarServicios() {
+        const listaServicios = document.getElementById("lista-servicios");
+        listaServicios.innerHTML = `
+            <div class="servicio-card">
+                <h3>Consulta General</h3>
+                <p><strong>Duración:</strong> 30 min</p>
+                <p><strong>Precio:</strong> $50</p>
+                <button class="btn-primary" onclick="editarServicio()">Editar</button>
+            </div>
+            <div class="servicio-card">
+                <h3>Examen de Laboratorio</h3>
+                <p><strong>Duración:</strong> 1 hora</p>
+                <p><strong>Precio:</strong> $100</p>
+                <button class="btn-primary" onclick="editarServicio()">Editar</button>
+            </div>
+        `;
+    }
+
+});
+</script>
 <%- include('../_partials/footer') %>
