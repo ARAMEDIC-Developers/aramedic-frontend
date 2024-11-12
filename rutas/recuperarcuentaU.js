@@ -34,7 +34,7 @@ router.get("/cambiar_password", function(req, res){
         {
             const mensajesError = [];
             mensajesError.push({ msg: "Error, Email no encontrado" });
-            return res.render("recuperarcuenta", {
+            return res.render("verificarcorreo", {
                 link,
                 errors: mensajesError,
                 oldData: req.body

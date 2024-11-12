@@ -425,8 +425,12 @@ function renderCalendar(){
         days += `<div class="day next">${j}</div>`;
     }
 
+
     hideTodayBtn();
     daysContainer.innerHTML=days;
+
+
+
 }
 
 renderCalendar();
