@@ -6,66 +6,245 @@
     <!-- Contenido Principal -->
     <main id="main-content">
         <%- include('../_partials/sub_header') %>
+
         <!-- Lista de Notificaciones -->
         <%- include('../_partials/notificaciones') %>
 
-        <div class="main-content">
-            <h2 class="title">Historia clínica</h2>
+        <!-- Sección de Historia Clínica -->
+        <section id="historia">
+            <h2 class="section-title">Listado de Historia Clínica</h2>
 
+            <!-- Filtro de búsqueda -->
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" id="searchInput" placeholder="Buscar por DNI, nombre, etc.">
             </div>
+
             <button id="btnAgregarServicio" class="add-button">
                 <i class="fas fa-plus-circle"></i> Añadir Historia
             </button>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>DNI</th>
-                            <th>Nombre y apellido</th>
-                            <th>Teléfono</th>
-                            <th>Email</th>
-                            <th>Motivo de Consulta</th>
-                            <th>Cirugía</th>
-                            <th>Procedimiento</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaServicios">
-                        <!-- Los datos de usuarios se insertarán aquí dinámicamente -->
-                        <% if (historias && historias.length > 0) { %>
-                            <% historias.forEach(function(historia) { %>
-                                <tr>
-                                    <td><%= historia.dni %></td>
-                                    <td><%= historia.nombre_paciente %> <%= historia.apellido_paciente %></td>
-                                    <td><%= historia.telefono || 'No especificado' %></td>
-                                    <td><%= historia.email || 'No especificado' %></td>
-                                    <td><%= historia.motivo || 'No especificado' %></td>
-                                    <td><%= historia.cirugia || 'No especificado' %></td>
-                                    <td><%= historia.procedimiento || 'No especificado' %></td>
-                                    <td>
-                                        <!-- Botones para editar o eliminar historia -->
-                                        <form action="/dashboard_jmedico/historia_clinica" method="GET" style="display: inline;">
-                                            <input type="hidden" name="historiaId" value="<%= historia.id %>">
-                                            <button type="submit" class="btn-editar" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">
-                                                Editar
-                                            </button>
-                                        </form>
-                                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">Eliminar</button>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="8">No se encontraron registros.</td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+
+            <!-- Tabla de Historias Clínicas -->
+            <table id="historia-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead style="background-color: #007BFF; color: white;">
+                    <tr>
+                        <th style="padding: 10px; text-align: left;">DNI</th>
+                        <th style="padding: 10px; text-align: left;">Nombre y Apellido</th>
+                        <th style="padding: 10px; text-align: left;">Fecha de Nacimiento</th>
+                        <th style="padding: 10px; text-align: left;">Edad</th>
+                        <th style="padding: 10px; text-align: left;">Género</th>
+                        <th style="padding: 10px; text-align: left;">Estado Civil</th>
+                        <th style="padding: 10px; text-align: left;">Ocupación</th>
+                        <th style="padding: 10px; text-align: left;">Teléfono</th>
+                        <th style="padding: 10px; text-align: left;">Correo</th>
+                        <th style="padding: 10px; text-align: left;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaServicios">
+                    <!-- Las filas de historias se generarán dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+        </section>
     </main>
 </div>
-<%- include('../_partials/footer') %>
+
+<!-- Modal para añadir/editar historia clínica -->
+<div id="modalServicio" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Añadir Historia Clínica</h2>
+        <form id="formServicio">
+            <div class="form-group">
+                <label for="dni">DNI</label>
+                <input type="text" id="dni" name="dni" required>
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre y Apellido</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+            </div>
+            <div class="form-group">
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" name="edad" required readonly>
+            </div>
+            <div class="form-group">
+                <label for="genero">Género</label>
+                <select id="genero" name="genero" required>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="estadoCivil">Estado Civil</label>
+                <input type="text" id="estadoCivil" name="estadoCivil" required>
+            </div>
+            <div class="form-group">
+                <label for="ocupacion">Ocupación</label>
+                <input type="text" id="ocupacion" name="ocupacion" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" required>
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            <button type="submit" class="btn-guardar">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let historias = [
+        { id: 1, dni: "12345678", nombre: "Juan Pérez", fechaNacimiento: "1990-03-15", edad: 34, genero: "Masculino", estadoCivil: "Soltero", ocupacion: "Ingeniero", telefono: "987654321", correo: "juan.perez@mail.com" },
+        { id: 2, dni: "87654321", nombre: "María García", fechaNacimiento: "1985-07-22", edad: 39, genero: "Femenino", estadoCivil: "Casada", ocupacion: "Doctora", telefono: "912345678", correo: "maria.garcia@mail.com" }
+    ];
+
+    const tablaServicios = document.getElementById('tablaServicios');
+    const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+    const modal = document.getElementById('modalServicio');
+    const closeModal = document.querySelector('.close');
+    const formServicio = document.getElementById('formServicio');
+    const modalTitle = document.getElementById('modalTitle');
+    const searchInput = document.getElementById('searchInput');
+
+    // Función para renderizar la tabla de historias clínicas
+    function renderizarTabla(historiasArray) {
+        tablaServicios.innerHTML = '';
+        historiasArray.forEach(historia => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${historia.dni}</td>
+                <td>${historia.nombre}</td>
+                <td>${historia.fechaNacimiento}</td>
+                <td>${historia.edad}</td>
+                <td>${historia.genero}</td>
+                <td>${historia.estadoCivil}</td>
+                <td>${historia.ocupacion}</td>
+                <td>${historia.telefono}</td>
+                <td>${historia.correo}</td>
+                <td>
+                    <button class="edit-button" data-id="${historia.id}" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">Editar</button>
+                    <button class="view-button" data-id="${historia.id}" style="background-color: #007BFF; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px;">Ver</button>
+                    <button class="delete-button" data-id="${historia.id}" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">Eliminar</button>
+                </td>
+            `;
+            tablaServicios.appendChild(row);
+        });
+    }
+
+    // Inicializar la tabla
+    renderizarTabla(historias);
+
+    // Evento para abrir el modal de añadir historia
+    btnAgregarServicio.addEventListener('click', () => {
+        modalTitle.textContent = 'Añadir Historia Clínica';
+        formServicio.reset();
+        document.getElementById('edad').value = ''; // Resetear campo edad
+        modal.classList.add('show');
+    });
+
+    // Evento para cerrar el modal
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+
+    // Evento para manejar el envío del formulario
+    formServicio.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(formServicio);
+        const nuevaHistoria = {
+            id: Date.now(),
+            dni: formData.get('dni'),
+            nombre: formData.get('nombre'),
+            fechaNacimiento: formData.get('fechaNacimiento'),
+            edad: calcularEdad(formData.get('fechaNacimiento')),
+            estadoCivil: formData.get('estadoCivil'),
+            ocupacion: formData.get('ocupacion'),
+            telefono: formData.get('telefono'),
+            correo: formData.get('correo'),
+            genero: formData.get('genero')
+        };
+
+        if (formServicio.dataset.editId) {
+            const index = historias.findIndex(h => h.id === parseInt(formServicio.dataset.editId));
+            if (index !== -1) {
+                historias[index] = { ...historias[index], ...nuevaHistoria };
+            }
+            delete formServicio.dataset.editId;
+        } else {
+            historias.push(nuevaHistoria);
+        }
+
+        renderizarTabla(historias);
+        modal.classList.remove('show');
+    });
+
+    // Evento para editar o eliminar historias
+    document.getElementById('tablaServicios').addEventListener('click', (e) => {
+        if (e.target.classList.contains('edit-button')) {
+            const id = parseInt(e.target.dataset.id);
+            const historia = historias.find(h => h.id === id);
+            if (historia) {
+                modalTitle.textContent = 'Editar Historia Clínica';
+                formServicio.dni.value = historia.dni;
+                formServicio.nombre.value = historia.nombre;
+                formServicio.fechaNacimiento.value = historia.fechaNacimiento;
+                formServicio.estadoCivil.value = historia.estadoCivil;
+                formServicio.ocupacion.value = historia.ocupacion;
+                formServicio.telefono.value = historia.telefono;
+                formServicio.correo.value = historia.correo;
+                formServicio.genero.value = historia.genero;
+                formServicio.dataset.editId = historia.id;
+                modal.classList.add('show');
+            }
+        }
+
+        if (e.target.classList.contains('delete-button')) {
+            const id = parseInt(e.target.dataset.id);
+            historias = historias.filter(h => h.id !== id);
+            renderizarTabla(historias);
+        }
+
+        if (e.target.classList.contains('view-button')) {
+            const id = parseInt(e.target.dataset.id);
+            const historia = historias.find(h => h.id === id);
+            if (historia) {
+                alert(`Ver detalles de la historia clínica de: ${historia.nombre}`);
+            }
+        }
+    });
+
+// Función para calcular la edad a partir de la fecha de nacimiento
+function calcularEdad(fechaNacimiento) {
+    const nacimiento = new Date(fechaNacimiento);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+        edad--;
+    }
+    return edad;
+}
+
+// Filtros de búsqueda
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredHistorias = historias.filter(historia =>
+        historia.dni.includes(searchTerm) ||
+        historia.nombre.toLowerCase().includes(searchTerm) ||
+        historia.correo.toLowerCase().includes(searchTerm)
+    );
+    renderizarTabla(filteredHistorias);
+});
+</script>
+
+<style>
+    .modal.show {
+        display: block;
+    }
+</style>

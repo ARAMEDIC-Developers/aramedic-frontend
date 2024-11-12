@@ -40,19 +40,10 @@ router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
     res.render("dashboard_paciente/citas", data);
 });
 
-router.get("/dashboard_paciente/historia_clinica", checkLoginPaciente, async (req,res) => {
+router.get("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) => {
     //TRAER HISTORIA DE LA BD
     const idusuario = req.session.pac;
-    const historia = `
-        SELECT p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.fecha_nacimiento, p.telefono,
-               p.email, p.direccion, p.genero, p.estado_civil, p.ocupacion, h.motivo, h.enfermedades_previas, 
-               h.alergias, h.medicamentos_actuales, h.cirugias_previas, h.fuma, h.consume_alcohol, 
-               h.enfermedades_hereditarias, h.peso, h.altura, h.imc, h.descripcion_fisica,
-               h.cirugia, h.procedimiento, h.riesgos, h.cuidado_preoperativo, h.cuidado_postoperativo
-        FROM historial_medico h
-        JOIN pacientes p ON h.paciente_id = p.id
-        WHERE h.paciente_id = ?;
-    `;
+    const historia = 'SELECT h.id, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, m.nombre AS nombre_medico, m.especialidad_id AS especialidad_id, h.fecha, h.diagnostico, h.tratamiento, h.observaciones FROM historial_medico h JOIN pacientes p ON h.paciente_id= p.id JOIN medicos m ON h.medico_id = m.id WHERE h.paciente_id = ?;';
     conexion.query(historia, idusuario, async function(error,rows){
         if (error) 
             {
@@ -68,11 +59,22 @@ router.get("/dashboard_paciente/historia_clinica", checkLoginPaciente, async (re
             const data = {
                 'usuario': req.session,
                 'link' : link,
-                'historia' : historial_medico
+                'paciente' : historial_medico
             };
-            res.render("dashboard_paciente/historia_clinica", data)
+            console.log(historial_medico)
+            res.render("dashboard_paciente/historias", data)
         }
     })
+});
+
+router.post("/dashboard_paciente/historias", checkLoginPaciente, async (req,res) => {
+    //ENVIAR HISTORIA A LA BD
+    const data = {
+        'usuario': req.session,
+        'link' : link,
+    };
+    
+    res.render("dashboard_paciente/calendario", data);
 });
 
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Historia Clínica - ARAMEDIC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="<%= link %>dashboard_med/css/styles-historia_clinica.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <div class="header-text">
+            <h1><span class="highlight">ARA</span>MEDIC</h1>
+        </div>
+        <div class="main-content">
+            <div class="container">
+                <h2 class="title">Perfil de Historia Clínica del Paciente</h2>
+                <p>Información del historial m:</p>
+                <form id="patientForm" method="get">
+                    <!-- Información del Paciente -->
+                    <h3>Información del Paciente</h3>
+                    <div class="form-group">
+                        <label for="patientFirstName">Nombre del paciente:</label>
+                        <input type="text" id="patientFirstName" name="patientFirstName" placeholder="Ingresa el nombre del paciente" value="<%= paciente.nombre_paciente %>" readonly="readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientLastName">Apellido del paciente:</label>
+                        <input type="text" id="patientLastName" name="patientLastName" placeholder="Ingresa el apellido del paciente" value="<%= paciente.apellido_paciente %>" readonly="readonly">
+                    </div>
+
+                    <!-- Información del Médico -->
+                    <h3>Información del Médico</h3>
+                    <div class="form-group">
+                        <label for="doctorName">Nombre del médico:</label>
+                        <input type="text" id="doctorName" name="doctorName" placeholder="Ingresa el nombre del médico" value="<%= paciente.nombre_medico %>" readonly="readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="specialty">Especialidad del médico:</label>
+                        <input type="text" id="specialty" name="specialty" placeholder="Ingresa la especialidad del médico" value="<%= paciente.especialidad_id %>" readonly="readonly">
+                    </div>
+
+                    <!-- Información de la Consulta -->
+                    <h3>Información de la Consulta</h3>
+                    <div class="form-group">
+                        <label for="date">Fecha:</label>
+                        <input type="datetime" id="date" name="date" placeholder="Selecciona la fecha de consulta" value="<%= paciente.fecha %>" readonly="readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="diagnosis">Diagnóstico:</label>
+                        <input id="diagnosis" name="diagnosis" placeholder="Ingresa el diagnóstico" value="<%=paciente.diagnostico %>" readonly="readonly"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="observations">Observaciones:</label>
+                        <input id="observations" name="observations" placeholder="Ingresa las observaciones" value="<%= paciente.observaciones %>" readonly="readonly"></textarea>
+                    </div>
+                    <div class="form-group">
+                    </div>
+                    <button type="button" onclick="location.href='/dashboard_paciente'">Regresar</button>
+                    <!-- Botón para regresar -->
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
