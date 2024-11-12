@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-10-2024 a las 00:21:59
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Tiempo de generación: 31-10-2024 a las 02:31:14
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.1.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,15 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `aramedic`
 --
+
+DELIMITER $$
+--
+-- Procedimientos
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_medical_history` (IN `iduser` BIGINT, IN `nombre` TEXT, IN `apellido` TEXT, IN `num_telefono` VARCHAR(255), IN `genero` TINYINT, IN `correo` TEXT)   INSERT INTO pacientes(idpacientes, nombres, telefono, genero, correo) VALUES
+(iduser, CONCAT(nombre, ' ',apellido), num_telefono, genero, correo)$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -106,21 +115,25 @@ CREATE TABLE `medico_servicio` (
 
 CREATE TABLE `pacientes` (
   `idpacientes` bigint(20) NOT NULL,
+  `nombres` varchar(60) NOT NULL,
   `edad` int(11) DEFAULT NULL,
-  `estado_civil` text DEFAULT NULL,
+  `genero` tinyint(4) NOT NULL,
+  `estado_civil` tinyint(4) DEFAULT NULL,
   `ocupacion` text DEFAULT NULL,
+  `telefono` varchar(255) NOT NULL,
+  `correo` text NOT NULL,
   `direccion` text DEFAULT NULL,
   `motivo_principal` text DEFAULT NULL,
   `enfermedades_previas` text DEFAULT NULL,
   `alergia` text DEFAULT NULL,
   `medicamentos_actuales` text DEFAULT NULL,
   `cirugias_previas` text DEFAULT NULL,
-  `fuma` text DEFAULT NULL,
-  `consume_alcohol` text DEFAULT NULL,
+  `fuma` tinyint(1) DEFAULT NULL,
+  `consume_alcohol` tinyint(1) DEFAULT NULL,
   `enfermedades_hereditarias` text DEFAULT NULL,
-  `peso` text DEFAULT NULL,
+  `peso` decimal(5,2) DEFAULT NULL,
   `altura` decimal(5,2) DEFAULT NULL,
-  `indice_de_masa_corporal_mic` double DEFAULT NULL,
+  `indice_de_masa_corporal_mic` decimal(5,2) DEFAULT NULL,
   `descripcion_fisica` text DEFAULT NULL,
   `cirugia` text DEFAULT NULL,
   `descripcion_del_procedimiento` text DEFAULT NULL,
@@ -128,6 +141,14 @@ CREATE TABLE `pacientes` (
   `cuidado_preoperatorio` text DEFAULT NULL,
   `cuidado_postoperatorio` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pacientes`
+--
+
+INSERT INTO `pacientes` (`idpacientes`, `nombres`, `edad`, `genero`, `estado_civil`, `ocupacion`, `telefono`, `correo`, `direccion`, `motivo_principal`, `enfermedades_previas`, `alergia`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `indice_de_masa_corporal_mic`, `descripcion_fisica`, `cirugia`, `descripcion_del_procedimiento`, `riesgos_y_complicaciones`, `cuidado_preoperatorio`, `cuidado_postoperatorio`) VALUES
+(11, 'EDGAR FRANCO LEIVA CHAVEZ', 20, 2, 2, 'N/A', '983459106', 'just.me.edgar.2004@gmail.com', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80.00, 150.00, 1.20, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'),
+(12, 'Edgar Franco Leiva Chavez', NULL, 2, NULL, NULL, '983983983', 'just.me.edgar.2004@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -202,7 +223,8 @@ INSERT INTO `usuario` (`idusuario`, `dni`, `nombres`, `apellidos`, `fecha_nacimi
 (7, '', '', '', NULL, '', 'Masculino', '', '', 1),
 (8, '', '', '', NULL, '', 'Masculino', '', '', 1),
 (10, '74733226', 'DERECK', 'FERNANDO', NULL, '999999999', 'Masculino', 'dereckmunoz07@gmail.com', 'Pecosin0412', 2),
-(11, '72666946', 'Dean Ayrton', 'Reyes Vallejos', NULL, '974617857', 'Masculino', 'deanreyesvallejos@gmail.com', 'ITJ6v2jHRk03NPa', 1);
+(11, '72666946', 'Dean Ayrton', 'Reyes Vallejos', NULL, '974617857', 'Masculino', 'deanreyesvallejos@gmail.com', 'ITJ6v2jHRk03NPa', 1),
+(12, '74747474', 'Edgar Franco', 'Leiva Chavez', NULL, '983983983', '0', 'just.me.edgar.2002@gmail.com', 'Asd123123', 1);
 
 --
 -- Disparadores `usuario`
@@ -298,7 +320,6 @@ ALTER TABLE `medicos`
   MODIFY `idmedico` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
---
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
@@ -314,7 +335,7 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idusuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `idusuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios_key`

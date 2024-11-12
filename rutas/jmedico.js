@@ -131,8 +131,7 @@ router.get("/dashboard_jmedico/historias", checkLoginMedico, async (req,res) => 
 });
 /*/
 router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req,res) => {
-    // traer citas de la base de datos
-    // const citas = database.Citas('select * from citas');
+    
     const data = {
         'total_citas':0,
         'titulo' : 'pagina de citas',
