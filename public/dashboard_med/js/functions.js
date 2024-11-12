@@ -391,8 +391,7 @@ let currentMonth = date.getMonth();
 let currentYear = date.getFullYear();
 
 //function to render days
-function renderCalendar(){
-
+function renderCalendar() {
     date.setDate(1);
     const firstDay = new Date(currentYear, currentMonth, 1);
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
@@ -405,33 +404,37 @@ function renderCalendar(){
     month.innerHTML = `${months[currentMonth]} ${currentYear}`;
     let days = "";
 
-    for(let x= firstDay.getDay(); x > 0; x--){
-        days += `<div class="day prev">${prevLastDayDate -x + 1}</div>`
+    // Días del mes anterior
+    for (let x = firstDay.getDay(); x > 0; x--) {
+        days += `<div class="day prev">${prevLastDayDate - x + 1}</div>`;
     }
 
-    for (let i = 1; i<=lastDayDate; i++){
-        if(
-            i=== new Date().getDate() &&
-            currentMonth == new Date().getMonth() &&
-            currentYear == new Date().getFullYear()
-        ){
-            days += `<div class="day today">${i}</div>`
-        }else{
-            days += `<div class="day">${i}</div>`
+    // Días del mes actual
+    for (let i = 1; i <= lastDayDate; i++) {
+        // Crear una fecha para cada día
+        const dayDate = new Date(currentYear, currentMonth, i);
+        
+        if (
+            i === new Date().getDate() &&
+            currentMonth === new Date().getMonth() &&
+            currentYear === new Date().getFullYear()
+        ) {
+            days += `<button onclick="openModalCalendario('${dayDate.toISOString()}')" class="day today">${i}</button>`;
+        } else {
+            days += `<button onclick="openModalCalendario('${dayDate.toISOString()}')" class="day">${i}</button>`;
         }
     }
 
-    for (let j = 1; j<=nextDays; j++){
+    // Días del siguiente mes
+    for (let j = 1; j <= nextDays; j++) {
         days += `<div class="day next">${j}</div>`;
     }
 
 
     hideTodayBtn();
-    daysContainer.innerHTML=days;
-
-
-
+    daysContainer.innerHTML = days;
 }
+
 
 renderCalendar();
 
@@ -488,45 +491,47 @@ const searchInput = document.getElementById('searchInput');
 
 // Función para renderizar la tabla de servicios
 function renderizarTabla(serviciosArray) {
-    tablaServicios.innerHTML = '';
-    serviciosArray.forEach(servicio => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${servicio.nombre}</td>
-            <td>${servicio.tipo}</td>
-            <td>S/. ${servicio.costo}</td>
-            <td>${servicio.tiempoProcedimiento}</td>
-            <td>${servicio.tiempoRecuperacion}</td>
-            <td>
-                <button class="edit-button" data-id="${servicio.id}">
-                    <i class="fas fa-edit"></i> Editar
-                </button>
-                <button class="delete-button" data-id="${servicio.id}">
-                    <i class="fas fa-trash-alt"></i> Eliminar
-                </button>
-            </td>
-        `;
-        tablaServicios.appendChild(row);
-    });
+    if(tablaServicios){
+        tablaServicios.innerHTML = '';
+        serviciosArray.forEach(servicio => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${servicio.nombre}</td>
+                <td>${servicio.tipo}</td>
+                <td>S/. ${servicio.costo}</td>
+                <td>${servicio.tiempoProcedimiento}</td>
+                <td>${servicio.tiempoRecuperacion}</td>
+                <td>
+                    <button class="edit-button" data-id="${servicio.id}">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="delete-button" data-id="${servicio.id}">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </button>
+                </td>
+            `;
+            tablaServicios.appendChild(row);
+        });
+    }
 }
 
 // Inicializar la tabla
 renderizarTabla(servicios);
 
 // Evento para abrir el modal de agregar servicio
-btnAgregarServicio.addEventListener('click', () => {
+btnAgregarServicio?.addEventListener('click', () => {
     modalTitle.textContent = 'Añadir Servicio';
     formServicio.reset();
     modal.classList.add('show');
 });
 
 // Evento para cerrar el modal
-closeModal.addEventListener('click', () => {
+closeModal?.addEventListener('click', () => {
     modal.classList.remove('show');
 });
 
 // Evento para manejar el envío del formulario
-formServicio.addEventListener('submit', (e) => {
+formServicio?.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(formServicio);
     const nuevoServicio = {
@@ -555,7 +560,7 @@ formServicio.addEventListener('submit', (e) => {
 });
 
 // Evento para editar o eliminar servicios
-tablaServicios.addEventListener('click', (e) => {
+tablaServicios?.addEventListener('click', (e) => {
     if (e.target.classList.contains('edit-button') || e.target.closest('.edit-button')) {
         const id = parseInt(e.target.dataset.id || e.target.closest('.edit-button').dataset.id);
         const servicio = servicios.find(s => s.id === id);
@@ -579,7 +584,7 @@ tablaServicios.addEventListener('click', (e) => {
 });
 
 // Evento para buscar servicios
-searchInput.addEventListener('input', (e) => {
+searchInput?.addEventListener('input', (e) => {
     const searchTerm = e.target.value.toLowerCase();
     const serviciosFiltrados = servicios.filter(servicio => 
         servicio.nombre.toLowerCase().includes(searchTerm) ||

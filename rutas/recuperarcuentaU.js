@@ -129,7 +129,7 @@ router.post("/recuperarcuentaU", function(req, res){
                 service: 'gmail',
                 auth: {
                     user: 'aramedicperu@gmail.com',
-                    pass: 'mqlg gcfb bgkl phij' 
+                    pass: 'wjeg zycw qajl liab' 
                 }
             });
             // Email options
