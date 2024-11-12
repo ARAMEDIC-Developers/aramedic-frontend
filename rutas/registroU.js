@@ -53,8 +53,8 @@ router.post("/registroU", validateCreate, (req, res) => {
         }
 
         // Si no hay errores, insertar el nuevo usuario en la base de datos
-        const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, genero, telefono, email, direccion) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        conexion.query(insertarPaciente, [nom, ape, fecha, gender, num, ema, dire], (error, result) => {
+        const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, telefono, email, direccion) VALUES (?, ?, ?, ?, ?, ?)";
+        conexion.query(insertarPaciente, [nom, ape, fecha, num, ema, dire], (error, result) => {
             if (error) {
                 console.log("TRIKA error al insertar paciente", error);
                 return res.status(500).send("Error al registrar el paciente");
