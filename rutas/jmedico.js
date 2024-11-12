@@ -16,7 +16,15 @@ router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
 
 router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
     const idusuario = req.session.med;
-    const historias = 'SELECT h.id, u.dni AS dni_paciente, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.fecha_nacimiento AS fecha_paciente, p.telefono AS paciente_telefono, p.email AS paciente_email, h.descripcion, h.diagnostico, h.tratamiento FROM historial_medico h JOIN pacientes p ON h.paciente_id= p.id JOIN medicos m ON h.medico_id = m.id JOIN usuarios u ON u.paciente_id = p.id WHERE h.medico_id = ?;'
+    const historias =  `
+    SELECT u.dni, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.telefono,
+               p.email, h.id, h.motivo, h.cirugia, h.procedimiento
+        FROM historial_medico h
+        JOIN pacientes p ON h.paciente_id= p.id
+        JOIN usuarios u ON u.paciente_id = p.id
+        JOIN medicos m ON h.medico_id = m.id
+        WHERE h.medico_id = ?;
+    `;
     conexion.query(historias, idusuario, async function(error,rows){
         if (error) 
             {
