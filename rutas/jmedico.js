@@ -16,15 +16,15 @@ router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
 
 router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
     const idusuario = req.session.med;
-    const historias =  `
-    SELECT u.dni, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.telefono,
+    const historias = `
+        SELECT u.dni, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.telefono,
                p.email, h.id, h.motivo, h.cirugia, h.procedimiento
         FROM historial_medico h
         JOIN pacientes p ON h.paciente_id= p.id
         JOIN usuarios u ON u.paciente_id = p.id
         JOIN medicos m ON h.medico_id = m.id
-        WHERE h.medico_id = ?;
-    `;
+        WHERE h.medico_id = ?;
+    `;
     conexion.query(historias, idusuario, async function(error,rows){
         if (error) 
             {
@@ -36,9 +36,8 @@ router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
             const data = {
                 'usuario': req.session,
                 'link' : link,
-                'paciente' : historial_medico
+                'historias' : historial_medico
             };
-            console.log(historial_medico)
             res.render("dashboard_medico/historias", data);
         }
     })
@@ -53,16 +52,18 @@ router.get("/dashboard_jmedico/historia_clinica", checkLoginMedico, function(req
     }
 
     // Consulta SQL para obtener los detalles de la historia clínica
-    const sql = `
-        SELECT p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, 
-               m.nombre AS nombre_medico, m.especialidad_id AS especialidad_id,
-               h.fecha, h.diagnostico, h.descripcion, h.tratamiento, h.observaciones
+    const historia = `
+        SELECT p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.fecha_nacimiento, p.telefono,
+               p.email, p.direccion, p.genero, p.estado_civil, p.ocupacion, h.motivo, h.enfermedades_previas,
+               h.alergias, h.medicamentos_actuales, h.cirugias_previas, h.fuma, h.consume_alcohol, 
+               h.enfermedades_hereditarias, h.peso, h.altura, h.imc, h.descripcion_fisica,
+               h.cirugia, h.procedimiento, h.riesgos, h.cuidado_preoperativo, h.cuidado_postoperativo
         FROM historial_medico h
         JOIN pacientes p ON h.paciente_id = p.id
         JOIN medicos m ON h.medico_id = m.id
         WHERE h.id = ? AND h.medico_id = ?;
     `;
-    conexion.query(sql, [historiaid, idusuario], function(error, rows) {
+    conexion.query(historia, [historiaid, idusuario], function(error, rows) {
         if (error) {
             console.log("Error al obtener historia clínica", error);
             return res.status(500).send("Error al obtener la historia clínica.");
