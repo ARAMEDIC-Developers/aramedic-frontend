@@ -487,6 +487,15 @@ header {
   cursor: pointer;
 }
 
+.whatsapp-link {
+  color: var(--text-white);
+  text-decoration: none;
+}
+
+.whatsapp-link:hover {
+  color: var(--secondary-color); /* Cambia el color al pasar el mouse si lo deseas */
+}
+
 @media (width < 900px) {
 
 .footer__container {
