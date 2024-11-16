@@ -40,8 +40,8 @@ router.post("/login", validateItem, function(req, res) {
         } else {
             const usuario = rows[0]
             const loginQuery = "CALL login_procedure(?, ?)"
-            if(usuario.paciente_id){
-                conexion.query(loginQuery, [usuario.rol_id, usuario.paciente_id], function(error, result){
+            if(usuario.rol_id=1){
+                conexion.query(loginQuery, [usuario.rol_id, usuario.id], function(error, result){
                     const paciente = result[0][0];
                     const match = contrasena == usuario.contrasena;
                     if (!match) {
@@ -64,8 +64,8 @@ router.post("/login", validateItem, function(req, res) {
                     }
                 })
             }
-            else{
-                conexion.query(loginQuery, [usuario.rol_id, usuario.medico_id], async function(error, result){
+            else if (usuario.rol_id = 2){
+                conexion.query(loginQuery, [usuario.rol_id, usuario.id], async function(error, result){
                     const medico = result[0][0];
                     const match = contrasena == usuario.contrasena;
                     if (!match) {
@@ -87,6 +87,9 @@ router.post("/login", validateItem, function(req, res) {
                         res.redirect("dashboard_jmedico");
                     }
                 })
+            }
+            else{
+                //ADMIN POR TERMINAR
             }
         }
     });
