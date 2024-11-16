@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 16-11-2024 a las 10:18:37
+-- Tiempo de generación: 16-11-2024 a las 11:15:39
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -188,6 +188,15 @@ INSERT INTO `pacientes` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `genero
 (1, 'Juan', 'Pérez', '1985-05-10', 0, '', '', '555123456', '202210515@urp.edu.pe', 'Calle 123, Ciudad', 1),
 (2, 'Maria', 'Gomez', '1990-11-25', 1, '', '', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad', 4);
 
+--
+-- Disparadores `pacientes`
+--
+DELIMITER $$
+CREATE TRIGGER `create_medical_history` AFTER INSERT ON `pacientes` FOR EACH ROW INSERT INTO historial_medico (paciente_id)
+VALUES (NEW.id)
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -342,7 +351,7 @@ ALTER TABLE `especialidades`
 -- AUTO_INCREMENT de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `medicos`
@@ -360,7 +369,7 @@ ALTER TABLE `medico_servicio`
 -- AUTO_INCREMENT de la tabla `pacientes`
 --
 ALTER TABLE `pacientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -378,7 +387,7 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restricciones para tablas volcadas

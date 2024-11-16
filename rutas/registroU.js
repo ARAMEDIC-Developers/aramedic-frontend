@@ -49,23 +49,22 @@ router.post("/registroU", validateCreate, (req, res) => {
                 oldData: req.body
             });
         }
-
         // Si no hay errores, insertar el nuevo usuario en la base de datos
-        const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, genero, telefono, email, direccion) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        conexion.query(insertarPaciente, [nom, ape, fecha, gender, num, ema, dire], (error, result) => {
-            if (error) {
-                console.log("TRIKA error al insertar paciente", error);
-                return res.status(500).send("Error al registrar el paciente");
-            }
-            const pac_id = result.insertId; 
-            const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id, paciente_id) VALUES (?, ?, ?, ?)";
-            conexion.query(insertarUsuario, [dni, contra, idrolPaciente, pac_id], (error, result) => {
+        const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id) VALUES (?, ?, ?)";
+            conexion.query(insertarUsuario, [dni, contra, idrolPaciente], (error, result) => {
                 if (error) {
                     console.log("TRIKA error al insertar usuario", error);
                     return res.status(500).send("Error al registrar el usuario");
                 }
-            console.log("TRIKA datos almacenados correctamente");
-            res.redirect(link + "login");
+            const user_id = result.insertId;
+            const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, genero, telefono, email, direccion, usuario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            conexion.query(insertarPaciente, [nom, ape, fecha, gender, num, ema, dire, user_id], (error, result) => {
+                if (error) {
+                    console.log("TRIKA error al insertar paciente", error);
+                    return res.status(500).send("Error al registrar el paciente");
+                }
+                console.log("TRIKA datos almacenados correctamente");
+                res.redirect(link + "login");
             });
         });
         /*/
