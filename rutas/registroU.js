@@ -4,7 +4,6 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 const { validateCreate } = require('../validaciones/registroU');
 const { validationResult } = require('express-validator');
-const { NULL } = require("mysql/lib/protocol/constants/types");
 
 // Mostrar el formulario de registro
 router.get("/registroU", function(req, res) {
