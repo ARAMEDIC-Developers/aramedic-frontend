@@ -77,11 +77,11 @@
 
         function saveModalCalentar(){
             Swal.fire({
-            title: "Do you want to save the changes?",
+            title: "¿Deseas guardar tu cita?",
             showDenyButton: false,
             showCancelButton: true,
-            confirmButtonText: "Save",
-            denyButtonText: `Don't save`
+            confirmButtonText: "Sí",
+            denyButtonText: `No`
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
@@ -156,8 +156,8 @@
                     closeModalCalentario();
 
                     Swal.fire({
-                    title: "The Internet?",
-                    text: "good",
+                    title: "Su cita ha sido registrada",
+                    text: "Redirigiendo a WhatsApp",
                     icon: "success"
                 }).then(()=>{
                     sendWhatsapp("+51974617857", registrarfecha, registrarhora)
