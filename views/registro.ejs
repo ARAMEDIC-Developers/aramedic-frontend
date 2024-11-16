@@ -65,6 +65,14 @@
                     <span class="details">Dirección</span>
                     <input type="text" name="dire" placeholder="Introduce tu Dirección" value="<%= oldData ? oldData.dire : '' %>">
                 </div>
+                <div class="input-box">
+                    <span class="details">Género</span>
+                    <select name="gender" id="gender">
+                        <option value="0" <%= oldData && oldData.gender === 'Masculino' ? 'selected' : '' %>>Masculino</option>
+                        <option value="1" <%= oldData && oldData.gender === 'Femenino' ? 'selected' : '' %>>Femenino</option>
+                        <option value="2" <%= oldData && oldData.gender === 'Otro' ? 'selected' : '' %>>Otro</option>
+                    </select>
+                </div>
             </div>
             <div class="button">
                 <input type="submit" value="Registrar">
