@@ -218,3 +218,28 @@ form .button input:hover {
         width: 0;
     }
 }
+
+
+.popup-suggestion-password {
+    position: relative;
+}
+
+.popup-suggestion-password .password {
+    position: absolute;
+    left: 0;
+    bottom: -35px;
+    width: 100%;
+    display: none;
+}
+
+.popup-suggestion-password .password.visible {
+    display: block;
+}
+
+.popup-suggestion-password .password button{
+    background-color: white;
+    outline: 0;
+    padding: 5px;
+    width: 100%;
+    border-radius: 5px;
+}
