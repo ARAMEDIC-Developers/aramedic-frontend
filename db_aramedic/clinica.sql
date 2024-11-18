@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 16-11-2024 a las 11:15:39
+-- Tiempo de generación: 18-11-2024 a las 04:08:48
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -113,7 +113,7 @@ CREATE TABLE `historial_medico` (
 
 INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`) VALUES
 (1, 2, 'Chequeo Semanal', 'Sin anomalías', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80, 165, 2.5, '', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2),
-(2, 1, 'Chequeo', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2);
+(2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2);
 
 -- --------------------------------------------------------
 
@@ -171,7 +171,7 @@ CREATE TABLE `pacientes` (
   `nombre` varchar(100) NOT NULL,
   `apellido` varchar(100) NOT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
-  `genero` tinyint(2) NOT NULL,
+  `genero` tinyint(2) DEFAULT NULL,
   `estado_civil` text NOT NULL,
   `ocupacion` text NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
@@ -185,7 +185,7 @@ CREATE TABLE `pacientes` (
 --
 
 INSERT INTO `pacientes` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `genero`, `estado_civil`, `ocupacion`, `telefono`, `email`, `direccion`, `usuario_id`) VALUES
-(1, 'Juan', 'Pérez', '1985-05-10', 0, '', '', '555123456', '202210515@urp.edu.pe', 'Calle 123, Ciudad', 1),
+(1, 'Juan', 'Pérez', '1985-05-10', 0, '', '', '555123456', 'pierocarhuaricra@gmail.com', 'Calle 123, Ciudad', 1),
 (2, 'Maria', 'Gomez', '1990-11-25', 1, '', '', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad', 4);
 
 --
@@ -224,25 +224,20 @@ INSERT INTO `rol` (`id`, `nombre_rol`) VALUES
 --
 
 CREATE TABLE `servicios` (
-  `idservicio` int(11) NOT NULL,
-  `nombre_servicio` varchar(100) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
   `descripcion` text DEFAULT NULL,
-  `costo` decimal(10,2) NOT NULL,
-  `tipo_procedimiento` varchar(100) DEFAULT NULL,
-  `tiempo_estimado` varchar(100) DEFAULT NULL,
-  `tiempo_recuperacion` varchar(100) DEFAULT NULL
+  `costo` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `servicios`
 --
 
-INSERT INTO `servicios` (`idservicio`, `nombre_servicio`, `descripcion`, `costo`, `tipo_procedimiento`, `tiempo_estimado`, `tiempo_recuperacion`) VALUES
-(1, 'Consulta General', 'Consulta general con el médico', 50.00, 'nose', '20', '10'),
-(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, 'nose', '15', '30'),
-(3, 'Radiografía', 'Radiografía de diagnóstico', 75.00, 'ayaya', '12 min', '14 min'),
-(4, 'Revision anal', NULL, 7777.00, 'manual', '30 min', '24 horas'),
-(5, 'qjnfwefj', NULL, 20.00, 'wefqefqfqe', '15', '78');
+INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`) VALUES
+(1, 'Consulta General', 'Consulta general con el médico', 50.00),
+(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00),
+(3, 'Radiografía', 'Radiografía de diagnóstico', 75.00);
 
 -- --------------------------------------------------------
 
@@ -252,6 +247,7 @@ INSERT INTO `servicios` (`idservicio`, `nombre_servicio`, `descripcion`, `costo`
 
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
+  `dni` varchar(8) DEFAULT NULL,
   `contrasena` varchar(255) NOT NULL,
   `rol_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -265,6 +261,18 @@ INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`) VALUES
 (2, '75565656', 'Asd123123', 2),
 (3, NULL, 'contrasena_segura789', 3),
 (4, '16780921', 'Asd123123', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios_key`
+--
+
+CREATE TABLE `usuarios_key` (
+  `id` int(11) NOT NULL,
+  `email` text NOT NULL,
+  `key` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Índices para tablas volcadas
@@ -326,7 +334,7 @@ ALTER TABLE `rol`
 -- Indices de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  ADD PRIMARY KEY (`idservicio`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -334,6 +342,12 @@ ALTER TABLE `servicios`
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD KEY `rol` (`rol_id`);
+
+--
+-- Indices de la tabla `usuarios_key`
+--
+ALTER TABLE `usuarios_key`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -355,7 +369,7 @@ ALTER TABLE `especialidades`
 -- AUTO_INCREMENT de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `medicos`
@@ -373,7 +387,7 @@ ALTER TABLE `medico_servicio`
 -- AUTO_INCREMENT de la tabla `pacientes`
 --
 ALTER TABLE `pacientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -385,13 +399,19 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  MODIFY `idservicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios_key`
+--
+ALTER TABLE `usuarios_key`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
@@ -403,7 +423,7 @@ ALTER TABLE `usuarios`
 ALTER TABLE `citas`
   ADD CONSTRAINT `citas_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `pacientes` (`id`),
   ADD CONSTRAINT `citas_ibfk_2` FOREIGN KEY (`medico_id`) REFERENCES `medicos` (`id`),
-  ADD CONSTRAINT `citas_ibfk_3` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`idservicio`);
+  ADD CONSTRAINT `citas_ibfk_3` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`);
 
 --
 -- Filtros para la tabla `historial_medico`
@@ -424,7 +444,7 @@ ALTER TABLE `medicos`
 --
 ALTER TABLE `medico_servicio`
   ADD CONSTRAINT `medico_servicio_ibfk_1` FOREIGN KEY (`medico_id`) REFERENCES `medicos` (`id`),
-  ADD CONSTRAINT `medico_servicio_ibfk_2` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`idservicio`);
+  ADD CONSTRAINT `medico_servicio_ibfk_2` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`);
 
 --
 -- Filtros para la tabla `pacientes`

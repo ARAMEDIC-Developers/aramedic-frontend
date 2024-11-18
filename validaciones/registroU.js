@@ -33,8 +33,6 @@ const validateCreate = [
             }
             return true;
         }),
-    check('fecha')
-        .notEmpty().withMessage('Fecha de Nacimiento obligatoria')
 ];
 
 module.exports = { validateCreate };

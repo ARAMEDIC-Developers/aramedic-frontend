@@ -26,7 +26,7 @@ router.post("/registroU", validateCreate, (req, res) => {
         });
     }
  
-    const { nom, ape, ema, num, dni, fecha, gender, dire, contra, confirm_contra} = req.body;
+    const { nom, ape, ema, num, dni, contra} = req.body;
 
     const idrolPaciente =1;
 
@@ -37,7 +37,6 @@ router.post("/registroU", validateCreate, (req, res) => {
             console.log("TRIKA error en la consulta de verificación", error);
             return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
         }
-
         if (rows.length > 0) {
             // Si ya existe un usuario con el DNI
             const mensajesError = [];
@@ -57,8 +56,8 @@ router.post("/registroU", validateCreate, (req, res) => {
                     return res.status(500).send("Error al registrar el usuario");
                 }
             const user_id = result.insertId;
-            const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, genero, telefono, email, direccion, usuario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            conexion.query(insertarPaciente, [nom, ape, fecha, gender, num, ema, dire, user_id], (error, result) => {
+            const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, telefono, email, usuario_id) VALUES (?, ?, ?, ?, ?)";
+            conexion.query(insertarPaciente, [nom, ape, num, ema, user_id], (error, result) => {
                 if (error) {
                     console.log("TRIKA error al insertar paciente", error);
                     return res.status(500).send("Error al registrar el paciente");
@@ -94,7 +93,6 @@ router.post("/registro-cita",async (req, res) =>{
     let connection = null;
     try {
         connection = await conec.beginTransaction();
-
         await conec.execute(connection, `
             INSERT INTO citas(
             paciente_id, 
@@ -104,9 +102,7 @@ router.post("/registro-cita",async (req, res) =>{
             hora,
             estado) 
             VALUES (?,?,?,?,?,?)`, Object.values(req.body));
-
         await conec.commit(connection);
-
         res.status(201).send("prabando ruta");
     } catch (error) {
         if (connection != null) {
@@ -115,6 +111,5 @@ router.post("/registro-cita",async (req, res) =>{
         console.log(error)
         return res.status(500).send("error en registrar")
     }
-   
 });
 module.exports = router;

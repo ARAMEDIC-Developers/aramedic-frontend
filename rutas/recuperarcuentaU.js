@@ -75,7 +75,7 @@ router.post("/cambiar_password", function(req, res){
         {
             const password = req.body.password;
             const updateQuery = `UPDATE usuarios u
-                                    JOIN pacientes p ON u.paciente_id = p.id
+                                    JOIN pacientes p ON p.usuario_id = u.id
                                     SET contrasena = ?
                                     WHERE p.email = ?
             `;
@@ -140,7 +140,7 @@ router.post("/recuperarcuentaU", function(req, res){
                 // text: 'Hello! This is a test email sent using Nodemailer.',
                 html:
                 `
-                <h1>Hello!</h1>
+                <h1>Hola!</h1>
                 <p>Para cambiar contraseña entra al sgte link.</p>
                 <a href="http://localhost:3000/cambiar_password?key=${key}" > Cambiar contraseña</a>
                 `
