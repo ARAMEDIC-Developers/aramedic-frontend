@@ -4,6 +4,7 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 const { validateCreate } = require('../validaciones/registroU');
 const { validationResult } = require('express-validator');
+const generatePassword = require('generate-password');
 
 // Mostrar el formulario de registro
 router.get("/registroU", function(req, res) {
@@ -112,4 +113,17 @@ router.post("/registro-cita",async (req, res) =>{
         return res.status(500).send("error en registrar")
     }
 });
+
+router.get("/suggestion-password", async (req, res) =>{
+    const password = generatePassword.generate({
+        length: 12,       // Longitud de la contraseña
+        numbers: true,    // Incluir números
+        symbols: true,    // Incluir símbolos
+        uppercase: true,  // Incluir mayúsculas
+        lowercase: true,  // Incluir minúsculas
+        excludeSimilarCharacters: true // Excluir caracteres similares como 'i', 'l', '1'
+    });
+    res.status(200).send({"text": password});
+});
+
 module.exports = router;
