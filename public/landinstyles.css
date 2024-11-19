@@ -43,6 +43,14 @@
   cursor: pointer;
 }
 
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
 img {
   width: 100%;
   display: flex;
@@ -425,6 +433,13 @@ header {
   padding: 0.95rem;
 }
 
+.footer__col.md {
+  width: 25%;
+}
+
+.footer__col.lg {
+  width: 50%;
+}
 
 .footer__col h3 {
   margin-bottom: 1rem;
@@ -487,6 +502,15 @@ header {
   cursor: pointer;
 }
 
+.gmail-link {
+  color: var(--text-white);
+  text-decoration: none;
+}
+
+.gmail-link:hover {
+  color: var(--secondary-color); /* Cambia el color al pasar el mouse si lo deseas */
+}
+
 .whatsapp-link {
   color: var(--text-white);
   text-decoration: none;
@@ -504,6 +528,10 @@ header {
 
 .footer__col {
     width: 100%;
+}
+
+.footer__col.md, .footer__col.lg {
+  width: 100%;
 }
 
 .service__grid {
