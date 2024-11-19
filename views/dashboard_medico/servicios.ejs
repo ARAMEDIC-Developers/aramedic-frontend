@@ -27,21 +27,17 @@
                     <thead style="background-color: #007BFF; color: white;">
                         <tr>
                             <th style="padding: 10px; text-align: left;">Nombre</th>
-                            <th style="padding: 10px; text-align: left;">Tipo</th>
+                            <th style="padding: 10px; text-align: left;">Descripcion</th>
                             <th style="padding: 10px; text-align: left;">Costo</th>
-                            <th style="padding: 10px; text-align: left;">Tiempo Procedimiento</th>
-                            <th style="padding: 10px; text-align: left;">Tiempo Recuperación</th>
                             <th style="padding: 10px; text-align: left;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tablaServicios">
                         <% servicios.forEach(servicio => { %>
                             <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 10px;"><%= servicio.nombre_servicio %></td>
-                                <td style="padding: 10px;"><%= servicio.tipo_procedimiento %></td>
+                                <td style="padding: 10px;"><%= servicio.nombre%></td>
+                                <td style="padding: 10px;"><%= servicio.descripcion %></td>
                                 <td style="padding: 10px;"><%= servicio.costo %></td>
-                                <td style="padding: 10px;"><%= servicio.tiempo_estimado %></td>
-                                <td style="padding: 10px;"><%= servicio.tiempo_recuperacion %></td>
                                 <td style="padding: 10px;">
                                     <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
                                     <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
@@ -66,20 +62,12 @@
                 <input type="text" id="nombre" name="nombre" required>
             </div>
             <div class="form-group">
-                <label for="tipoProcedimiento">Tipo de Procedimiento</label>
-                <input type="text" id="tipoProcedimiento" name="tipoProcedimiento" required>
+                <label for="tipoProcedimiento">Descripcion</label>
+                <input type="text" id="descripcion" name="descripcion" required>
             </div>
             <div class="form-group">
                 <label for="costo">Costo</label>
                 <input type="number" id="costo" name="costo" required>
-            </div>
-            <div class="form-group">
-                <label for="tiempoEstimadoProcedimiento">Tiempo Estimado de Procedimiento</label>
-                <input type="text" id="tiempoEstimadoProcedimiento" name="tiempoEstimadoProcedimiento" required>
-            </div>
-            <div class="form-group">
-                <label for="tiempoEstimadoRecuperacion">Tiempo Estimado de Recuperación</label>
-                <input type="text" id="tiempoEstimadoRecuperacion" name="tiempoEstimadoRecuperacion" required>
             </div>
             <button type="button" id="btnGuardar" class="btn-guardar">Guardar</button>
         </form>
@@ -111,11 +99,9 @@
                 servicios.forEach(servicio => {
                     const row = `
                         <tr style="border-bottom: 1px solid #ddd;">
-                            <td style="padding: 10px;">${servicio.nombre_servicio}</td>
-                            <td style="padding: 10px;">${servicio.tipo_procedimiento}</td>
+                            <td style="padding: 10px;">${servicio.nombre}</td>
+                            <td style="padding: 10px;">${servicio.descripcion}</td>
                             <td style="padding: 10px;">${servicio.costo}</td>
-                            <td style="padding: 10px;">${servicio.tiempo_estimado}</td>
-                            <td style="padding: 10px;">${servicio.tiempo_recuperacion}</td>
                             <td style="padding: 10px;">
                                 <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
                                 <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
@@ -139,11 +125,9 @@
         // Función para abrir el modal en modo edición con los datos cargados
         function abrirModalEditar(servicio) {
             document.getElementById("modalTitle").textContent = "Editar Servicio";
-            document.getElementById("nombre").value = servicio.nombre_servicio;
-            document.getElementById("tipoProcedimiento").value = servicio.tipo_procedimiento;
+            document.getElementById("nombre").value = servicio.nombre;
+            document.getElementById("descripcion").value = servicio.descripcion;
             document.getElementById("costo").value = servicio.costo;
-            document.getElementById("tiempoEstimadoProcedimiento").value = servicio.tiempo_estimado;
-            document.getElementById("tiempoEstimadoRecuperacion").value = servicio.tiempo_recuperacion;
             modal.classList.add("show");
         }
     
@@ -152,11 +136,9 @@
             if (event.target && event.target.matches(".btn-editar")) {
                 const row = event.target.closest("tr");
                 const servicio = {
-                    nombre_servicio: row.cells[0].textContent.trim(),
-                    tipo_procedimiento: row.cells[1].textContent.trim(),
+                    nombre: row.cells[0].textContent.trim(),
+                    descripcion: row.cells[1].textContent.trim(),
                     costo: row.cells[2].textContent.trim(),
-                    tiempo_estimado: row.cells[3].textContent.trim(),
-                    tiempo_recuperacion: row.cells[4].textContent.trim(),
                 };
                 abrirModalEditar(servicio);
             }
@@ -176,13 +158,11 @@
         // Guardar o actualizar servicio
         btnGuardar.addEventListener("click", async function () {
             const nombre = document.getElementById("nombre").value.trim();
-            const tipoProcedimiento = document.getElementById("tipoProcedimiento").value.trim();
+            const descripcion = document.getElementById("descripcion").value.trim();
             const costo = document.getElementById("costo").value.trim();
-            const tiempoEstimadoProcedimiento = document.getElementById("tiempoEstimadoProcedimiento").value.trim();
-            const tiempoEstimadoRecuperacion = document.getElementById("tiempoEstimadoRecuperacion").value.trim();
     
             // Crear objeto con los datos del formulario
-            const servicio = { nombre, tipoProcedimiento, costo, tiempoEstimadoProcedimiento, tiempoEstimadoRecuperacion };
+            const servicio = { nombre, descripcion, costo};
     
             try {
                 const response = await fetch("/dashboard_jmedico/servicios/guardar", {

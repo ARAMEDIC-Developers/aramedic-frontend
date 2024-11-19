@@ -186,7 +186,7 @@ router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req,res) => {
 
 router.get("/dashboard_jmedico/servicios", checkLoginMedico, async (req, res) => {
     try {
-        const servicios = await conexion.query("SELECT idservicio, nombre_servicio, tipo_procedimiento, costo, tiempo_estimado, tiempo_recuperacion FROM servicios");
+        const servicios = await conexion.query("SELECT id, nombre, descripcion, costo FROM servicios");
         const data = {
             'link': link,
             'usuario': req.session,
@@ -203,10 +203,10 @@ router.get("/dashboard_jmedico/servicios/buscar", checkLoginMedico, async (req, 
     const { nombre } = req.query;
     
     try {
-        let query = "SELECT idservicio, nombre_servicio, tipo_procedimiento, costo, tiempo_estimado, tiempo_recuperacion FROM servicios";
+        let query = "SELECT id, nombre, descripcion, costo FROM servicios";
         
         if (nombre) {
-            query += " WHERE nombre_servicio LIKE ?";
+            query += " WHERE nombre LIKE ?";
             const servicios = await conexion.query(query, [`${nombre}%`]);
             return res.json(servicios);
         } else {
@@ -220,30 +220,30 @@ router.get("/dashboard_jmedico/servicios/buscar", checkLoginMedico, async (req, 
 });
 
 router.post("/dashboard_jmedico/servicios/guardar", checkLoginMedico, async (req, res) => {
-    const { nombre, tipoProcedimiento, costo, tiempoEstimadoProcedimiento, tiempoEstimadoRecuperacion } = req.body;
+    const { nombre, descripcion, costo } = req.body;
 
     // Validar datos de entrada
-    const validacion = validarServicio({ nombre_servicio: nombre, costo, tipo_procedimiento: tipoProcedimiento });
+    const validacion = validarServicio({ nombre, descripcion, costo });
     if (!validacion.valido) {
         return res.status(400).json({ mensaje: validacion.mensaje });
     }
 
     try {
         // Revisar si el nombre del servicio ya existe
-        const [servicioExistente] = await conexion.query("SELECT * FROM servicios WHERE nombre_servicio = ?", [nombre]);
+        const [servicioExistente] = await conexion.query("SELECT * FROM servicios WHERE nombre = ?", [nombre]);
 
         if (servicioExistente) {
             // Si existe, actualizar la fila
             await conexion.query(
-                "UPDATE servicios SET tipo_procedimiento = ?, costo = ?, tiempo_estimado = ?, tiempo_recuperacion = ? WHERE nombre_servicio = ?",
-                [tipoProcedimiento, costo, tiempoEstimadoProcedimiento, tiempoEstimadoRecuperacion, nombre]
+                "UPDATE servicios SET descripcion = ?, costo = ? WHERE nombre = ?",
+                [descripcion, costo, nombre]
             );
             return res.json({ mensaje: "Servicio actualizado exitosamente" });
         } else {
             // Si no existe, insertar una nueva fila
             await conexion.query(
-                "INSERT INTO servicios (nombre_servicio, tipo_procedimiento, costo, tiempo_estimado, tiempo_recuperacion) VALUES (?, ?, ?, ?, ?)",
-                [nombre, tipoProcedimiento, costo, tiempoEstimadoProcedimiento, tiempoEstimadoRecuperacion]
+                "INSERT INTO servicios (nombre, descripcion, costo) VALUES (?, ?, ?)",
+                [nombre, descripcion, costo]
             );
             return res.json({ mensaje: "Servicio añadido exitosamente" });
         }
@@ -252,5 +252,4 @@ router.post("/dashboard_jmedico/servicios/guardar", checkLoginMedico, async (req
         return res.status(500).json({ mensaje: "Error al guardar el servicio" });
     }
 });
-
 module.exports = router;
