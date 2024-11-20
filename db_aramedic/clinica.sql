@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-11-2024 a las 17:27:47
+-- Tiempo de generación: 20-11-2024 a las 20:59:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -134,18 +134,30 @@ CREATE TABLE `historial_medico` (
   `riesgos` text DEFAULT NULL,
   `cuidado_preoperativo` text DEFAULT NULL,
   `cuidado_postoperativo` text DEFAULT NULL,
-  `medico_id` int(11) DEFAULT NULL
+  `medico_id` int(11) DEFAULT NULL,
+  `horaCreacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `horaActualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `historial_medico`
 --
 
-INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`) VALUES
-(1, 2, 'Chequeo Semanal', 'Sin anomalías', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80, 165, 2.5, '', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2),
-(2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2),
-(15, 7, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`, `horaCreacion`, `horaActualizacion`) VALUES
+(1, 2, 'Chequeo Semanal', 'Sin anomalías', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80, 165, 2.5, '', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-20 19:58:59'),
+(2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-20 19:59:02'),
+(15, 7, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
+(16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08');
+
+--
+-- Disparadores `historial_medico`
+--
+DELIMITER $$
+CREATE TRIGGER `before_historial_medico_update` BEFORE UPDATE ON `historial_medico` FOR EACH ROW BEGIN
+    SET NEW.horaActualizacion = CURRENT_TIMESTAMP;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
