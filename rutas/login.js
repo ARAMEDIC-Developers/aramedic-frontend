@@ -51,7 +51,6 @@ router.post("/login", validateItem, function(req, res) {
                 req.session.contra = usuario.contrasena;
                 req.session.rol = usuario.rol_id;
                 req.session[idKey] = datos[idKey]; // ID DEL MEDICO O PACIENTE
-                console.log(req.session); 
                 res.redirect(dashboard);
             }
             function procesarLoginPorRol(res, req, usuario) {

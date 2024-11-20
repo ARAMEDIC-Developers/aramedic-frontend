@@ -126,4 +126,5 @@ router.get("/suggestion-password", async (req, res) =>{
     res.status(200).send({"text": password});
 });
 
+
 module.exports = router;
