@@ -5,6 +5,8 @@ const link= require("../config/link");
 const { validateCreate } = require('../validaciones/registroU');
 const { validationResult } = require('express-validator');
 const generatePassword = require('generate-password');
+const bcrypt= require("bcrypt");
+const saltRounds=10;
 
 // Mostrar el formulario de registro
 router.get("/registroU", function(req, res) {
@@ -16,7 +18,7 @@ router.get("/registroU", function(req, res) {
 });
 
 // Procesar el formulario de registro
-router.post("/registroU", validateCreate, (req, res) => {
+router.post("/registroU", validateCreate, async function(req, res)  {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // Si hay errores, renderizamos la vista 'registro' con los errores y datos anteriores
@@ -30,6 +32,31 @@ router.post("/registroU", validateCreate, (req, res) => {
     const { nom, ape, ema, num, dni, contra} = req.body;
 
     const idrolPaciente =1;
+
+    try {
+        const hashedPas=await bcrypt.hash(contra, saltRounds);
+
+         // Si no hay errores, insertar el nuevo usuario en la base de datos
+    const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id) VALUES (?, ?, ?)";
+    conexion.query(insertarUsuario, [dni, hashedPas, idrolPaciente], (error, result) => {
+        if (error) {
+            console.log("TRIKA error al insertar usuario", error);
+            return res.status(500).send("Error al registrar el usuario");
+        }
+    const user_id = result.insertId;
+    const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, telefono, email, usuario_id) VALUES (?, ?, ?, ?, ?)";
+    conexion.query(insertarPaciente, [nom, ape, num, ema, user_id], (error, result) => {
+        if (error) {
+            console.log("TRIKA error al insertar paciente", error);
+            return res.status(500).send("Error al registrar el paciente");
+        }
+        console.log("TRIKA datos almacenados correctamente");
+        res.redirect(link + "login");
+    });
+});
+    } catch (error) {
+        
+    }
 
     // Verificar si el DNI, correo o número de celular ya existen
     const verificarUsuario = "SELECT * FROM usuarios WHERE dni = ?";
@@ -49,24 +76,9 @@ router.post("/registroU", validateCreate, (req, res) => {
                 oldData: req.body
             });
         }
-        // Si no hay errores, insertar el nuevo usuario en la base de datos
-        const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id) VALUES (?, ?, ?)";
-            conexion.query(insertarUsuario, [dni, contra, idrolPaciente], (error, result) => {
-                if (error) {
-                    console.log("TRIKA error al insertar usuario", error);
-                    return res.status(500).send("Error al registrar el usuario");
-                }
-            const user_id = result.insertId;
-            const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, telefono, email, usuario_id) VALUES (?, ?, ?, ?, ?)";
-            conexion.query(insertarPaciente, [nom, ape, num, ema, user_id], (error, result) => {
-                if (error) {
-                    console.log("TRIKA error al insertar paciente", error);
-                    return res.status(500).send("Error al registrar el paciente");
-                }
-                console.log("TRIKA datos almacenados correctamente");
-                res.redirect(link + "login");
-            });
-        });
+
+
+       
         /*/
         const obteneridUser='SELECT idusuario FROM `usuario` WHERE DNI = ?';
         conexion.query(obteneridUser, dni, (error, rows)=>{
