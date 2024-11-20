@@ -186,7 +186,9 @@ router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req,res) => {
 
 router.get("/dashboard_jmedico/servicios", checkLoginMedico, async (req, res) => {
     try {
-        const servicios = await conexion.query("SELECT id, nombre, descripcion, costo FROM servicios");
+        const medico_id = req.session.medico_id;
+        const servicios = await conexion.query(`SELECT s.id, s.nombre, s.descripcion, s.costo  FROM medico_servicio m
+                                                JOIN servicios s ON m.servicio_id=s.id WHERE m.medico_id = `+medico_id);
         const data = {
             'link': link,
             'usuario': req.session,
@@ -201,12 +203,11 @@ router.get("/dashboard_jmedico/servicios", checkLoginMedico, async (req, res) =>
 
 router.get("/dashboard_jmedico/servicios/buscar", checkLoginMedico, async (req, res) => {
     const { nombre } = req.query;
-    
+    //ARREGLAR BUSCAR
     try {
-        let query = "SELECT id, nombre, descripcion, costo FROM servicios";
-        
+        let query = "SELECT s.nombre, s.descripcion, s.costo FROM medico_servicio m JOIN servicios s ON m.servicio_id = s.id WHERE m.medico_id = "+req.session.medico_id;
         if (nombre) {
-            query += " WHERE nombre LIKE ?";
+            query += " AND nombre LIKE ?";
             const servicios = await conexion.query(query, [`${nombre}%`]);
             return res.json(servicios);
         } else {
@@ -219,24 +220,23 @@ router.get("/dashboard_jmedico/servicios/buscar", checkLoginMedico, async (req, 
     }
 });
 
+//PARA ADMIN EDITAR COMPLETO / 
 router.post("/dashboard_jmedico/servicios/guardar", checkLoginMedico, async (req, res) => {
     const { nombre, descripcion, costo } = req.body;
-
     // Validar datos de entrada
     const validacion = validarServicio({ nombre, descripcion, costo });
     if (!validacion.valido) {
         return res.status(400).json({ mensaje: validacion.mensaje });
     }
-
     try {
         // Revisar si el nombre del servicio ya existe
-        const [servicioExistente] = await conexion.query("SELECT * FROM servicios WHERE nombre = ?", [nombre]);
-
+        const id = req.body.id;
+        const [servicioExistente] = await conexion.query("SELECT s.nombre, s.descripcion, s.costo, FROM servicios WHERE id = ?", [id]);
         if (servicioExistente) {
             // Si existe, actualizar la fila
             await conexion.query(
-                "UPDATE servicios SET descripcion = ?, costo = ? WHERE nombre = ?",
-                [descripcion, costo, nombre]
+                "UPDATE servicios SET nombre = ?, descripcion = ?, costo = ? WHERE id = ?",
+                [nombre, descripcion, costo, id]
             );
             return res.json({ mensaje: "Servicio actualizado exitosamente" });
         } else {
@@ -252,4 +252,23 @@ router.post("/dashboard_jmedico/servicios/guardar", checkLoginMedico, async (req
         return res.status(500).json({ mensaje: "Error al guardar el servicio" });
     }
 });
+
+router.delete("/dashboard_jmedico/servicios/eliminar/:id", checkLoginMedico, async (req, res) => {
+    const { id } = req.params;
+    const id_medico = req.session.medico_id;  
+    try {
+        //const result = await conexion.query("DELETE FROM servicios WHERE id = ?", [id]); | ELIMINAR ADMIN
+        //ELIMINAR SERVICIO POR MEDICO | USAR PROCEDURES
+        const result = await conexion.query("DELETE FROM medico_servicio WHERE medico_id = ? AND servicio_id = ?", [id_medico, id]);
+        if (result.affectedRows > 0) {
+            return res.json({ mensaje: "Servicio eliminado exitosamente" });
+        } else {
+            return res.status(404).json({ mensaje: "Servicio no encontrado" });
+        }
+    } catch (error) {
+        console.error("Error al eliminar servicio:", error);
+        return res.status(500).json({ mensaje: "Error al eliminar el servicio" });
+    }
+});
+
 module.exports = router;

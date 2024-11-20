@@ -1,5 +1,4 @@
 <%- include('../_partials/header') %>
-
 <div class="dashboard-container">
     <%- include('../_partials/sidebar') %>
 
@@ -39,8 +38,8 @@
                                 <td style="padding: 10px;"><%= servicio.descripcion %></td>
                                 <td style="padding: 10px;"><%= servicio.costo %></td>
                                 <td style="padding: 10px;">
-                                    <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
-                                    <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                                    <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="<%= servicio.id %>">Editar</button>
+                                    <button class="btn-eliminar" style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="<%= servicio.id %>">Eliminar</button>
                                 </td>
                             </tr>
                         <% }) %>
@@ -57,12 +56,13 @@
         <span class="close">&times;</span>
         <h2 id="modalTitle">Añadir Servicio</h2>
         <form id="formServicio">
+            <input type="hidden" id="servicioId" name="id"> <!-- Campo oculto para el ID del servicio -->
             <div class="form-group">
                 <label for="nombre">Nombre del Servicio</label>
                 <input type="text" id="nombre" name="nombre" required>
             </div>
             <div class="form-group">
-                <label for="tipoProcedimiento">Descripcion</label>
+                <label for="descripcion">Descripcion</label>
                 <input type="text" id="descripcion" name="descripcion" required>
             </div>
             <div class="form-group">
@@ -103,8 +103,8 @@
                             <td style="padding: 10px;">${servicio.descripcion}</td>
                             <td style="padding: 10px;">${servicio.costo}</td>
                             <td style="padding: 10px;">
-                                <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;">Editar</button>
-                                <button style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                                <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="${servicio.id}">Editar</button>
+                                <button class="btn-eliminar" style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="${servicio.id}">Eliminar</button>
                             </td>
                         </tr>
                     `;
@@ -128,21 +128,48 @@
             document.getElementById("nombre").value = servicio.nombre;
             document.getElementById("descripcion").value = servicio.descripcion;
             document.getElementById("costo").value = servicio.costo;
+            document.getElementById("servicioId").value = servicio.id; // Establecer el ID en el campo oculto
             modal.classList.add("show");
         }
     
         // Asignar evento de clic en los botones de editar dentro de cada fila de la tabla
         tablaServicios.addEventListener("click", function (event) {
             if (event.target && event.target.matches(".btn-editar")) {
-                const row = event.target.closest("tr");
+                const idServicio = event.target.getAttribute("data-id");
+                // Buscar los datos del servicio con el id (esto puede ser una solicitud a la base de datos)
                 const servicio = {
-                    nombre: row.cells[0].textContent.trim(),
-                    descripcion: row.cells[1].textContent.trim(),
-                    costo: row.cells[2].textContent.trim(),
+                    id: idServicio,
+                    nombre: event.target.closest("tr").cells[0].textContent.trim(),
+                    descripcion: event.target.closest("tr").cells[1].textContent.trim(),
+                    costo: event.target.closest("tr").cells[2].textContent.trim()
                 };
                 abrirModalEditar(servicio);
             }
         });
+
+        tablaServicios.addEventListener("click", async function (event) {
+        if (event.target && event.target.matches(".btn-eliminar")) {
+            const idServicio = event.target.getAttribute("data-id");
+            const confirmar = confirm("¿Estás seguro de que deseas eliminar este servicio?");
+            if (confirmar) {
+                try {
+                    const response = await fetch(`/dashboard_jmedico/servicios/eliminar/${idServicio}`, {
+                        method: "DELETE"
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(result.mensaje);
+                        location.reload();
+                    } else {
+                        alert(result.mensaje);
+                    }
+                } catch (error) {
+                    console.error("Error al eliminar el servicio:", error);
+                    alert("Error al eliminar el servicio.");
+                }
+            }
+        }
+    });
     
         // Cerrar el modal
         closeModal.addEventListener("click", () => {
@@ -160,9 +187,10 @@
             const nombre = document.getElementById("nombre").value.trim();
             const descripcion = document.getElementById("descripcion").value.trim();
             const costo = document.getElementById("costo").value.trim();
-    
+            const id = document.getElementById("servicioId").value; // Obtener el ID del servicio
+            
             // Crear objeto con los datos del formulario
-            const servicio = { nombre, descripcion, costo};
+            const servicio = { id, nombre, descripcion, costo };
     
             try {
                 const response = await fetch("/dashboard_jmedico/servicios/guardar", {
@@ -186,6 +214,4 @@
         });
     });
     </script>
-    
-
 <%- include('../_partials/footer') %>
