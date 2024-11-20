@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 18-11-2024 a las 04:08:48
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 20-11-2024 a las 06:48:26
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -25,12 +25,21 @@ DELIMITER $$
 --
 -- Procedimientos
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `login_procedure` (IN `idrol` INT, IN `iduser` INT)   IF (idrol = 1) THEN
-SELECT u.id, u.dni, p.nombre, p.telefono, p.email, p.id AS paciente_id, u.contrasena, u.rol_id FROM usuarios u INNER JOIN pacientes p WHERE p.usuario_id=u.id AND p.usuario_id = iduser;
-ELSEIF (idrol = 2) THEN
-SELECT u.id, u.dni, m.nombre, m.telefono, m.email, m.id AS medico_id, u.contrasena, u.rol_id FROM usuarios u INNER JOIN medicos m 
-WHERE m.usuario_id=u.id AND m.usuario_id = iduser;
-END IF$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `login_procedure` (IN `idrol` INT, IN `iduser` INT)   BEGIN
+    IF (idrol = 1) THEN
+        SELECT u.id, u.dni, p.nombre, p.telefono, p.email, p.id AS paciente_id, u.contrasena, u.rol_id 
+        FROM usuarios u 
+        INNER JOIN pacientes p 
+        ON p.usuario_id = u.id 
+        WHERE p.usuario_id = iduser;
+    ELSEIF (idrol = 2) THEN
+        SELECT u.id, u.dni, m.nombre, m.telefono, m.email, m.id AS medico_id, u.contrasena, u.rol_id 
+        FROM usuarios u 
+        INNER JOIN medicos m 
+        ON m.usuario_id = u.id 
+        WHERE m.usuario_id = iduser;
+    END IF;
+END$$
 
 DELIMITER ;
 
@@ -113,7 +122,9 @@ CREATE TABLE `historial_medico` (
 
 INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`) VALUES
 (1, 2, 'Chequeo Semanal', 'Sin anomalías', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80, 165, 2.5, '', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2),
-(2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2);
+(2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2),
+(15, 7, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -137,7 +148,8 @@ CREATE TABLE `medicos` (
 
 INSERT INTO `medicos` (`id`, `nombre`, `apellido`, `especialidad_id`, `telefono`, `email`, `usuario_id`) VALUES
 (1, 'Carlos', 'Lopez', 1, '555789012', 'carlos.lopez@example.com', NULL),
-(2, 'Ana', 'Martinez', 2, '555345678', 'ana.martinez@example.com', 2);
+(2, 'Ana', 'Martinez', 2, '555345678', 'ana.martinez@example.com', 2),
+(3, 'dereck', 'muñoz', 1, '944224435', 'dereckmunoz07@gmail.com', 13);
 
 -- --------------------------------------------------------
 
@@ -186,7 +198,9 @@ CREATE TABLE `pacientes` (
 
 INSERT INTO `pacientes` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `genero`, `estado_civil`, `ocupacion`, `telefono`, `email`, `direccion`, `usuario_id`) VALUES
 (1, 'Juan', 'Pérez', '1985-05-10', 0, '', '', '555123456', 'pierocarhuaricra@gmail.com', 'Calle 123, Ciudad', 1),
-(2, 'Maria', 'Gomez', '1990-11-25', 1, '', '', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad', 4);
+(2, 'Maria', 'Gomez', '1990-11-25', 1, '', '', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad', 4),
+(7, 'DERECK', 'MUÑOZ', NULL, NULL, '', '', '999999999', 'dereckmunoz07@gmail.com', NULL, 11),
+(8, 'DERECK', 'Muñoz', NULL, NULL, '', '', '999999999', 'dereckmunoz07@gmail.com', NULL, 12);
 
 --
 -- Disparadores `pacientes`
@@ -260,7 +274,10 @@ INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`) VALUES
 (1, '74972730', 'Asd123123', 1),
 (2, '75565656', 'Asd123123', 2),
 (3, NULL, 'contrasena_segura789', 3),
-(4, '16780921', 'Asd123123', 1);
+(4, '16780921', 'Asd123123', 1),
+(11, '74733211', '$2b$10$ZRdhUj6d8GHNd/hsK47GHuohNlxhd2GvWXZQ/PfWR.GTZWHJgATEC', 1),
+(12, '74733299', '$2b$10$/NB90fLoUA5hcLz.kwL8VubJn8mpflhdKGtI6Lpt3Mjgsj9BQ5v3S', 1),
+(13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2);
 
 -- --------------------------------------------------------
 
@@ -369,13 +386,13 @@ ALTER TABLE `especialidades`
 -- AUTO_INCREMENT de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `medicos`
 --
 ALTER TABLE `medicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `medico_servicio`
@@ -387,7 +404,7 @@ ALTER TABLE `medico_servicio`
 -- AUTO_INCREMENT de la tabla `pacientes`
 --
 ALTER TABLE `pacientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -405,7 +422,7 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios_key`

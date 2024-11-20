@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 /**
  * Clase para gestionar la conexión a la base de datos MySQL.

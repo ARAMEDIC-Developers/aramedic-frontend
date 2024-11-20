@@ -1,108 +1,92 @@
 const express = require("express");
-const router= express.Router();
-const conexion=require("../config/conexion");
-const link= require("../config/link");
+const router = express.Router();
+const conexion = require("../config/conexion");
+const link = require("../config/link");
 const { validateCreate } = require('../validaciones/registroU');
 const { validationResult } = require('express-validator');
 const generatePassword = require('generate-password');
-const bcrypt= require("bcrypt");
-const saltRounds=10;
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 // Mostrar el formulario de registro
 router.get("/registroU", function(req, res) {
-    res.render("registro", { 
-        link, 
+    res.render("registro", {
+        link,
         errors: [], // No hay errores en la primera carga
         oldData: {} // En la primera carga no hay datos previos
     });
 });
 
 // Procesar el formulario de registro
-router.post("/registroU", validateCreate, async function(req, res)  {
+router.post("/registroU", validateCreate, async function(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // Si hay errores, renderizamos la vista 'registro' con los errores y datos anteriores
-        return res.render("registro", { 
-            link, 
-            errors: errors.array(), // Enviamos los errores a la vista
-            oldData: req.body // Enviamos los datos ingresados para que se mantengan
+        return res.render("registro", {
+            link,
+            errors: errors.array(),
+            oldData: req.body
         });
     }
- 
-    const { nom, ape, ema, num, dni, contra} = req.body;
 
-    const idrolPaciente =1;
+    const { nom, ape, ema, num, dni, contra } = req.body;
+    const idrolPaciente = 2;
 
     try {
-        const hashedPas=await bcrypt.hash(contra, saltRounds);
-
-         // Si no hay errores, insertar el nuevo usuario en la base de datos
-    const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id) VALUES (?, ?, ?)";
-    conexion.query(insertarUsuario, [dni, hashedPas, idrolPaciente], (error, result) => {
-        if (error) {
-            console.log("TRIKA error al insertar usuario", error);
-            return res.status(500).send("Error al registrar el usuario");
-        }
-    const user_id = result.insertId;
-    const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, telefono, email, usuario_id) VALUES (?, ?, ?, ?, ?)";
-    conexion.query(insertarPaciente, [nom, ape, num, ema, user_id], (error, result) => {
-        if (error) {
-            console.log("TRIKA error al insertar paciente", error);
-            return res.status(500).send("Error al registrar el paciente");
-        }
-        console.log("TRIKA datos almacenados correctamente");
-        res.redirect(link + "login");
-    });
-});
-    } catch (error) {
-        
-    }
-
-    // Verificar si el DNI, correo o número de celular ya existen
-    const verificarUsuario = "SELECT * FROM usuarios WHERE dni = ?";
-    conexion.query(verificarUsuario, [dni], (error, rows) => {
-        if (error) {
-            console.log("TRIKA error en la consulta de verificación", error);
-            return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
-        }
-        if (rows.length > 0) {
-            // Si ya existe un usuario con el DNI
-            const mensajesError = [];
-            if (rows.some(row => row.dni === dni)) mensajesError.push({ msg: "El DNI ya está registrado" });
-
-            return res.render("registro", {
-                link,
-                errors: mensajesError,
-                oldData: req.body
-            });
-        }
-
-
-       
-        /*/
-        const obteneridUser='SELECT idusuario FROM `usuario` WHERE DNI = ?';
-        conexion.query(obteneridUser, dni, (error, rows)=>{
-            if(error){
-                console.log(error)
+        // Verificar si el DNI ya existe antes de insertar
+        const verificarUsuario = "SELECT * FROM usuarios WHERE dni = ?";
+        conexion.query(verificarUsuario, [dni], async (error, rows) => {
+            if (error) {
+                console.log("TRIKA error en la consulta de verificación", error);
+                return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
             }
-            else{
-                const iduser = rows[0].idusuario;
-                const procedure='CALL create_medical_history(?, ?, ?, ?, ?, ?)';
-                conexion.query(procedure, [iduser, nom, ape, num, genderBool, ema], function(error){
-                    if(error){
-                        console.log(error)
+            if (rows.length > 0) {
+                // Si ya existe un usuario con el DNI
+                const mensajesError = [{ msg: "El DNI ya está registrado" }];
+                return res.render("registro", {
+                    link,
+                    errors: mensajesError,
+                    oldData: req.body
+                });
+            }
+
+            // Si el usuario no existe, procede a insertar
+            try {
+                const hashedPas = await bcrypt.hash(contra, saltRounds);
+                
+                // Insertar el nuevo usuario
+                const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id) VALUES (?, ?, ?)";
+                conexion.query(insertarUsuario, [dni, hashedPas, idrolPaciente], (error, result) => {
+                    if (error) {
+                        console.log("TRIKA error al insertar usuario", error);
+                        return res.status(500).send("Error al registrar el usuario");
                     }
-                    else{
-                        console.log('TRIKA AGREGADO HISTORIA')
-                    }
-                })
+                    const user_id = result.insertId;
+
+                    // Insertar datos en la tabla de pacientes
+                    const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, telefono, email, usuario_id) VALUES (?, ?, ?, ?, ?)";
+                    conexion.query(insertarPaciente, [nom, ape, num, ema, user_id], (error) => {
+                        if (error) {
+                            console.log("TRIKA error al insertar paciente", error);
+                            return res.status(500).send("Error al registrar el paciente");
+                        }
+                        console.log("TRIKA datos almacenados correctamente");
+                        return res.redirect(link + "login");
+                    });
+                });
+            } catch (error) {
+                console.log("TRIKA error al hashear la contraseña", error);
+                return res.status(500).send("Error al procesar la solicitud");
             }
         });
-        /*/
-    });
+    } catch (error) {
+        console.log("TRIKA error en el proceso general", error);
+        return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
+    }
 });
+
 // Ruta para registrar cita
-router.post("/registro-cita",async (req, res) =>{
+router.post("/registro-cita", async (req, res) => {
     let connection = null;
     try {
         connection = await conec.beginTransaction();
@@ -116,26 +100,26 @@ router.post("/registro-cita",async (req, res) =>{
             estado) 
             VALUES (?,?,?,?,?,?)`, Object.values(req.body));
         await conec.commit(connection);
-        res.status(201).send("prabando ruta");
+        res.status(201).send("Probando ruta");
     } catch (error) {
         if (connection != null) {
             await conec.rollback(connection);
         }
-        console.log(error)
-        return res.status(500).send("error en registrar")
+        console.log(error);
+        return res.status(500).send("Error en registrar");
     }
 });
 
-router.get("/suggestion-password", async (req, res) =>{
+router.get("/suggestion-password", async (req, res) => {
     const password = generatePassword.generate({
-        length: 12,       // Longitud de la contraseña
-        numbers: true,    // Incluir números
-        symbols: true,    // Incluir símbolos
-        uppercase: true,  // Incluir mayúsculas
-        lowercase: true,  // Incluir minúsculas
-        excludeSimilarCharacters: true // Excluir caracteres similares como 'i', 'l', '1'
+        length: 12,
+        numbers: true,
+        symbols: true,
+        uppercase: true,
+        lowercase: true,
+        excludeSimilarCharacters: true
     });
-    res.status(200).send({"text": password});
+    res.status(200).send({ "text": password });
 });
 
 module.exports = router;

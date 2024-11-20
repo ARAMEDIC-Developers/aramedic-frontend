@@ -4,6 +4,7 @@ const conexion = require("../config/conexion");
 const link = require("../config/link");
 const { validateItem } = require('../validaciones/login');
 const { validationResult } = require('express-validator');  
+const bcrypt = require("bcrypt"); // Importamos bcrypt para comparar las contraseñas
 
 router.get("/login", function(req, res) {
     res.render("login", { link, oldData: {} });
@@ -31,16 +32,21 @@ router.post("/login", validateItem, function(req, res) {
         }
         if (rows.length < 1) {
             mensaje = "El DNI no existe en la base de datos.";
-            res.render("login", { mensaje, link, oldData: req.body });
+            return res.render("login", { mensaje, link, oldData: req.body });
         } else {
-            const usuario = rows[0]
-            const loginQuery = "CALL login_procedure(?, ?)"
+            const usuario = rows[0];
+
+            // Usamos bcrypt.compare para verificar si la contraseña es correcta
+            const match = await bcrypt.compare(contrasena, usuario.contrasena);
+            
+            if (!match) {
+                const mensaje = "La contraseña ingresada es incorrecta.";
+                return res.render("login", { mensaje, link, oldData: req.body });
+            }
+
+            // Procedemos con el inicio de sesión
+            const loginQuery = "CALL login_procedure(?, ?)";
             function manejarInicioSesion(res, req, usuario, datos, dashboard, idKey) {
-                const match = contrasena === usuario.contrasena;
-                if (!match) {
-                    const mensaje = "La contraseña ingresada es incorrecta.";
-                    return res.render("login", { mensaje, link, oldData: req.body });
-                }
                 // Configurar la sesión
                 req.session.login = true;
                 req.session.idusu = usuario.id;
@@ -71,13 +77,7 @@ router.post("/login", validateItem, function(req, res) {
                     }
                 });
             }
-            const user = rows[0];
-            if (user) {
-                procesarLoginPorRol(res, req, user);
-            } else {
-                const mensaje = "Usuario no encontrado.";
-                res.render("login", { mensaje, link, oldData: req.body });
-            }
+            procesarLoginPorRol(res, req, usuario);
         }
     });
 });
@@ -86,4 +86,5 @@ router.get("/logout", function(req, res) {
     req.session.destroy();
     res.redirect("/login");
 });
+
 module.exports = router;
