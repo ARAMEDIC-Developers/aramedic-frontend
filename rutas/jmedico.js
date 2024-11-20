@@ -1,4 +1,6 @@
 const express = require("express");
+const PDFDocument = require('pdfkit');
+const archiver = require('archiver');
 const router = express.Router();
 const conexion = require("../config/conexion");
 const link = require("../config/link");
@@ -294,6 +296,129 @@ router.post("/bloquear-fechas", async (req, res) =>{
         console.log(error)
         return res.status(500).send("sessión terminada")
     }
+});
+
+//Metodo para generar PDF
+router.get("/dashboard_jmedico/historias/descargar_pdf/:id", checkLoginMedico, (req, res) => {
+    const historiaId = req.params.id;
+
+    const query = `
+        SELECT p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.fecha_nacimiento, 
+               h.motivo, h.enfermedades_previas, h.alergias, h.medicamentos_actuales
+        FROM historial_medico h
+        JOIN pacientes p ON h.paciente_id = p.id
+        WHERE h.id = ? AND h.medico_id = ?;
+    `;
+
+    conexion.query(query, [historiaId, req.session.medico_id], (error, results) => {
+        if (error || results.length === 0) {
+            return res.status(404).send("Historia clínica no encontrada o no tienes permiso.");
+        }
+
+        const historia = results[0];
+        const doc = new PDFDocument();
+
+        // Configurar headers para la descarga
+        res.setHeader("Content-Type", "application/pdf");
+        // Modificar la línea para usar el nombre y apellido del paciente
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename=historia_clinica_${historia.nombre_paciente}_${historia.apellido_paciente}.pdf`
+        );
+
+        // Generar contenido del PDF
+        doc.pipe(res);
+
+        // Encabezado
+        doc.fontSize(16).text("Historia Clínica", { align: "center" });
+        doc.moveDown();
+
+        // Detalles del paciente
+        doc.fontSize(12).text(`Paciente: ${historia.nombre_paciente} ${historia.apellido_paciente}`, { align: "left" });
+        doc.text(`Fecha de nacimiento: ${historia.fecha_nacimiento}`, { align: "left" });
+        doc.text(`Motivo de consulta: ${historia.motivo}`, { align: "left" });
+        doc.moveDown();
+
+        // Generación de la tabla
+        const tableTop = doc.y + 20;
+        const rowHeight = 20;
+        const columnWidth = [120, 320]; // Tamaños de columnas
+        let currentY = tableTop;
+
+        // Títulos de la tabla
+        doc.fontSize(12).text("Descripción", columnWidth[0], currentY, { width: columnWidth[0], align: "center" });
+        doc.text("Detalle", columnWidth[0] + columnWidth[0], currentY, { width: columnWidth[1], align: "center" });
+        currentY += rowHeight;
+
+        // Filas de la tabla
+        const rows = [
+            ["Motivo de consulta", historia.motivo || "No especificado"],
+            ["Enfermedades previas", historia.enfermedades_previas || "N/A"],
+            ["Alergias", historia.alergias || "N/A"],
+            ["Medicamentos actuales", historia.medicamentos_actuales || "N/A"]
+        ];
+
+        // Dibujar las filas de la tabla
+        rows.forEach(row => {
+            doc.text(row[0], columnWidth[0], currentY, { width: columnWidth[0], align: "center" });
+            doc.text(row[1], columnWidth[0] + columnWidth[0], currentY, { width: columnWidth[1], align: "center" });
+            currentY += rowHeight;
+        });
+        
+        // Finalizar el documento
+        doc.end(); 
+    });
+});
+
+router.get("/dashboard_jmedico/historias/descargar_todos_pdf", checkLoginMedico, (req, res) => {
+    const idusuario = req.session.medico_id;
+
+    // Consulta para obtener todas las historias clínicas del médico
+    const historias = `
+        SELECT h.id, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente
+        FROM historial_medico h
+        JOIN pacientes p ON h.paciente_id = p.id
+        WHERE h.medico_id = ?;
+    `;
+
+    conexion.query(historias, idusuario, (error, rows) => {
+        if (error || rows.length === 0) {
+            return res.status(404).send("No se encontraron historias clínicas.");
+        }
+
+        // Crear archivo ZIP
+        const zip = archiver('zip', { zlib: { level: 9 } });
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', 'attachment; filename=historias_clinicas.zip');
+
+        // Pipe the archive to the response
+        zip.pipe(res);
+
+        // Iterar sobre todas las historias y generar los PDFs
+        rows.forEach(historia => {
+            const doc = new PDFDocument();
+            const nombrePaciente = historia.nombre_paciente;
+            const apellidoPaciente = historia.apellido_paciente;
+
+            // Nombre del archivo dentro del ZIP usando nombre y apellido del paciente
+            const nombreArchivo = `historia_clinica_${nombrePaciente}_${apellidoPaciente}.pdf`;
+
+            // Añadir cada PDF al archivo ZIP con el nombre del paciente
+            zip.append(doc, { name: nombreArchivo });
+
+            // Generar contenido del PDF
+            doc.fontSize(16).text("Historia Clínica", { align: "center" });
+            doc.moveDown();
+            doc.fontSize(12).text(`Paciente: ${nombrePaciente} ${apellidoPaciente}`, { align: "left" });
+            doc.text(`Historia clínica ID: ${historia.id}`, { align: "left" });
+
+            // Aquí puedes incluir más detalles de la historia clínica si lo deseas
+            doc.end();
+        });
+
+        // Finalizar la creación del archivo ZIP
+        zip.finalize();
+    });
 });
 
 module.exports = router;
