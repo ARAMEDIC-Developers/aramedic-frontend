@@ -30,63 +30,68 @@ router.post("/registroU", validateCreate, (req, res) => {
 
     const idrolPaciente =1;
 
-    // Verificar si el DNI, correo o número de celular ya existen
-    const verificarUsuario = "SELECT * FROM usuarios WHERE dni = ?";
-    conexion.query(verificarUsuario, [dni], (error, rows) => {
-        if (error) {
-            console.log("TRIKA error en la consulta de verificación", error);
-            return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
-        }
-
-        if (rows.length > 0) {
-            // Si ya existe un usuario con el DNI
-            const mensajesError = [];
-            if (rows.some(row => row.dni === dni)) mensajesError.push({ msg: "El DNI ya está registrado" });
-
-            return res.render("registro", {
-                link,
-                errors: mensajesError,
-                oldData: req.body
-            });
-        }
-        // Si no hay errores, insertar el nuevo usuario en la base de datos
-        const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id) VALUES (?, ?, ?)";
-            conexion.query(insertarUsuario, [dni, contra, idrolPaciente], (error, result) => {
-                if (error) {
-                    console.log("TRIKA error al insertar usuario", error);
-                    return res.status(500).send("Error al registrar el usuario");
-                }
-            const user_id = result.insertId;
-            const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, fecha_nacimiento, genero, telefono, email, direccion, usuario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            conexion.query(insertarPaciente, [nom, ape, fecha, gender, num, ema, dire, user_id], (error, result) => {
-                if (error) {
-                    console.log("TRIKA error al insertar paciente", error);
-                    return res.status(500).send("Error al registrar el paciente");
-                }
-                console.log("TRIKA datos almacenados correctamente");
-                res.redirect(link + "login");
-            });
-        });
-        /*/
-        const obteneridUser='SELECT idusuario FROM `usuario` WHERE DNI = ?';
-        conexion.query(obteneridUser, dni, (error, rows)=>{
-            if(error){
-                console.log(error)
+    try {
+        // Verificar si el DNI ya existe antes de insertar
+        const verificarUsuario = "SELECT * FROM usuarios WHERE dni = ?";
+        conexion.query(verificarUsuario, [dni], async (error, rows) => {
+            if (error) {
+                console.log("TRIKA error en la consulta de verificación", error);
+                return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
             }
-            else{
-                const iduser = rows[0].idusuario;
-                const procedure='CALL create_medical_history(?, ?, ?, ?, ?, ?)';
-                conexion.query(procedure, [iduser, nom, ape, num, genderBool, ema], function(error){
-                    if(error){
-                        console.log(error)
+            if (rows.length > 0) {
+                // Si ya existe un usuario con el DNI
+                const mensajesError = [{ msg: "El DNI ya está registrado" }];
+                return res.render("registro", {
+                    link,
+                    errors: mensajesError,
+                    oldData: req.body
+                });
+            }
+
+            // Si el usuario no existe, procede a insertar
+            try {
+                const hashedPas = await bcrypt.hash(contra, saltRounds);
+                
+                // Insertar el nuevo usuario
+                const insertarUsuario = "INSERT INTO usuarios (dni, contrasena, rol_id) VALUES (?, ?, ?)";
+                conexion.query(insertarUsuario, [dni, hashedPas, idrolPaciente], (error, result) => {
+                    if (error) {
+                        console.log("TRIKA error al insertar usuario", error);
+                        return res.status(500).send("Error al registrar el usuario");
                     }
-                    else{
-                        console.log('TRIKA AGREGADO HISTORIA')
-                    }
-                })
+                    const user_id = result.insertId;
+
+                    // Insertar datos en la tabla de pacientes
+                    const insertarPaciente = "INSERT INTO pacientes (nombre, apellido, telefono, email, usuario_id) VALUES (?, ?, ?, ?, ?)";
+                    conexion.query(insertarPaciente, [nom, ape, num, ema, user_id], (error) => {
+                        if (error) {
+                            console.log("TRIKA error al insertar paciente", error);
+                            return res.status(500).send("Error al registrar el paciente");
+                        }
+                        console.log("TRIKA datos almacenados correctamente");
+                        return res.redirect(link + "login");
+                    });
+                });
+            } catch (error) {
+                console.log("TRIKA error al hashear la contraseña", error);
+                return res.status(500).send("Error al procesar la solicitud");
             }
         });
-        /*/
+    } catch (error) {
+        console.log("TRIKA error en el proceso general", error);
+        return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
+    }
+});
+
+router.get("/suggestion-password", async (req, res) => {
+    const password = generatePassword.generate({
+        length: 12,
+        numbers: true,
+        symbols: true,
+        uppercase: true,
+        lowercase: true,
+        excludeSimilarCharacters: true
     });
+    res.status(200).send({ "text": password });
 });
 module.exports = router;

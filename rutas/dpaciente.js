@@ -26,6 +26,53 @@ router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res)
     res.render("dashboard_paciente/calendario", data);
 });
 
+router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req, res) =>{
+    const medico_servicios = `
+    SELECT m.id AS medico_id, m.nombre AS medico_nombre, m.apellido AS medico_apellido, s.id AS servicio_id, 
+           s.nombre AS servicio_nombre, s.descripcion AS servicio_descripcion, s.costo AS servicio_costo
+    FROM medico_servicio ms 
+    JOIN medicos m ON ms.medico_id = m.id
+    JOIN servicios s ON ms.servicio_id = s.id
+    `
+    conexion.query(medico_servicios, async function(error, rows) {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Error al obtener médicos" });
+        }
+
+        const med_sv = rows;
+        console.log(med_sv);
+        
+        const data = {
+            'usuario': req.session,
+            'link': link,
+            'medico_servicios': med_sv
+        };
+        res.status(200).render("dashboard_paciente/solicitar_consulta", data);
+    });
+});
+
+router.post("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req,res) => {
+    const idusuario = req.session.paciente_id;
+    const {medico_id, servicio_id, fecha, hora} =req.body;
+    const citas = `
+    INSERT INTO citas(paciente_id, medico_id, servicio_id, fecha, hora)
+    VALUES (?, ?, ?, ?, ?)
+    `
+    conexion.query(citas, [idusuario, medico_id, servicio_id, fecha, hora], async function(error, rows){
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Error al registrar la cita" });
+        }
+        const data = {
+            'titulo': 'Página de calendario',
+            'usuario': req.session,
+            'link': link,
+        };
+        res.status(200).render("dashboard_paciente/calendario", data);
+    });
+});
+
 router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
     // const citas = database.Historias('select * from historias');
     const data = {
