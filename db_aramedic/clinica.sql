@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-11-2024 a las 06:48:26
+-- Tiempo de generación: 20-11-2024 a las 17:27:47
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -86,6 +86,27 @@ INSERT INTO `especialidades` (`id`, `nombre`) VALUES
 (1, 'Cardiología'),
 (2, 'Pediatría'),
 (3, 'Dermatología');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `fechas`
+--
+
+CREATE TABLE `fechas` (
+  `id_fecha` int(11) NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_final` date NOT NULL,
+  `id_usuario` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `fechas`
+--
+
+INSERT INTO `fechas` (`id_fecha`, `fecha_inicio`, `fecha_final`, `id_usuario`) VALUES
+(1, '2024-11-20', '2024-11-30', 2),
+(2, '2024-11-05', '2024-11-15', 2);
 
 -- --------------------------------------------------------
 
@@ -311,6 +332,12 @@ ALTER TABLE `especialidades`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `fechas`
+--
+ALTER TABLE `fechas`
+  ADD PRIMARY KEY (`id_fecha`);
+
+--
 -- Indices de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
@@ -381,6 +408,12 @@ ALTER TABLE `citas`
 --
 ALTER TABLE `especialidades`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `fechas`
+--
+ALTER TABLE `fechas`
+  MODIFY `id_fecha` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_medico`

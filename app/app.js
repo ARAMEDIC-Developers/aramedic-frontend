@@ -3,6 +3,7 @@ const path = require('path');
 const express = require("express");
 const app = express();
 const methodOverride = require('method-override'); // Para usar métodos PUT y DELETE en formularios
+const cors = require('cors');
 const session = require('express-session');
 
 // Configuraciones
@@ -15,8 +16,13 @@ app.use(methodOverride('_method')); // Permite usar métodos PUT y DELETE
 app.use(session({
     secret: "tu_contraseña",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true
 }));
+
+app.use(cors({
+    origin: '*', // Cambia esto a tu dominio cliente
+    credentials: true // Permite cookies en solicitudes CORS
+  }));
 
 // Middleware para pasar datos de la sesión a las vistas EJS
 app.use((req, res, next) => {

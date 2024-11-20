@@ -11,7 +11,7 @@ router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
         'usuario': req.session
     }
 
-    res.render("dashboard_medico/calendario", data);
+    res.render("dashboard_medico/gestion_calendario", data);
 });
 
 router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
@@ -122,7 +122,7 @@ router.post("/dashboard_jmedico/historia_clinica", checkLoginMedico, async(req, 
     );
 });
 
-router.get("/dashboard_jmedico/calendario", checkLoginMedico, async (req,res) => {
+router.get("/dashboard_jmedico/gestion_calendario", checkLoginMedico, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
 
@@ -133,7 +133,7 @@ router.get("/dashboard_jmedico/calendario", checkLoginMedico, async (req,res) =>
         'usuario': req.session
     };
     
-    res.render("dashboard_medico/calendario", data);
+    res.render("dashboard_medico/gestion_calendario", data);
 });
 
 router.get("/dashboard_jmedico/test", checkLoginMedico, async (req,res) => {
@@ -268,6 +268,31 @@ router.delete("/dashboard_jmedico/servicios/eliminar/:id", checkLoginMedico, asy
     } catch (error) {
         console.error("Error al eliminar servicio:", error);
         return res.status(500).json({ mensaje: "Error al eliminar el servicio" });
+    }
+});
+
+router.post("/bloquear-fechas", async (req, res) =>{
+    try {
+        console.log("que fue.")
+        console.log(req.body)
+        console.log(req.session.medico_id)
+
+        conexion.query(`
+            INSERT INTO fechas(
+            fecha_inicio, 
+            fecha_final, 
+            id_usuario) 
+            VALUES (?,?,?)`, [
+                req.body.fecha_inicio,
+                req.body.fecha_final,
+                req.session.medico_id
+            ]);
+
+        res.status(200).send("ok");
+    } catch (error) {
+       
+        console.log(error)
+        return res.status(500).send("sessión terminada")
     }
 });
 
