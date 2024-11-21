@@ -1,0 +1,208 @@
+<%- include('../_partials/header') %>
+
+    <div class="dashboard-container">
+        <%- include('../_partials/sidebar') %>
+
+        <!-- Contenido Principal -->
+        <main id="main-content">
+            <%- include('../_partials/sub_header') %>
+            <!-- Lista de Notificaciones -->
+            <%- include('../_partials/notificaciones') %>
+
+            <div class="main-content">
+                <h2 class="section-title">Citas Médicas</h2>
+
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar cita...">
+                </div>
+
+                <button id="btnAgregarCitas" class="add-button">
+                    <i class="fas fa-plus-circle"></i> Agendar Cita
+                </button>
+                
+            
+                <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                            <th>Hora de Inicio</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCitas">
+                        <!-- Los servicios se insertarán aquí dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+                
+        </div>
+    </div>  
+
+
+    <div id="modalCitas" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Añadir Cita</h2>
+            <form id="formCitas">
+                <div class="form-group">
+                    <label for="nombre">Paciente</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipoProcedimiento">Tipo de Procedimiento</label>
+                    <select id="tipoProcedimiento" name="tipoProcedimiento" required>
+                        <option value="">Seleccione el tipo</option>
+                        <option value="Consulta">Consulta</option>
+                        <option value="Cirugía">Cirugía</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha">Fecha</label>
+                    <input type="text" id="fecha" name="fecha" required>
+                </div>
+                <div class="form-group">
+                    <label for="hora">Hora de Inicio</label>
+                    <input type="text" id="hora" name="hora" required>
+                </div>
+                <div class="form-group">
+                    <label for="Estado">Estado</label>
+                    <select id="estado" name="estado" required>
+                        <option value="">Seleccione el Estado</option>
+                        <option value="Consulta">Pendiente</option>
+                        <option value="Cirugía">Aceptado</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-guardar">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+
+
+<script>
+    let citas = [
+    { id: 1, paciente: "Juan Perez", tipo: "Consulta", fecha: "29, noviembre 2024", hora: "11:00 am", estado: "Aceptado" },
+    { id: 2, paciente: "Wilmer Casco", tipo: "Cirugía", fecha: "5, diciembre 2024", hora: "5:00 pm", estado: "Aceptado" },
+   
+];
+    
+     // Elementos del DOM
+const tablaCitas = document.getElementById('tablaCitas');
+const btnAgregarCitas = document.getElementById('btnAgregarCitas');
+const modal = document.getElementById('modalCitas');
+const closeModal = document.querySelector('.close');
+const formCitas = document.getElementById('formCitas');
+const modalTitle = document.getElementById('modalTitle');
+const searchInput = document.getElementById('searchInput');
+
+// Función para renderizar la tabla de servicios
+function renderizarTabla(citasArray) {
+    tablaCitas.innerHTML = '';
+    citasArray.forEach(citas => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${citas.paciente}</td>
+            <td>${citas.tipo}</td>
+            <td>${citas.fecha}</td>
+            <td>${citas.hora}</td>
+            <td>${citas.estado}</td>
+            <td>
+                <button class="edit-button" data-id="${citas.id}">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="delete-button" data-id="${citas.id}">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            </td>
+        `;
+        tablaCitas.appendChild(row);
+    });
+}
+renderizarTabla(citas);
+
+// Evento para abrir el modal de agregar servicio
+btnAgregarCitas.addEventListener('click', () => {
+modalTitle.textContent = 'Añadir Citas';
+formCitas.reset();
+modal.classList.add('show');
+});
+
+// Evento para cerrar el modal
+closeModal.addEventListener('click', () => {
+modal.classList.remove('show');
+});
+// Evento para manejar el envío del formulario
+formCitas.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(formCitas);
+    const nuevaCita = {
+        id: Date.now(), // Generar un ID único
+        paciente: formData.get('nombre'),
+        tipo: formData.get('tipoProcedimiento'),
+        fecha:formData.get('fecha'),
+        hora: formData.get('hora'),
+        estado: formData.get('estado')
+    };
+    if (formCitas.dataset.editId) {
+        // Editar servicio existente
+        const index = citas.findIndex(c => c.id === parseInt(formCitas.dataset.editId));
+        if (index !== -1) {
+            citas[index] = { ...citas[index], ...nuevaCita };
+        }
+        delete formCitas.dataset.editId;
+    } else {
+        // Agregar nuevo servicio
+        citas.push(nuevaCita);
+    }
+
+    renderizarTabla(citas);
+    modal.classList.remove('show');
+});
+// Evento para editar o eliminar servicios
+tablaCitas.addEventListener('click', (e) => {
+    if (e.target.classList.contains('edit-button') || e.target.closest('.edit-button')) {
+        const id = parseInt(e.target.dataset.id || e.target.closest('.edit-button').dataset.id);
+        const cita = citas.find(c => c.id === id);
+        if (cita) {
+            modalTitle.textContent = 'Editar Cita';
+            formCitas.nombre.value = cita.paciente;
+            formCitas.tipoProcedimiento.value = cita.tipo;
+            formCitas.fecha.value = cita.fecha;
+            formCitas.hora.value = cita.hora;
+            formCitas.estado.value = cita.estado;
+            formCitas.dataset.editId = id;
+            modal.classList.add('show');
+        }
+    } else if (e.target.classList.contains('delete-button') || e.target.closest('.delete-button')) {
+        const id = parseInt(e.target.dataset.id || e.target.closest('.delete-button').dataset.id);
+        if (confirm('¿Estás seguro de que quieres eliminar esta cita?')) {
+            citas = citas.filter(c => c.id !== id);
+            renderizarTabla(citas);
+        }
+    }
+});
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const citasFiltrados = citas.filter(citas => 
+        citas.paciente.toLowerCase().includes(searchTerm) ||
+        citas.tipo.toLowerCase().includes(searchTerm)
+    );
+    renderizarTabla(citasFiltrados);
+});
+
+// Cerrar el modal si se hace clic fuera de él
+window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        modal.classList.remove('show');
+    }
+});
+
+</script>
+
+
+<%- include('../_partials/footer') %>

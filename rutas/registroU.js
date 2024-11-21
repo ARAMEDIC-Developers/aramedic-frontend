@@ -30,7 +30,7 @@ router.post("/registroU", validateCreate, async function(req, res) {
     }
 
     const { nom, ape, ema, num, dni, contra } = req.body;
-    const idrolPaciente =1;
+    const idrolPaciente = 1;
 
     try {
         // Verificar si el DNI ya existe antes de insertar

@@ -3,14 +3,14 @@ const router = express.Router();
 const conexion = require("../config/conexion");
 const link = require("../config/link");
 const { validateItem } = require('../validaciones/login');
-const { validationResult } = require('express-validator');  
+const { validationResult } = require('express-validator');
 const bcrypt = require("bcrypt"); // Importamos bcrypt para comparar las contraseñas
 
 router.get("/login", function(req, res) {
     res.render("login", { link, oldData: {} });
 });
 
-router.post("/login", validateItem, function(req, res) {
+router.post("/login", validateItem, async function(req, res) {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -21,64 +21,67 @@ router.post("/login", validateItem, function(req, res) {
             oldData: req.body
         });
     }
+
     const DNI = req.body.dni;
     const contrasena = req.body.contra;
     const validar = "SELECT * FROM usuarios WHERE dni = ?";
-    conexion.query(validar, [DNI], async function(error, rows) {
-        let mensaje;
-        if (error) {
-            console.log("TRIKA error consulta validar", error);
-            return res.status(500).send("TRIKA ERROR EN EL SERVIDOR");
-        }
+
+    try {
+        // Verificar si el usuario existe
+        const [rows] = await conexion.promise().query(validar, [DNI]);
+
         if (rows.length < 1) {
-            mensaje = "El DNI no existe en la base de datos.";
+            const mensaje = "El DNI no existe en la base de datos.";
             return res.render("login", { mensaje, link, oldData: req.body });
-        } else {
-            const usuario = rows[0];
-
-            // Usamos bcrypt.compare para verificar si la contraseña es correcta
-            const match = await bcrypt.compare(contrasena, usuario.contrasena);
-            
-            if (!match) {
-                const mensaje = "La contraseña ingresada es incorrecta.";
-                return res.render("login", { mensaje, link, oldData: req.body });
-            }
-
-            // Procedemos con el inicio de sesión
-            const loginQuery = "CALL login_procedure(?, ?)";
-            function manejarInicioSesion(res, req, usuario, datos, dashboard, idKey) {
-                // Configurar la sesión
-                req.session.login = true;
-                req.session.idusu = usuario.id;
-                req.session.dni = usuario.dni;
-                req.session.nom = datos.nombre;
-                req.session.tel = datos.telefono;
-                req.session.cor = datos.email;
-                req.session.contra = usuario.contrasena;
-                req.session.rol = usuario.rol_id;
-                req.session[idKey] = datos[idKey]; // ID DEL MEDICO O PACIENTE
-                res.redirect(dashboard);
-            }
-            function procesarLoginPorRol(res, req, usuario) {
-                conexion.query(loginQuery, [usuario.rol_id, usuario.id], function (error, result) {
-                    if (error) {
-                        console.error("Error en la consulta:", error);
-                        const mensaje = "Error interno. Intente más tarde.";
-                        return res.render("login", { mensaje, link, oldData: req.body });
-                    }
-                    const datos = result[0][0];
-                    if (usuario.rol_id === 1) {
-                        manejarInicioSesion(res, req, usuario, datos, "dashboard_paciente", "paciente_id");
-                    } else if (usuario.rol_id === 2) {
-                        manejarInicioSesion(res, req, usuario, datos, "dashboard_jmedico", "medico_id");
-                    } else {
-                        //ROL ADMIN
-                    }
-                });
-            }
-            procesarLoginPorRol(res, req, usuario);
         }
-    });
+
+        const usuario = rows[0];
+
+        // Comparar contraseñas con bcrypt
+        const match = await bcrypt.compare(contrasena, usuario.contrasena);
+        if (!match) {
+            const mensaje = "La contraseña ingresada es incorrecta.";
+            return res.render("login", { mensaje, link, oldData: req.body });
+        }
+
+        // Procedemos con el inicio de sesión
+        const loginQuery = "CALL login_procedure(?, ?)";
+        const [result] = await conexion.promise().query(loginQuery, [usuario.rol_id, usuario.id]);
+        const datos = result[0][0]; // Obtenemos los datos del procedimiento almacenado
+
+        if (!datos) {
+            const mensaje = "Error en el inicio de sesión. Intente nuevamente.";
+            return res.render("login", { mensaje, link, oldData: req.body });
+        }
+
+        // Manejar la sesión según el rol
+        req.session.login = true;
+        req.session.idusu = usuario.id;
+        req.session.dni = usuario.dni;
+        req.session.contra = usuario.contrasena;
+        req.session.rol = usuario.rol_id;
+
+        if (usuario.rol_id === 1) { // Rol Paciente
+            req.session.nom = datos.nombre;
+            req.session.tel = datos.telefono;
+            req.session.cor = datos.email;
+            req.session.paciente_id = datos.paciente_id;
+            return res.redirect("dashboard_paciente");
+        } else if (usuario.rol_id === 2) { // Rol Médico
+            req.session.nom = datos.nombre;
+            req.session.tel = datos.telefono;
+            req.session.cor = datos.email;
+            req.session.medico_id = datos.medico_id;
+            return res.redirect("dashboard_jmedico");
+        } else if (usuario.rol_id === 3) { // Rol Administrador
+            return res.redirect("dashboard_admin");
+        }
+
+    } catch (error) {
+        console.error("Error en el proceso de inicio de sesión:", error);
+        const mensaje = "Error interno. Intente nuevamente más tarde.";
+        return res.render("login", { mensaje, link, oldData: req.body });
+    }
 });
 
 router.get("/logout", function(req, res) {
