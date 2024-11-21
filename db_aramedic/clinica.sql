@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-11-2024 a las 20:59:21
+-- Tiempo de generación: 21-11-2024 a las 05:17:49
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -38,6 +38,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `login_procedure` (IN `idrol` INT, I
         INNER JOIN medicos m 
         ON m.usuario_id = u.id 
         WHERE m.usuario_id = iduser;
+	ELSEIF (idrol = 3) THEN
+        SELECT u.id, u.dni, u.contrasena, u.rol_id 
+        FROM usuarios u 
+        WHERE u.id = iduser;
     END IF;
 END$$
 
@@ -310,7 +314,8 @@ INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`) VALUES
 (4, '16780921', 'Asd123123', 1),
 (11, '74733211', '$2b$10$ZRdhUj6d8GHNd/hsK47GHuohNlxhd2GvWXZQ/PfWR.GTZWHJgATEC', 1),
 (12, '74733299', '$2b$10$/NB90fLoUA5hcLz.kwL8VubJn8mpflhdKGtI6Lpt3Mjgsj9BQ5v3S', 1),
-(13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2);
+(13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2),
+(14, '12345678', '$2b$10$KSRLPcmF4VVRaj1Ug58hke2a5trtFVJCmqXvAZSKZGAyTnJPZt/L2', 3);
 
 -- --------------------------------------------------------
 
@@ -467,7 +472,7 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios_key`

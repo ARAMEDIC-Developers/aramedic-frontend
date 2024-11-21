@@ -44,6 +44,7 @@ app.use(require("../rutas/login"));
 app.use(require("../rutas/registroU"));
 app.use(require("../rutas/jmedico"));
 app.use(require("../rutas/dpaciente"));
+app.use(require("../rutas/admin"));
 app.use(require("../rutas/recuperarcuentaU"));
 
 // Configuración del puerto del servidor
