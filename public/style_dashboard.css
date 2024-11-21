@@ -423,6 +423,154 @@ body::before {
     color: #777;
 }
 
+/* mobile styses */
+/* Mobile Navigation */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--sidebar-bg);
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.mobile-nav-icons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.mobile-nav-icons a {
+  color: #fff;
+  font-size: 24px;
+  text-decoration: none;
+}
+
+/* Mobile Sidebar */
+.mobile-sidebar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 80%;
+  height: 100%;
+  background: var(--sidebar-bg);
+  z-index: 1001;
+  transition: left 0.3s ease;
+  overflow-y: auto;
+  padding: 20px 0; /* Add padding top and bottom */
+  display: flex; /* Use flexbox for vertical centering */
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+}
+
+.mobile-sidebar.open {
+  left: 0;
+}
+
+.mobile-sidebar-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Mobile Doctor Info Styles */
+.mobile-doctor-info {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.mobile-doctor-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.mobile-doctor-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.mobile-doctor-email {
+  font-size: 14px;
+  color: #ecf0f1;
+  word-break: break-all;
+  margin-bottom: 20px; /* Add space below email */
+}
+
+/* Mobile Sidebar Menu */
+.mobile-sidebar .sidebar-menu {
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-sidebar .sidebar-menu li {
+  margin-bottom: 15px;
+}
+
+.mobile-sidebar .sidebar-menu li:last-child {
+  margin-top: auto; /* Push "Cerrar sesión" to the bottom */
+}
+
+.mobile-sidebar .sidebar-menu li a {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.mobile-sidebar .sidebar-menu li a i {
+  margin-right: 10px;
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  #sidebar {
+      display: none;
+  }
+
+  .mobile-nav {
+      display: block;
+  }
+
+  .mobile-sidebar {
+      display: flex;
+  }
+
+  #main-content {
+      margin-left: 0;
+      padding-bottom: 70px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .dashboard-container {
@@ -443,11 +591,11 @@ body::before {
         margin-left: 0;
     }
 
-    .sidebar-menu {
+    /* .sidebar-menu {
         flex-direction: row;
         justify-content: space-around;
         padding: 10px 0;
-    }
+    } */
 
     .sidebar-menu li {
         margin-bottom: 0;

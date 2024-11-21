@@ -55,24 +55,35 @@
                     </div>  
                     <div class="field input-field">
                         <label for="password">Contraseña</label>
-                        <input type="password" name="contra" placeholder="Ingresa tu contraseña" required>
+                        <input type="password" name="contra" id="password" placeholder="Ingresa tu contraseña" required>
                         <i class="bx bx-hide eye-icon"></i>
-                    </div>
+                    </div>                    
                     <div class="field button-field">
                         <button type="submit">Iniciar Sesión</button>
                     </div>
                     <div class="form-link forgot-password">
-                        <span>Olvidaste tu contraseña?</span>
-                        <a href="/recuperarcuentaU" class="forgot-pass">Recuperar cuenta</a>
+                        <span>¿Olvidaste tu contraseña?</span>
+                        <a href="/recuperarcuentaU" class="forgot-pass">Recuperar mi Cuenta</a>
                     </div>
                     <div class="form-link register-section">
-                        <span>¿No tienes una cuenta?</span>
-                        <a href="/registroU" class="register">Regístrate</a>
+                        <span>¿No tienes una cuenta?<a href="/registroU" class="register"> Regístrate</a></span>
                     </div>
                 </form>
             </div>
         </div>
     </section>
-    <script src="script-login.js"></script>
+    <!-- <script src="script-login.js"></script>-->
+    <script>
+        const passwordField = document.querySelector("#password");
+        const eyeIcon = document.querySelector(".eye-icon");
+    
+        eyeIcon.addEventListener("click", () => {
+            const isPassword = passwordField.getAttribute("type") === "password";
+            passwordField.setAttribute("type", isPassword ? "text" : "password");
+            eyeIcon.classList.toggle("bx-show");
+            eyeIcon.classList.toggle("bx-hide");
+        });
+    </script>
+    
 </body>
 </html>

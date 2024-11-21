@@ -10,10 +10,23 @@
             <!-- Lista de Notificaciones -->
             <%- include('../_partials/notificaciones') %>
 
+            <%- include('../_partials/modal_bl_fecha') %>
+
             <section id="calendario" >
                 <h2 class="section-title">Calendario</h2>
+
+                
+                <div>
+                    <button onclick="openModalCalendario()">Bloquear fechas</button>
+                </div>
+
+                <div>
+                    <button onclick="openModalCalendario()">Bloquear horas de un día</button>
+                </div>
+
                 <!-- Contenido del calendario -->
                 <div class="container">
+
                     <div class="calendar">
                         <div class="header">
                             <div class="month"></div>
@@ -48,6 +61,50 @@
 
         </main>
     </div>
+
+    <script>
+        const session = "<%= JSON.stringify(usuario) %>";
+        console.log(session)
+            const modalCalendario = document.getElementById("myModal");
+            const closeModalCalendarioBtn = document.getElementsByClassName("close-calentario")[0];
+
+            function openModalCalendario(date) {
+                modalCalendario.classList.add('active');
+            }
+
+            function closeModalCalentario() {
+                modalCalendario.classList.remove('active');
+            }
+
+            closeModalCalendarioBtn.onclick = closeModalCalentario;
+
+            async function saveModalCalentar(){
+                const fechaInicio = document.getElementById("fechaInicio");
+                const fechaFinal = document.getElementById("fechaFinal")
+                console.log(fechaInicio.value, fechaFinal.value)
+
+                try{
+
+                    const data = {
+                        fecha_inicio: fechaInicio.value,
+                        fecha_final: fechaFinal.value
+                    }
+
+                const response = await fetch('/bloquear-fechas', {  // Cambia '/ruta-del-servidor' por tu URL de destino
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                    });
+
+                    console.log(response)
+            }catch(error){
+                console.log(error)
+            }
+            }
+    </script>
 
 <%- include('../_partials/footer') %>
 

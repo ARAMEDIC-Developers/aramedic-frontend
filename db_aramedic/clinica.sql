@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 16-11-2024 a las 11:15:39
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 20-11-2024 a las 20:59:21
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -25,12 +25,21 @@ DELIMITER $$
 --
 -- Procedimientos
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `login_procedure` (IN `idrol` INT, IN `iduser` INT)   IF (idrol = 1) THEN
-SELECT u.id, u.dni, p.nombre, p.telefono, p.email, p.id AS paciente_id, u.contrasena, u.rol_id FROM usuarios u INNER JOIN pacientes p WHERE p.usuario_id=u.id AND p.usuario_id = iduser;
-ELSEIF (idrol = 2) THEN
-SELECT u.id, u.dni, m.nombre, m.telefono, m.email, m.id AS medico_id, u.contrasena, u.rol_id FROM usuarios u INNER JOIN medicos m 
-WHERE m.usuario_id=u.id AND m.usuario_id = iduser;
-END IF$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `login_procedure` (IN `idrol` INT, IN `iduser` INT)   BEGIN
+    IF (idrol = 1) THEN
+        SELECT u.id, u.dni, p.nombre, p.telefono, p.email, p.id AS paciente_id, u.contrasena, u.rol_id 
+        FROM usuarios u 
+        INNER JOIN pacientes p 
+        ON p.usuario_id = u.id 
+        WHERE p.usuario_id = iduser;
+    ELSEIF (idrol = 2) THEN
+        SELECT u.id, u.dni, m.nombre, m.telefono, m.email, m.id AS medico_id, u.contrasena, u.rol_id 
+        FROM usuarios u 
+        INNER JOIN medicos m 
+        ON m.usuario_id = u.id 
+        WHERE m.usuario_id = iduser;
+    END IF;
+END$$
 
 DELIMITER ;
 
@@ -81,6 +90,27 @@ INSERT INTO `especialidades` (`id`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `fechas`
+--
+
+CREATE TABLE `fechas` (
+  `id_fecha` int(11) NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_final` date NOT NULL,
+  `id_usuario` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `fechas`
+--
+
+INSERT INTO `fechas` (`id_fecha`, `fecha_inicio`, `fecha_final`, `id_usuario`) VALUES
+(1, '2024-11-20', '2024-11-30', 2),
+(2, '2024-11-05', '2024-11-15', 2);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `historial_medico`
 --
 
@@ -104,16 +134,30 @@ CREATE TABLE `historial_medico` (
   `riesgos` text DEFAULT NULL,
   `cuidado_preoperativo` text DEFAULT NULL,
   `cuidado_postoperativo` text DEFAULT NULL,
-  `medico_id` int(11) DEFAULT NULL
+  `medico_id` int(11) DEFAULT NULL,
+  `horaCreacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `horaActualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `historial_medico`
 --
 
-INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`) VALUES
-(1, 2, 'Chequeo Semanal', 'Sin anomalías', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80, 165, 2.5, '', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2),
-(2, 1, 'Chequeo', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 2);
+INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`, `horaCreacion`, `horaActualizacion`) VALUES
+(1, 2, 'Chequeo Semanal', 'Sin anomalías', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80, 165, 2.5, '', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-20 19:58:59'),
+(2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-20 19:59:02'),
+(15, 7, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
+(16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08');
+
+--
+-- Disparadores `historial_medico`
+--
+DELIMITER $$
+CREATE TRIGGER `before_historial_medico_update` BEFORE UPDATE ON `historial_medico` FOR EACH ROW BEGIN
+    SET NEW.horaActualizacion = CURRENT_TIMESTAMP;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -137,7 +181,8 @@ CREATE TABLE `medicos` (
 
 INSERT INTO `medicos` (`id`, `nombre`, `apellido`, `especialidad_id`, `telefono`, `email`, `usuario_id`) VALUES
 (1, 'Carlos', 'Lopez', 1, '555789012', 'carlos.lopez@example.com', NULL),
-(2, 'Ana', 'Martinez', 2, '555345678', 'ana.martinez@example.com', 2);
+(2, 'Ana', 'Martinez', 2, '555345678', 'ana.martinez@example.com', 2),
+(3, 'dereck', 'muñoz', 1, '944224435', 'dereckmunoz07@gmail.com', 13);
 
 -- --------------------------------------------------------
 
@@ -171,7 +216,7 @@ CREATE TABLE `pacientes` (
   `nombre` varchar(100) NOT NULL,
   `apellido` varchar(100) NOT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
-  `genero` tinyint(2) NOT NULL,
+  `genero` tinyint(2) DEFAULT NULL,
   `estado_civil` text NOT NULL,
   `ocupacion` text NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
@@ -185,8 +230,10 @@ CREATE TABLE `pacientes` (
 --
 
 INSERT INTO `pacientes` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `genero`, `estado_civil`, `ocupacion`, `telefono`, `email`, `direccion`, `usuario_id`) VALUES
-(1, 'Juan', 'Pérez', '1985-05-10', 0, '', '', '555123456', '202210515@urp.edu.pe', 'Calle 123, Ciudad', 1),
-(2, 'Maria', 'Gomez', '1990-11-25', 1, '', '', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad', 4);
+(1, 'Juan', 'Pérez', '1985-05-10', 0, '', '', '555123456', 'pierocarhuaricra@gmail.com', 'Calle 123, Ciudad', 1),
+(2, 'Maria', 'Gomez', '1990-11-25', 1, '', '', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad', 4),
+(7, 'DERECK', 'MUÑOZ', NULL, NULL, '', '', '999999999', 'dereckmunoz07@gmail.com', NULL, 11),
+(8, 'DERECK', 'Muñoz', NULL, NULL, '', '', '999999999', 'dereckmunoz07@gmail.com', NULL, 12);
 
 --
 -- Disparadores `pacientes`
@@ -260,7 +307,22 @@ INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`) VALUES
 (1, '74972730', 'Asd123123', 1),
 (2, '75565656', 'Asd123123', 2),
 (3, NULL, 'contrasena_segura789', 3),
-(4, '16780921', 'Asd123123', 1);
+(4, '16780921', 'Asd123123', 1),
+(11, '74733211', '$2b$10$ZRdhUj6d8GHNd/hsK47GHuohNlxhd2GvWXZQ/PfWR.GTZWHJgATEC', 1),
+(12, '74733299', '$2b$10$/NB90fLoUA5hcLz.kwL8VubJn8mpflhdKGtI6Lpt3Mjgsj9BQ5v3S', 1),
+(13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios_key`
+--
+
+CREATE TABLE `usuarios_key` (
+  `id` int(11) NOT NULL,
+  `email` text NOT NULL,
+  `key` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Índices para tablas volcadas
@@ -280,6 +342,12 @@ ALTER TABLE `citas`
 --
 ALTER TABLE `especialidades`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `fechas`
+--
+ALTER TABLE `fechas`
+  ADD PRIMARY KEY (`id_fecha`);
 
 --
 -- Indices de la tabla `historial_medico`
@@ -332,6 +400,12 @@ ALTER TABLE `usuarios`
   ADD KEY `rol` (`rol_id`);
 
 --
+-- Indices de la tabla `usuarios_key`
+--
+ALTER TABLE `usuarios_key`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -348,16 +422,22 @@ ALTER TABLE `especialidades`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT de la tabla `fechas`
+--
+ALTER TABLE `fechas`
+  MODIFY `id_fecha` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `medicos`
 --
 ALTER TABLE `medicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `medico_servicio`
@@ -369,7 +449,7 @@ ALTER TABLE `medico_servicio`
 -- AUTO_INCREMENT de la tabla `pacientes`
 --
 ALTER TABLE `pacientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -387,7 +467,13 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios_key`
+--
+ALTER TABLE `usuarios_key`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas

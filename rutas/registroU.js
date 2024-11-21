@@ -1,32 +1,36 @@
 const express = require("express");
-const router= express.Router();
-const conexion=require("../config/conexion");
-const link= require("../config/link");
+const router = express.Router();
+const conexion = require("../config/conexion");
+const link = require("../config/link");
 const { validateCreate } = require('../validaciones/registroU');
 const { validationResult } = require('express-validator');
+const generatePassword = require('generate-password');
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 // Mostrar el formulario de registro
 router.get("/registroU", function(req, res) {
-    res.render("registro", { 
-        link, 
+    res.render("registro", {
+        link,
         errors: [], // No hay errores en la primera carga
         oldData: {} // En la primera carga no hay datos previos
     });
 });
 
 // Procesar el formulario de registro
-router.post("/registroU", validateCreate, (req, res) => {
+router.post("/registroU", validateCreate, async function(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // Si hay errores, renderizamos la vista 'registro' con los errores y datos anteriores
-        return res.render("registro", { 
-            link, 
-            errors: errors.array(), // Enviamos los errores a la vista
-            oldData: req.body // Enviamos los datos ingresados para que se mantengan
+        return res.render("registro", {
+            link,
+            errors: errors.array(),
+            oldData: req.body
         });
     }
- 
-    const { nom, ape, ema, num, dni, fecha, gender, dire, contra, confirm_contra} = req.body;
+
+    const { nom, ape, ema, num, dni, contra } = req.body;
+    const idrolPaciente = 2;
 
     const idrolPaciente =1;
 
@@ -94,4 +98,5 @@ router.get("/suggestion-password", async (req, res) => {
     });
     res.status(200).send({ "text": password });
 });
+
 module.exports = router;

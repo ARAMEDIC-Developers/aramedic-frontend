@@ -50,28 +50,22 @@
                     <input type="text" name="num" placeholder="Introduce tu Número" value="<%= oldData ? oldData.num : '' %>">
                 </div>
                 <div class="input-box">
-                    <span class="details">Fecha de Nacimiento</span>
-                    <input type="date" name="fecha" placeholder="Introduce tu fecha de Nacimiento" value="<%= oldData ? oldData.fecha : '' %>">
-                </div>
-                <div class="input-box">
                     <span class="details">Contraseña</span>
-                    <input type="password" name="contra" placeholder="Introduce tu contraseña">
+                    <div class="popup-suggestion-password">
+                        <input type="password" name="contra" id="txtPasswordPrimary" placeholder="Introduce tu contraseña">
+                        <div class="password" id="divPassword">
+                            <button type="button" id="btnSuggestion">
+                                <span>Contraseña sugerida: </span>
+                                <span id="txtSuggestion"></span>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="input-box">
                     <span class="details">Confirmar Contraseña</span>
-                    <input type="password" name="confirm_contra" placeholder="Confirmar tu contraseña">
-                </div>
-                <div class="input-box">
-                    <span class="details">Dirección</span>
-                    <input type="text" name="dire" placeholder="Introduce tu Dirección" value="<%= oldData ? oldData.dire : '' %>">
-                </div>
-                <div class="input-box">
-                    <span class="details">Género</span>
-                    <select name="gender" id="gender">
-                        <option value="0" <%= oldData && oldData.gender === 'Masculino' ? 'selected' : '' %>>Masculino</option>
-                        <option value="1" <%= oldData && oldData.gender === 'Femenino' ? 'selected' : '' %>>Femenino</option>
-                        <option value="2" <%= oldData && oldData.gender === 'Otro' ? 'selected' : '' %>>Otro</option>
-                    </select>
+                    <input type="password" name="confirm_contra" 
+                    id="txtPasswordConfirm" placeholder="Confirmar tu contraseña">
                 </div>
             </div>
             <div class="button">
@@ -79,5 +73,47 @@
             </div>
         </form>
     </div>
+
+    <script>
+        let pressend = false;
+        let loading = false;
+        const txtPasswordPrimary = document.getElementById("txtPasswordPrimary");
+        const txtPasswordConfirm = document.getElementById("txtPasswordConfirm")
+        const divPassword = document.getElementById("divPassword");
+        const btnSuggestion = document.getElementById("btnSuggestion");
+        const txtSuggestion = document.getElementById("txtSuggestion");
+
+        txtPasswordPrimary.addEventListener("focus", ()=> {
+            if(!loading){
+                loading = true;
+                fetch("/suggestion-password").then(response => {
+                if  (response.ok) return response.json()
+                    
+                throw new Exception("Error al conectar")
+                }).then(result=>{
+                    divPassword.classList.add("visible")
+                    txtSuggestion.innerHTML = result.text;
+                    loading = false;
+                }).catch(_ =>{
+                    loading = false;
+                })
+            }
+        });
+
+        txtPasswordPrimary.addEventListener("blur", (event) => {
+            if(!divPassword.classList.contains(event.relatedTarget)){
+                divPassword.classList.remove("visible");
+            }
+        });
+
+        btnSuggestion.addEventListener("mousedown", () => {
+            event.preventDefault();
+        });
+
+        btnSuggestion.addEventListener("click", () =>{
+            txtPasswordPrimary.value = txtSuggestion.innerText
+            txtPasswordConfirm.value = txtSuggestion.innerText
+        });
+    </script>
 </body>
 </html>

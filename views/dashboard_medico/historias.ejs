@@ -16,8 +16,11 @@
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" id="searchInput" placeholder="Buscar por DNI, nombre, etc.">
             </div>
-            <button id="btnAgregarServicio" class="add-button">
+            <button id="btnAgregarServicio" class="add-button" onclick="window.location.href='/dashboard_jmedico/registrar_historia_clinica'">
                 <i class="fas fa-plus-circle"></i> Añadir Historia
+            </button>
+            <button id="btnGenerarZip" class="add-button" onclick="location.href='/dashboard_jmedico/historias/descargar_todos_pdf'">
+                <i class="fas fa-file-archive"></i> Generar ZIP
             </button>
             <div class="table-container">
                 <table>
@@ -53,7 +56,13 @@
                                                 Editar
                                             </button>
                                         </form>
-                                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">Eliminar</button>
+                                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                                            Eliminar
+                                        </button>
+                                        <!-- Boton para descargar PDF -->
+                                         <button onclick="location.href='/dashboard_jmedico/historias/descargar_pdf/<%= historia.id %>'" class="btn-descargar" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                                            Descargar
+                                         </button>
                                     </td>
                                 </tr>
                             <% }); %>

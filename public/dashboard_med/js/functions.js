@@ -202,8 +202,153 @@ function cerrarSesion() {
     // Aquí iría la lógica real para cerrar sesión,     como limpiar el almacenamiento local y redirigir a la página de inicio de sesión
 }
 
+
+
+function handleMobileNavigation() {
+    const mobileHamburger = document.querySelector('.mobile-nav-icons .fa-bars').parentElement;
+    const mobileSidebar = document.querySelector('.mobile-sidebar');
+    const mobileSidebarClose = document.querySelector('.mobile-sidebar-close');
+    const mobileMenuItems = document.querySelectorAll('.mobile-sidebar .sidebar-menu a');
+
+    mobileHamburger.addEventListener('click', (e) => {
+        e.preventDefault();
+        mobileSidebar.classList.add('open');
+    });
+
+    mobileSidebarClose.addEventListener('click', () => {
+        mobileSidebar.classList.remove('open');
+    });
+
+    // Cerrar el sidebar móvil al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!mobileSidebar.contains(e.target) && !mobileHamburger.contains(e.target) && mobileSidebar.classList.contains('open')) {
+            mobileSidebar.classList.remove('open');
+        }
+    });
+
+    // Manejar clics en los elementos del menú móvil
+    mobileMenuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = item.getAttribute('href').substring(1);
+
+            // Cerrar el sidebar móvil
+            mobileSidebar.classList.remove('open');
+
+            // Manejar la acción de cerrar sesión
+            if (targetId === 'cerrar-sesion') {
+                cerrarSesion();
+                return;
+            }
+
+            // Mostrar la sección correspondiente
+            const secciones = document.querySelectorAll('.dashboard-section');
+            secciones.forEach(seccion => {
+                if (seccion.id === targetId) {
+                    seccion.classList.add('active');
+                    // Cargar datos específicos de la sección
+                    switch(targetId) {
+                        case "citas":
+                            mostrarCitas();
+                            break;
+                        case "historias":
+                            mostrarHistoriasClinicas();
+                            break;
+                        case "cuentas":
+                            mostrarCuentas();
+                            break;
+                        case "servicios":
+                            mostrarServicios();
+                            break;
+                    }
+                } else {
+                    seccion.classList.remove('active');
+                }
+            });
+
+            // Actualizar el mensaje de bienvenida
+            const welcomeMessage = document.getElementById('welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.textContent = `Sección: ${item.querySelector('span').textContent}`;
+            }
+        });
+    });
+}
+
+
+function handleMobileNavigation() {
+    const mobileHamburger = document.querySelector('.mobile-nav-icons .fa-bars').parentElement;
+    const mobileSidebar = document.querySelector('.mobile-sidebar');
+    const mobileSidebarClose = document.querySelector('.mobile-sidebar-close');
+    const mobileMenuItems = document.querySelectorAll('.mobile-sidebar .sidebar-menu a');
+
+    mobileHamburger.addEventListener('click', (e) => {
+        e.preventDefault();
+        mobileSidebar.classList.add('open');
+    });
+
+    mobileSidebarClose.addEventListener('click', () => {
+        mobileSidebar.classList.remove('open');
+    });
+
+    // Cerrar el sidebar móvil al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!mobileSidebar.contains(e.target) && !mobileHamburger.contains(e.target) && mobileSidebar.classList.contains('open')) {
+            mobileSidebar.classList.remove('open');
+        }
+    });
+
+    // Manejar clics en los elementos del menú móvil
+    mobileMenuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = item.getAttribute('href').substring(1);
+
+            // Cerrar el sidebar móvil
+            mobileSidebar.classList.remove('open');
+
+            // Manejar la acción de cerrar sesión
+            if (targetId === 'cerrar-sesion') {
+                cerrarSesion();
+                return;
+            }
+
+            // Mostrar la sección correspondiente
+            const secciones = document.querySelectorAll('.dashboard-section');
+            secciones.forEach(seccion => {
+                if (seccion.id === targetId) {
+                    seccion.classList.add('active');
+                    // Cargar datos específicos de la sección
+                    switch(targetId) {
+                        case "citas":
+                            mostrarCitas();
+                            break;
+                        case "historias":
+                            mostrarHistoriasClinicas();
+                            break;
+                        case "cuentas":
+                            mostrarCuentas();
+                            break;
+                        case "servicios":
+                            mostrarServicios();
+                            break;
+                    }
+                } else {
+                    seccion.classList.remove('active');
+                }
+            });
+
+            // Actualizar el mensaje de bienvenida
+            const welcomeMessage = document.getElementById('welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.textContent = `Sección: ${item.querySelector('span').textContent}`;
+            }
+        });
+    });
+}
 // Función para inicializar la aplicación
 function inicializarApp() {
+    handleMobileNavigation();
     actualizarPerfilUsuario();
     // manejarNavegacion();
     manejarHamburgerMenu();
@@ -246,9 +391,7 @@ let currentMonth = date.getMonth();
 let currentYear = date.getFullYear();
 
 //function to render days
-function renderCalendar(){
-
-
+function renderCalendar() {
     date.setDate(1);
     const firstDay = new Date(currentYear, currentMonth, 1);
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
@@ -369,45 +512,47 @@ const searchInput = document.getElementById('searchInput');
 
 // Función para renderizar la tabla de servicios
 function renderizarTabla(serviciosArray) {
-    tablaServicios.innerHTML = '';
-    serviciosArray.forEach(servicio => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${servicio.nombre}</td>
-            <td>${servicio.tipo}</td>
-            <td>S/. ${servicio.costo}</td>
-            <td>${servicio.tiempoProcedimiento}</td>
-            <td>${servicio.tiempoRecuperacion}</td>
-            <td>
-                <button class="edit-button" data-id="${servicio.id}">
-                    <i class="fas fa-edit"></i> Editar
-                </button>
-                <button class="delete-button" data-id="${servicio.id}">
-                    <i class="fas fa-trash-alt"></i> Eliminar
-                </button>
-            </td>
-        `;
-        tablaServicios.appendChild(row);
-    });
+    if(tablaServicios){
+        tablaServicios.innerHTML = '';
+        serviciosArray.forEach(servicio => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${servicio.nombre}</td>
+                <td>${servicio.tipo}</td>
+                <td>S/. ${servicio.costo}</td>
+                <td>${servicio.tiempoProcedimiento}</td>
+                <td>${servicio.tiempoRecuperacion}</td>
+                <td>
+                    <button class="edit-button" data-id="${servicio.id}">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="delete-button" data-id="${servicio.id}">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </button>
+                </td>
+            `;
+            tablaServicios.appendChild(row);
+        });
+    }
 }
 
 // Inicializar la tabla
 renderizarTabla(servicios);
 
 // Evento para abrir el modal de agregar servicio
-btnAgregarServicio.addEventListener('click', () => {
+btnAgregarServicio?.addEventListener('click', () => {
     modalTitle.textContent = 'Añadir Servicio';
     formServicio.reset();
     modal.classList.add('show');
 });
 
 // Evento para cerrar el modal
-closeModal.addEventListener('click', () => {
+closeModal?.addEventListener('click', () => {
     modal.classList.remove('show');
 });
 
 // Evento para manejar el envío del formulario
-formServicio.addEventListener('submit', (e) => {
+formServicio?.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(formServicio);
     const nuevoServicio = {
@@ -436,7 +581,7 @@ formServicio.addEventListener('submit', (e) => {
 });
 
 // Evento para editar o eliminar servicios
-tablaServicios.addEventListener('click', (e) => {
+tablaServicios?.addEventListener('click', (e) => {
     if (e.target.classList.contains('edit-button') || e.target.closest('.edit-button')) {
         const id = parseInt(e.target.dataset.id || e.target.closest('.edit-button').dataset.id);
         const servicio = servicios.find(s => s.id === id);
@@ -460,7 +605,7 @@ tablaServicios.addEventListener('click', (e) => {
 });
 
 // Evento para buscar servicios
-searchInput.addEventListener('input', (e) => {
+searchInput?.addEventListener('input', (e) => {
     const searchTerm = e.target.value.toLowerCase();
     const serviciosFiltrados = servicios.filter(servicio => 
         servicio.nombre.toLowerCase().includes(searchTerm) ||
