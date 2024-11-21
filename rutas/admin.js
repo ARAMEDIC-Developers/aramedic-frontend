@@ -16,36 +16,32 @@ router.get("/dashboard_admin", checkLoginAdmin, function(req,res){
     res.render("dashboard_admin/gestion_calendario", data);
 });
 
-// router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
-//     const idusuario = req.session.medico_id;
+// router.get("/dashboard_admin/historias", checkLoginAdmin, function(req, res) {
 //     const historias = `
 //         SELECT u.dni, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.telefono,
-//                p.email, h.id, h.motivo, h.cirugia, h.procedimiento
+//                p.email, h.id, h.motivo, h.cirugia, h.procedimiento, m.nombre AS nombre_medico
 //         FROM historial_medico h
-//         JOIN pacientes p ON h.paciente_id= p.id
+//         JOIN pacientes p ON h.paciente_id = p.id
 //         JOIN usuarios u ON u.id = p.usuario_id
-//         JOIN medicos m ON h.medico_id = m.id
-//         WHERE h.medico_id = ?;
+//         JOIN medicos m ON h.medico_id = m.id;
 //     `;
-//     conexion.query(historias, idusuario, async function(error,rows){
-//         if (error) 
-//             {
-//                 console.log("TRIKA error en la consulta de verificación", error);
-//                 return res.status(500).send(error);
-//             }
-//         else{
+//     conexion.query(historias, async function(error, rows) {
+//         if (error) {
+//             console.log("Error en la consulta de historias clínicas", error);
+//             return res.status(500).send(error);
+//         } else {
 //             const historial_medico = rows;
 //             const data = {
 //                 'usuario': req.session,
-//                 'link' : link,
-//                 'historias' : historial_medico
+//                 'historias': historial_medico
 //             };
-//             res.render("dashboard_medico/historias", data);
+//             res.render("dashboard_admin/historias", data);
 //         }
-//     })
+//     });
 // });
 
-// router.get("/dashboard_jmedico/historia_clinica", checkLoginMedico, function(req,res){
+
+// router.get("/dashboard_admin/historia_clinica", checkLoginAdmin, function(req,res){
 //     const idusuario = req.session.medico_id;
 //     const historiaid = req.query.historiaId;
 //     if (!historiaid) {
@@ -79,11 +75,11 @@ router.get("/dashboard_admin", checkLoginAdmin, function(req,res){
 //             'link': link,
 //             'historia': historiaClinica
 //         };
-//     res.render("dashboard_medico/historia_clinica", data);
+//     res.render("dashboard_admin/historia_clinica", data);
 //     });
 // });
 
-// router.post("/dashboard_jmedico/historia_clinica", checkLoginMedico, async(req, res) =>{
+// router.post("/dashboard_admin/historia_clinica", checkLoginAdmin, async(req, res) =>{
 //     const idusuario = req.session.medico_id;
 //     const historiaId = req.body.historiaId;
 //     if (!idusuario) {
@@ -119,7 +115,7 @@ router.get("/dashboard_admin", checkLoginAdmin, function(req,res){
 //                 return res.status(404).send("No se encontró el historial clínico o no tienes permisos para editarlo.");
 //             }
 
-//             res.redirect("/dashboard_jmedico/historias");
+//             res.redirect("/dashboard_admin/historias");
 //         }
 //     );
 // });
