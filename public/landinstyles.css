@@ -520,6 +520,15 @@ header {
   color: var(--secondary-color); /* Cambia el color al pasar el mouse si lo deseas */
 }
 
+.facebook-link {
+  color: var(--text-white);
+  text-decoration: none;
+}
+
+.facebook-link:hover {
+  color: var(--secondary-color); /* Cambia el color al pasar el mouse si lo deseas */
+}
+
 @media (width < 900px) {
 
 .footer__container {
