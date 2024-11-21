@@ -1,19 +1,14 @@
-
 <%- include('../_partials/header') %>
-
     <div class="dashboard-container">
         <%- include('../_partials/sidebar') %>
-
         <!-- Contenido Principal -->
         <main id="main-content">
             <%- include('../_partials/sub_header') %>
             <!-- Lista de Notificaciones -->
             <%- include('../_partials/notificaciones') %>
-
             <%- include('../_partials/modal') %>
-
             <section id="calendario" >
-                <h2 class="section-title">Calendario</h2>
+                <h2 class="section-title">Solicitar Cita</h2>
                 <!-- Contenido del calendario -->
                 <div class="container">
                     <div class="calendar">
@@ -54,10 +49,8 @@
     <script>
         const modalCalendario = document.getElementById("myModal");
         const closeModalCalendarioBtn = document.getElementsByClassName("close-calentario")[0];
-
         let hora = "";
         let fecha = "";
-
         function openModalCalendario(date) {
             fecha = date;
             const currentDate = new Date(date);
@@ -136,25 +129,20 @@
 
             // Construir el objeto `data`
             const data = {                
-                "paciente_id": 1, 
                 "medico_id": 1, 
                 "servicio_id": 1,
                 "fecha": registrarfecha, // Formato AAAA-MM-DD
                 "hora": registrarhora, // Formato HH:mm:ss
-                "estado": "confirmada"
             };
-
             try{
-                const response = await fetch('/registro-cita', {  // Cambia '/ruta-del-servidor' por tu URL de destino
+                const response = await fetch('/dashboard_paciente/solicitar_consulta', { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data)
                     });
-
                     closeModalCalentario();
-
                     Swal.fire({
                     title: "Su cita ha sido registrada",
                     text: "Redirigiendo a WhatsApp",
