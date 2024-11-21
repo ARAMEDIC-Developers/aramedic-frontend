@@ -49,7 +49,7 @@
                     </div>
                     <div class="form-group">
                         <label for="fechaNacimiento">Fecha de nacimiento:</label>
-                        <input type="date" id="fechaNacimiento" name="fechaNacimiento" readonly>
+                        <input type="text" id="fechaNacimiento" name="fechaNacimiento" readonly>
                     </div>
                     <div class="form-group">
                         <label for="telefono">Teléfono:</label>
@@ -182,6 +182,11 @@
                     return response.json();
             })
             .then(data => {
+                // Procesar la fecha si contiene una marca de tiempo
+                if (data.fecha_nacimiento) {
+                    const fecha = new Date(data.fecha_nacimiento);
+                    data.fecha_nacimiento = fecha.toISOString().split('T')[0]; // yyyy-MM-dd
+                }
                 // Rellenar los campos con los datos del paciente
                 document.getElementById('patientFirstName').value = data.nombre || '';
                 document.getElementById('patientLastName').value = data.apellido || '';

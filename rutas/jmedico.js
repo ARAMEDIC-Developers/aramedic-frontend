@@ -577,24 +577,6 @@ router.get('/dashboard_jmedico/getMedico/:id', checkLoginMedico, function(req, r
     });
 });
 
-router.get('/dashboard_jmedico/getPaciente/:id', checkLoginMedico, function(req, res) {
-    const pacienteId = req.params.id;
-
-    const query = 'SELECT * FROM pacientes WHERE id = ?';
-    conexion.query(query, [pacienteId], function(error, result) {
-        if (error) {
-            console.log("Error al obtener el paciente", error);
-            return res.status(500).send("Error al obtener el paciente.");
-        }
-
-        if (result.length > 0) {
-            res.json(result[0]); // Retorna el primer paciente encontrado
-        } else {
-            res.status(404).send("Paciente no encontrado.");
-        }
-    });
-});
-
 // Nuevo endpoint para obtener información del paciente por DNI
 router.get('/dashboard_jmedico/getPacienteByDNI/:dni', checkLoginMedico, function(req, res) {
     const dni = req.params.dni;
