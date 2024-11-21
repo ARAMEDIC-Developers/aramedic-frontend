@@ -426,40 +426,38 @@ router.get('/dashboard_jmedico/registrar_historia_clinica', checkLoginMedico, fu
 
     // Consulta para obtener los pacientes relacionados con el médico
     const pacientesQuery = `
-        SELECT p.id, p.nombre, p.apellido, p.telefono, p.email
+        SELECT u.dni, p.id AS paciente_id, p.nombre, p.apellido, p.fecha_nacimiento, p.telefono, p.email, p.direccion
         FROM pacientes p
-        JOIN historial_medico h ON p.id = h.paciente_id
-        WHERE h.medico_id = ?
+        JOIN usuarios u ON p.usuario_id = u.id
     `;
-    
-    // Consulta para obtener todos los médicos
-    const medicosQuery = 'SELECT id, nombre, apellido FROM medicos';
-    
-    conexion.query(pacientesQuery, [idusuario], function(error, pacientes) {
+
+    const medicosQuery = `SELECT id, nombre, apellido FROM medicos`;
+
+    conexion.query(pacientesQuery, function(error, pacientes) {
         if (error) {
-            console.log("Error al obtener pacientes", error);
+            console.error("Error al obtener pacientes:", error);
             return res.status(500).send("Error al obtener pacientes.");
         }
 
-        // Consulta para obtener la lista de médicos
+        console.log("Pacientes obtenidos:", pacientes); // Depuración
+
         conexion.query(medicosQuery, function(error, medicos) {
             if (error) {
-                console.log("Error al obtener médicos", error);
+                console.error("Error al obtener médicos:", error);
                 return res.status(500).send("Error al obtener médicos.");
             }
 
-            // Pasamos la lista de pacientes y médicos a la vista
-            const data = {
-                'usuario': req.session,
-                'link': link,
-                'pacientes': pacientes,  // Lista de pacientes
-                'medicos': medicos       // Lista de médicos
-            };
-
-            res.render("dashboard_medico/registro_historia_clinica", data);
+            res.render("dashboard_medico/registro_historia_clinica", {
+                usuario: req.session,
+                link: link,
+                pacientes: pacientes, // Lista de pacientes
+                medicos: medicos     // Lista de médicos
+            });
         });
     });
 });
+
+
 
 router.post('/dashboard_jmedico/guardar_historia_clinica', checkLoginMedico, function(req, res) {
     const { 
@@ -578,5 +576,55 @@ router.get('/dashboard_jmedico/getMedico/:id', checkLoginMedico, function(req, r
         }
     });
 });
+
+router.get('/dashboard_jmedico/getPaciente/:id', checkLoginMedico, function(req, res) {
+    const pacienteId = req.params.id;
+
+    const query = 'SELECT * FROM pacientes WHERE id = ?';
+    conexion.query(query, [pacienteId], function(error, result) {
+        if (error) {
+            console.log("Error al obtener el paciente", error);
+            return res.status(500).send("Error al obtener el paciente.");
+        }
+
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna el primer paciente encontrado
+        } else {
+            res.status(404).send("Paciente no encontrado.");
+        }
+    });
+});
+
+// Nuevo endpoint para obtener información del paciente por DNI
+router.get('/dashboard_jmedico/getPacienteByDNI/:dni', checkLoginMedico, function(req, res) {
+    const dni = req.params.dni;
+    const query = `
+        SELECT 
+            p.id AS paciente_id,
+            p.nombre,
+            p.apellido,
+            p.fecha_nacimiento,
+            p.telefono,
+            p.email,
+            p.direccion
+        FROM pacientes p
+        JOIN usuarios u ON p.usuario_id = u.id
+        WHERE u.dni = ?;
+    `;
+
+    conexion.query(query, [dni], function(error, result) {
+        if (error) {
+            console.error("Error al obtener datos del paciente por DNI:", error);
+            return res.status(500).send("Error al obtener datos del paciente.");
+        }
+
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna el primer registro del paciente
+        } else {
+            res.status(404).send("Paciente no encontrado.");
+        }
+    });
+});
+
 
 module.exports = router;
