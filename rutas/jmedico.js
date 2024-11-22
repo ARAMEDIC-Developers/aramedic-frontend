@@ -18,16 +18,18 @@ router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
 
 router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
     const idusuario = req.session.medico_id;
+    const buscar = req.query.buscar ?? "";
     const historias = `
         SELECT u.dni, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.telefono,
-               p.email, h.id, h.motivo, h.cirugia, h.procedimiento
+            p.email, h.id, h.motivo, h.cirugia, h.procedimiento
         FROM historial_medico h
         JOIN pacientes p ON h.paciente_id= p.id
         JOIN usuarios u ON u.id = p.usuario_id
         JOIN medicos m ON h.medico_id = m.id
-        WHERE h.medico_id = ?;
+        WHERE h.medico_id = ? AND (p.nombre like concat(?,'%') OR p.apellido like concat(?,'%') OR u.dni like concat(?,'%') OR p.email like concat(?,'%'));
     `;
-    conexion.query(historias, idusuario, async function(error,rows){
+    
+    conexion.query(historias, [idusuario, buscar, buscar, buscar, buscar], async function(error,rows){
         if (error) 
             {
                 console.log("TRIKA error en la consulta de verificación", error);
@@ -488,6 +490,7 @@ router.post('/dashboard_jmedico/guardar_historia_clinica', checkLoginMedico, fun
     }
 
     // Datos a insertar en la base de datos
+    console.log(pacienteId)
     const values = [
         parseInt(medicoId),   // Aseguramos que medicoId sea un número
         parseInt(pacienteId), // Aseguramos que pacienteId sea un número
@@ -514,12 +517,27 @@ router.post('/dashboard_jmedico/guardar_historia_clinica', checkLoginMedico, fun
 
     // Consulta SQL para insertar la historia clínica (el campo 'id' es autoincremental)
     const historia = `
-        INSERT INTO historial_medico 
-        (medico_id, paciente_id, motivo, enfermedades_previas, alergias, 
-        medicamentos_actuales, cirugias_previas, fuma, consume_alcohol, 
-        enfermedades_hereditarias, peso, altura, imc, descripcion_fisica, 
-        cirugia, procedimiento, riesgos, cuidado_preoperativo, cuidado_postoperativo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO historial_medico (
+        medico_id, 
+        paciente_id, 
+        motivo, 
+        enfermedades_previas, 
+        alergias, 
+        medicamentos_actuales, 
+        cirugias_previas, 
+        fuma, 
+        consume_alcohol, 
+        enfermedades_hereditarias, 
+        peso, 
+        altura, 
+        imc, 
+        descripcion_fisica, 
+        cirugia, 
+        procedimiento, 
+        riesgos, 
+        cuidado_preoperativo, 
+        cuidado_postoperativo)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
 
     // Ejecutar la consulta SQL
@@ -578,8 +596,8 @@ router.get('/dashboard_jmedico/getMedico/:id', checkLoginMedico, function(req, r
 });
 
 // Nuevo endpoint para obtener información del paciente por DNI
-router.get('/dashboard_jmedico/getPacienteByDNI/:dni', checkLoginMedico, function(req, res) {
-    const dni = req.params.dni;
+router.get('/dashboard_jmedico/getPacienteByDNI/:id', checkLoginMedico, function(req, res) {
+    const id = req.params.id;
     const query = `
         SELECT 
             p.id AS paciente_id,
@@ -591,10 +609,10 @@ router.get('/dashboard_jmedico/getPacienteByDNI/:dni', checkLoginMedico, functio
             p.direccion
         FROM pacientes p
         JOIN usuarios u ON p.usuario_id = u.id
-        WHERE u.dni = ?;
+        WHERE p.id = ?;
     `;
 
-    conexion.query(query, [dni], function(error, result) {
+    conexion.query(query, [id], function(error, result) {
         if (error) {
             console.error("Error al obtener datos del paciente por DNI:", error);
             return res.status(500).send("Error al obtener datos del paciente.");

@@ -24,7 +24,7 @@
                         <select id="pacienteId" name="pacienteId" required>
                             <option value="">Seleccione el DNI</option>
                             <% pacientes.forEach(function (paciente) { %>
-                                <option value="<%= paciente.dni %>"><%= paciente.dni %> - <%= paciente.nombre %> <%= paciente.apellido %></option>
+                                <option value="<%= paciente.paciente_id %>"><%= paciente.dni %> - <%= paciente.nombre %> <%= paciente.apellido %></option>
                             <% }); %>
                         </select>
 
