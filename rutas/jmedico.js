@@ -628,3 +628,31 @@ router.get('/dashboard_jmedico/getPacienteByDNI/:id', checkLoginMedico, function
 
 
 module.exports = router;
+
+router.get('/dashboard_jmedico/getUltimaHistoriaClinica/:pacienteId', checkLoginMedico, function(req, res) {
+    const pacienteId = req.params.pacienteId;
+
+    // Consulta SQL para obtener la última historia clínica del paciente
+    const query = `
+        SELECT h.id, h.motivo, h.enfermedades_previas, h.alergias, h.medicamentos_actuales, h.cirugias_previas, h.fuma, 
+            h.consume_alcohol, h.enfermedades_hereditarias, h.peso, h.altura, h.imc, h.descripcion_fisica, 
+            h.cirugia, h.procedimiento, h.riesgos, h.cuidado_preoperativo, h.cuidado_postoperativo
+        FROM historial_medico h
+        WHERE h.paciente_id = ?
+        ORDER BY h.id DESC
+        LIMIT 1;
+    `;
+
+    conexion.query(query, [pacienteId], function(error, result) {
+        if (error) {
+            console.error("Error al obtener la última historia clínica:", error);
+            return res.status(500).send("Error al obtener la última historia clínica.");
+        }
+
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna la última historia clínica encontrada
+        } else {
+            res.status(404).send("No se encontró historia clínica pasada para este paciente.");
+        }
+    });
+});
