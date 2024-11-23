@@ -18,16 +18,18 @@ router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
 
 router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
     const idusuario = req.session.medico_id;
+    const buscar = req.query.buscar ?? "";
     const historias = `
         SELECT u.dni, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.telefono,
-               p.email, h.id, h.motivo, h.cirugia, h.procedimiento
+            p.email, h.id, h.motivo, h.cirugia, h.procedimiento
         FROM historial_medico h
         JOIN pacientes p ON h.paciente_id= p.id
         JOIN usuarios u ON u.id = p.usuario_id
         JOIN medicos m ON h.medico_id = m.id
-        WHERE h.medico_id = ?;
+        WHERE h.medico_id = ? AND (p.nombre like concat(?,'%') OR p.apellido like concat(?,'%') OR u.dni like concat(?,'%') OR p.email like concat(?,'%'));
     `;
-    conexion.query(historias, idusuario, async function(error,rows){
+    
+    conexion.query(historias, [idusuario, buscar, buscar, buscar, buscar], async function(error,rows){
         if (error) 
             {
                 console.log("TRIKA error en la consulta de verificación", error);
@@ -426,40 +428,38 @@ router.get('/dashboard_jmedico/registrar_historia_clinica', checkLoginMedico, fu
 
     // Consulta para obtener los pacientes relacionados con el médico
     const pacientesQuery = `
-        SELECT p.id, p.nombre, p.apellido, p.telefono, p.email
+        SELECT u.dni, p.id AS paciente_id, p.nombre, p.apellido, p.fecha_nacimiento, p.telefono, p.email, p.direccion
         FROM pacientes p
-        JOIN historial_medico h ON p.id = h.paciente_id
-        WHERE h.medico_id = ?
+        JOIN usuarios u ON p.usuario_id = u.id
     `;
-    
-    // Consulta para obtener todos los médicos
-    const medicosQuery = 'SELECT id, nombre, apellido FROM medicos';
-    
-    conexion.query(pacientesQuery, [idusuario], function(error, pacientes) {
+
+    const medicosQuery = `SELECT id, nombre, apellido FROM medicos`;
+
+    conexion.query(pacientesQuery, function(error, pacientes) {
         if (error) {
-            console.log("Error al obtener pacientes", error);
+            console.error("Error al obtener pacientes:", error);
             return res.status(500).send("Error al obtener pacientes.");
         }
 
-        // Consulta para obtener la lista de médicos
+        console.log("Pacientes obtenidos:", pacientes); // Depuración
+
         conexion.query(medicosQuery, function(error, medicos) {
             if (error) {
-                console.log("Error al obtener médicos", error);
+                console.error("Error al obtener médicos:", error);
                 return res.status(500).send("Error al obtener médicos.");
             }
 
-            // Pasamos la lista de pacientes y médicos a la vista
-            const data = {
-                'usuario': req.session,
-                'link': link,
-                'pacientes': pacientes,  // Lista de pacientes
-                'medicos': medicos       // Lista de médicos
-            };
-
-            res.render("dashboard_medico/registro_historia_clinica", data);
+            res.render("dashboard_medico/registro_historia_clinica", {
+                usuario: req.session,
+                link: link,
+                pacientes: pacientes, // Lista de pacientes
+                medicos: medicos     // Lista de médicos
+            });
         });
     });
 });
+
+
 
 router.post('/dashboard_jmedico/guardar_historia_clinica', checkLoginMedico, function(req, res) {
     const { 
@@ -490,6 +490,7 @@ router.post('/dashboard_jmedico/guardar_historia_clinica', checkLoginMedico, fun
     }
 
     // Datos a insertar en la base de datos
+    console.log(pacienteId)
     const values = [
         parseInt(medicoId),   // Aseguramos que medicoId sea un número
         parseInt(pacienteId), // Aseguramos que pacienteId sea un número
@@ -516,12 +517,27 @@ router.post('/dashboard_jmedico/guardar_historia_clinica', checkLoginMedico, fun
 
     // Consulta SQL para insertar la historia clínica (el campo 'id' es autoincremental)
     const historia = `
-        INSERT INTO historial_medico 
-        (medico_id, paciente_id, motivo, enfermedades_previas, alergias, 
-        medicamentos_actuales, cirugias_previas, fuma, consume_alcohol, 
-        enfermedades_hereditarias, peso, altura, imc, descripcion_fisica, 
-        cirugia, procedimiento, riesgos, cuidado_preoperativo, cuidado_postoperativo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO historial_medico (
+        medico_id, 
+        paciente_id, 
+        motivo, 
+        enfermedades_previas, 
+        alergias, 
+        medicamentos_actuales, 
+        cirugias_previas, 
+        fuma, 
+        consume_alcohol, 
+        enfermedades_hereditarias, 
+        peso, 
+        altura, 
+        imc, 
+        descripcion_fisica, 
+        cirugia, 
+        procedimiento, 
+        riesgos, 
+        cuidado_preoperativo, 
+        cuidado_postoperativo)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
 
     // Ejecutar la consulta SQL
@@ -578,5 +594,37 @@ router.get('/dashboard_jmedico/getMedico/:id', checkLoginMedico, function(req, r
         }
     });
 });
+
+// Nuevo endpoint para obtener información del paciente por DNI
+router.get('/dashboard_jmedico/getPacienteByDNI/:id', checkLoginMedico, function(req, res) {
+    const id = req.params.id;
+    const query = `
+        SELECT 
+            p.id AS paciente_id,
+            p.nombre,
+            p.apellido,
+            p.fecha_nacimiento,
+            p.telefono,
+            p.email,
+            p.direccion
+        FROM pacientes p
+        JOIN usuarios u ON p.usuario_id = u.id
+        WHERE p.id = ?;
+    `;
+
+    conexion.query(query, [id], function(error, result) {
+        if (error) {
+            console.error("Error al obtener datos del paciente por DNI:", error);
+            return res.status(500).send("Error al obtener datos del paciente.");
+        }
+
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna el primer registro del paciente
+        } else {
+            res.status(404).send("Paciente no encontrado.");
+        }
+    });
+});
+
 
 module.exports = router;

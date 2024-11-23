@@ -53,15 +53,39 @@ router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
 router.get("/dashboard_paciente/historia_clinica", checkLoginPaciente, async (req,res) => {
     //TRAER HISTORIA DE LA BD
     const idusuario = req.session.paciente_id;
+    console.log(idusuario)
     const historia = `
-        SELECT p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.fecha_nacimiento, p.telefono,
-               p.email, p.direccion, p.genero, p.estado_civil, p.ocupacion, h.motivo, h.enfermedades_previas, 
-               h.alergias, h.medicamentos_actuales, h.cirugias_previas, h.fuma, h.consume_alcohol, 
-               h.enfermedades_hereditarias, h.peso, h.altura, h.imc, h.descripcion_fisica,
-               h.cirugia, h.procedimiento, h.riesgos, h.cuidado_preoperativo, h.cuidado_postoperativo
+        SELECT 
+            p.nombre AS nombre_paciente, 
+            p.apellido AS apellido_paciente, 
+            p.fecha_nacimiento, 
+            p.telefono,
+            p.email, 
+            p.direccion, 
+            p.genero, 
+            p.estado_civil, 
+            p.ocupacion, 
+            h.motivo, 
+            h.enfermedades_previas, 
+            h.alergias, 
+            h.medicamentos_actuales, 
+            h.cirugias_previas, 
+            h.fuma, 
+            h.consume_alcohol, 
+            h.enfermedades_hereditarias, 
+            h.peso, 
+            h.altura, 
+            h.imc, 
+            h.descripcion_fisica,
+            h.cirugia, 
+            h.procedimiento, 
+            h.riesgos, 
+            h.cuidado_preoperativo, 
+            h.cuidado_postoperativo
         FROM historial_medico h
         JOIN pacientes p ON h.paciente_id = p.id
-        WHERE h.paciente_id = ?;
+        ORDER BY h.id DESC
+        LIMIT 1
     `;
     conexion.query(historia, idusuario, async function(error,rows){
         if (error) 
@@ -75,6 +99,7 @@ router.get("/dashboard_paciente/historia_clinica", checkLoginPaciente, async (re
         }
         else{
             const historial_medico = rows[0];
+            console.log(historial_medico)
             const data = {
                 'usuario': req.session,
                 'link' : link,

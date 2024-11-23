@@ -585,6 +585,7 @@ tablaServicios?.addEventListener('click', (e) => {
 
 // Evento para buscar servicios
 searchInput?.addEventListener('input', (e) => {
+    console.log("ddd")
     const searchTerm = e.target.value.toLowerCase();
     const serviciosFiltrados = servicios.filter(servicio => 
         servicio.nombre.toLowerCase().includes(searchTerm) ||
