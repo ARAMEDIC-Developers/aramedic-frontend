@@ -56,13 +56,14 @@
                                                 Editar
                                             </button>
                                         </form>
-                                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                                        <!-- Boton para eliminar historia -->
+                                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;" data-id="<%= historia.id %>">
                                             Eliminar
                                         </button>
                                         <!-- Boton para descargar PDF -->
-                                         <button onclick="location.href='/dashboard_jmedico/historias/descargar_pdf/<%= historia.id %>'" class="btn-descargar" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                                        <button onclick="location.href='/dashboard_jmedico/historias/descargar_pdf/<%= historia.id %>'" class="btn-descargar" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer;">
                                             Descargar
-                                         </button>
+                                        </button>
                                     </td>
                                 </tr>
                             <% }); %>
@@ -77,4 +78,45 @@
         </div>
     </main>
 </div>
+
 <%- include('../_partials/footer') %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tablaServicios = document.getElementById('tablaServicios');
+
+        // Delegación de eventos para los botones "Eliminar"
+        tablaServicios.addEventListener('click', function (event) {
+            if (event.target.classList.contains('btn-eliminar')) {
+                const historiaId = event.target.getAttribute('data-id');
+                
+                // Confirmar eliminación
+                if (confirm("¿Estás seguro de que deseas eliminar esta historia clínica?")) {
+                    // Solicitud DELETE al backend
+                    fetch(`/dashboard_jmedico/historias/${historiaId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error al eliminar la historia clínica.");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert(data.mensaje); // Mensaje de éxito
+                        
+                        // Eliminar la fila de la tabla
+                        const fila = event.target.closest('tr');
+                        if (fila) {
+                            fila.remove();
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al eliminar historia clínica:", error);
+                        alert("No se pudo eliminar la historia clínica. Inténtalo nuevamente.");
+                    });
+                }
+            }
+        });
+    });
+</script>

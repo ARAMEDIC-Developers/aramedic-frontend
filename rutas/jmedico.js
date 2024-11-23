@@ -85,6 +85,32 @@ router.get("/dashboard_jmedico/historia_clinica", checkLoginMedico, function(req
     });
 });
 
+// Eliminar historia de la tabla y la BD
+router.delete('/dashboard_jmedico/historias/:id', checkLoginMedico, (req, res) => {
+    const historiaId = req.params.id;
+    const medicoId = req.session.medico_id;
+
+    // Consulta SQL para eliminar la historia clínica
+    const query = `
+        DELETE FROM historial_medico
+        WHERE id = ? AND medico_id = ?;
+    `;
+
+    conexion.query(query, [historiaId, medicoId], (error, result) => {
+        if (error) {
+            console.error("Error al eliminar historia clínica:", error);
+            return res.status(500).json({ mensaje: "Error al eliminar la historia clínica." });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ mensaje: "Historia clínica no encontrada o no tienes permiso para eliminarla." });
+        }
+
+        res.status(200).json({ mensaje: "Historia clínica eliminada exitosamente." });
+    });
+});
+
+
 router.post("/dashboard_jmedico/historia_clinica", checkLoginMedico, async(req, res) =>{
     const idusuario = req.session.medico_id;
     const historiaId = req.body.historiaId;
