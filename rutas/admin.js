@@ -16,29 +16,52 @@ router.get("/dashboard_admin", checkLoginAdmin, function(req,res){
     res.render("dashboard_admin/gestion_calendario", data);
 });
 
-// router.get("/dashboard_admin/historias", checkLoginAdmin, function(req, res) {
-//     const historias = `
-//         SELECT u.dni, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.telefono,
-//                p.email, h.id, h.motivo, h.cirugia, h.procedimiento, m.nombre AS nombre_medico
-//         FROM historial_medico h
-//         JOIN pacientes p ON h.paciente_id = p.id
-//         JOIN usuarios u ON u.id = p.usuario_id
-//         JOIN medicos m ON h.medico_id = m.id;
-//     `;
-//     conexion.query(historias, async function(error, rows) {
-//         if (error) {
-//             console.log("Error en la consulta de historias clínicas", error);
-//             return res.status(500).send(error);
-//         } else {
-//             const historial_medico = rows;
-//             const data = {
-//                 'usuario': req.session,
-//                 'historias': historial_medico
-//             };
-//             res.render("dashboard_admin/historias", data);
-//         }
-//     });
-// });
+
+router.get("/dashboard_admin/historias", checkLoginAdmin, (req, res) => {
+    const buscar = req.query.buscar ?? ""; // Capturar el parámetro de búsqueda desde la URL
+
+    const historias = `
+        SELECT 
+            h.id AS historia_id,
+            u.dni AS dni,
+            p.nombre AS nombre_paciente, 
+            p.apellido AS apellido_paciente, 
+            p.telefono, 
+            p.email, 
+            h.motivo, 
+            h.cirugia, 
+            h.procedimiento,
+            m.nombre AS nombre_medico, 
+            m.apellido AS apellido_medico
+        FROM historial_medico h
+        JOIN pacientes p ON h.paciente_id = p.id
+        JOIN usuarios u ON u.id = p.usuario_id
+        JOIN medicos m ON h.medico_id = m.id
+        WHERE 
+            p.nombre LIKE CONCAT(?, '%') 
+            OR p.apellido LIKE CONCAT(?, '%') 
+            OR u.dni LIKE CONCAT(?, '%') 
+            OR p.email LIKE CONCAT(?, '%')
+        ORDER BY h.id DESC;
+    `;
+
+    conexion.query(historias, [buscar, buscar, buscar, buscar], (error, rows) => {
+        if (error) {
+            console.error("Error al obtener historias clínicas:", error);
+            return res.status(500).send("Error al obtener las historias clínicas.");
+        }
+
+        const data = {
+            usuario: req.session,
+            link: link,
+            historias: rows,
+            buscar, // Enviar el término de búsqueda actual para mostrarlo en el front
+        };
+
+        res.render("dashboard_admin/historias", data);
+    });
+});
+
 
 
 // router.get("/dashboard_admin/historia_clinica", checkLoginAdmin, function(req,res){
