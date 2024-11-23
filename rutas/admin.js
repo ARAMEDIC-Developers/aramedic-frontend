@@ -143,19 +143,19 @@ router.get("/dashboard_admin/historias", checkLoginAdmin, (req, res) => {
 //     );
 // });
 
-// router.get("/dashboard_jmedico/gestion_calendario", checkLoginMedico, async (req,res) => {
-//     // traer citas de la base de datos
-//     // const citas = database.Citas('select * from citas');
+router.get("/dashboard_admin/gestion_calendario", checkLoginAdmin, async (req,res) => {
+    // traer citas de la base de datos
+    // const citas = database.Citas('select * from citas');
 
-//     const data = {
-//         'total_citas':0,
-//         'titulo' : 'pagina de calendario',
-//         'link' : link,
-//         'usuario': req.session
-//     };
+    const data = {
+        'total_citas':0,
+        'titulo' : 'pagina de calendario',
+        'link' : link,
+        'usuario': req.session
+    };
     
-//     res.render("dashboard_medico/gestion_calendario", data);
-// });
+    res.render("dashboard_admin/gestion_calendario", data);
+});
 
 // router.get("/dashboard_jmedico/test", checkLoginMedico, async (req,res) => {
 //     // traer citas de la base de datos
@@ -180,47 +180,78 @@ router.get("/dashboard_admin/historias", checkLoginAdmin, (req, res) => {
     
 //     res.json(data);
 // });
-// router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req,res) => {
+
+router.get("/dashboard_admin/citas", checkLoginAdmin, async (req, res) => {
+    try {
+        console.log("ID del administrador:", req.session.admin_id); // Verifica si admin_id es correcto
+        
+        const consultaCitas = `
+            SELECT c.id, c.paciente_id, c.medico_id, c.servicio_id, c.fecha, c.hora, c.estado
+            FROM citas c
+        `;
+        
+        // Realiza la consulta a la base de datos
+        const [citas] = await conexion.query(consultaCitas);
+        console.log("Citas obtenidas:", citas); // Verifica si la consulta devuelve datos
+
+        // Prepara los datos para la vista
+        const data = {
+            'titulo': 'Página de Citas',
+            'link': link,
+            'usuario': req.session,
+            'citas': citas || [] // Asegura que sea un array
+        };
+
+        // Renderiza la vista
+        res.render("dashboard_admin/citas", data);
+    } catch (error) {
+        console.error("Error al obtener citas:", error); // Muestra el error en la consola
+        res.status(500).send("Guau");
+    }
+});
+
+
+router.get("/dashboard_admin/cuentas", checkLoginAdmin, async (req,res) => {
+
+    const data = {
+        'total_citas':0,
+        'titulo' : 'pagina de citas',
+        'link' : link,
+        'usuario': req.session
+    };
     
-//     const data = {
-//         'total_citas':0,
-//         'titulo' : 'pagina de citas',
-//         'link' : link,
-//         'usuario': req.session
-//     };
-    
-//     res.render("dashboard_medico/citas", data);
-// });
-
-// router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req,res) => {
-
-//     const data = {
-//         'total_citas':0,
-//         'titulo' : 'pagina de citas',
-//         'link' : link,
-//         'usuario': req.session
-//     };
-    
-//     res.render("dashboard_medico/cuentas", data);
-// });
+    res.render("dashboard_admin/cuentas", data);
+});
 
 
-// router.get("/dashboard_jmedico/servicios", checkLoginMedico, async (req, res) => {
-//     try {
-//         const medico_id = req.session.medico_id;
-//         const servicios = await conexion.query(`SELECT s.id, s.nombre, s.descripcion, s.costo  FROM medico_servicio m
-//                                                 JOIN servicios s ON m.servicio_id=s.id WHERE m.medico_id = `+medico_id);
-//         const data = {
-//             'link': link,
-//             'usuario': req.session,
-//             'servicios': servicios
-//         };
-//         res.render("dashboard_medico/servicios", data);
-//     } catch (error) {
-//         console.error("Error al obtener servicios:", error);
-//         res.status(500).send("Error al obtener servicios");
-//     }
-// });
+// Ruta para mostrar la lista de servicios con admin_id
+router.get("/dashboard_admin/servicios", checkLoginAdmin, async (req, res) => {
+    try {
+        const admin_id = req.session.admin_id;
+        const consultaServicios = `
+            SELECT s.id, s.nombre, s.descripcion, s.costo
+            FROM medico_servicio m
+            JOIN servicios s ON m.servicio_id = s.id
+            WHERE m.medico_id = ?
+        `;
+        
+        // Realiza la consulta a la base de datos
+        const [servicios] = await conexion.query(consultaServicios, [admin_id]);
+
+        // Prepara los datos para la vista
+        const data = {
+            'link': link,
+            'usuario': req.session,
+            'servicios': servicios || [] // Asegura que sea un array
+        };
+
+        // Renderiza la vista
+        res.render("dashboard_admin/servicios", data);
+    } catch (error) {
+        console.error("Error al obtener servicios:", error);
+        res.status(500).send("Error al obtener servicios");
+    }
+});
 
 // router.get("/dashboard_jmedico/servicios/buscar", checkLoginMedico, async (req, res) => {
 //     const { nombre } = req.query;
