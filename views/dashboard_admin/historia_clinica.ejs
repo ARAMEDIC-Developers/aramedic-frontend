@@ -16,7 +16,7 @@
         <div class="main-content">
             <div class="container">
                 <h2 class="title">Perfil de Historia Clínica del Paciente</h2>
-                <form id="patientForm" method="post" action="/dashboard_jmedico/historia_clinica">
+                <form id="patientForm" method="post" action="/dashboard_admin/historia_clinica">
                     <input type="hidden" id="historiaId" name="historiaId" value="<%= historia.id %>">
                     <!-- Información del Paciente -->
                     <h3>Información del Paciente</h3>
@@ -144,7 +144,7 @@
                         <input type="text" id="cuidadoPostoperativo" name="cuidadoPostoperativo" value="<%= historia.cuidado_postoperativo %>">
                     </div>
                     <!-- Botón para regresar -->
-                    <button type="button" onclick="location.href='/dashboard_jmedico/historias'">Regresar</button>
+                    <button type="button" onclick="location.href='/dashboard_admin/historias'">Regresar</button>
                     <button type="submit">Guardar</button>
                 </form>
             </div>
