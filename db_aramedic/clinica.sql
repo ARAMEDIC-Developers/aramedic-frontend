@@ -2,10 +2,17 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
+<<<<<<< HEAD
 -- Servidor: 127.0.0.1
 -- Tiempo de generación: 21-11-2024 a las 05:17:49
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
+=======
+-- Servidor: 127.0.0.1:3306
+-- Tiempo de generación: 18-11-2024 a las 04:08:48
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.0.30
+>>>>>>> origin/jonathanv11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
