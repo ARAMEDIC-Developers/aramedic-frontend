@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-11-2024 a las 06:16:28
+-- Tiempo de generación: 25-11-2024 a las 06:51:26
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -207,8 +207,8 @@ CREATE TABLE `medico_servicio` (
 
 INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`) VALUES
 (1, 1, 1),
-(2, 1, 2),
-(3, 2, 1);
+(2, 3, 2),
+(3, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -283,6 +283,7 @@ CREATE TABLE `servicios` (
   `tiempo_duracion` varchar(255) DEFAULT NULL,
   `tiempo_recuperacion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Volcado de datos para la tabla `servicios`
 --
@@ -470,7 +471,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
