@@ -1,109 +1,41 @@
-
-<%- include('../_partials/header') %>
-
-    <div class="dashboard-container">
-        <%- include('../_partials/sidebar') %>
-
-        <!-- Contenido Principal -->
-        <main id="main-content">
-            <%- include('../_partials/sub_header') %>
-            <!-- Lista de Notificaciones -->
-            <%- include('../_partials/notificaciones') %>
-
-            <%- include('../_partials/modal_bl_fecha') %>
-
-            <section id="calendario" >
-                <h2 class="section-title">Calendario</h2>
-
-                
-                <div>
-                    <button onclick="openModalCalendario()">Bloquear fechas</button>
-                </div>
-
-                <div>
-                    <button onclick="openModalCalendario()">Bloquear horas de un día</button>
-                </div>
-
-                <!-- Contenido del calendario -->
-                <div class="container">
-
-                    <div class="calendar">
-                        <div class="header">
-                            <div class="month"></div>
-                            <div class="btns">
-                                <div class="btn today-btn">
-                                    <i class="fas fa-calendar-day"></i>
-                                </div>
-                                <div class="btn prev-btn">
-                                    <i class="fas fa-chevron-left"></i>
-                                </div>
-                                <div class="btn next-btn">
-                                    <i class="fas fa-chevron-right"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="weekdays">
-                            <div class="day">Dom</div>
-                            <div class="day">Lun</div>
-                            <div class="day">Mar</div>
-                            <div class="day">Mie</div>
-                            <div class="day">Jue</div>
-                            <div class="day">Vie</div>
-                            <div class="day">Sab</div>
-                        </div>
-                        <div class="days">
-
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-        </main>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="calendar"></div>
 
     <script>
-        const session = "<%= JSON.stringify(usuario) %>";
-        console.log(session)
-            const modalCalendario = document.getElementById("myModal");
-            const closeModalCalendarioBtn = document.getElementsByClassName("close-calentario")[0];
-
-            function openModalCalendario(date) {
-                modalCalendario.classList.add('active');
-            }
-
-            function closeModalCalentario() {
-                modalCalendario.classList.remove('active');
-            }
-
-            closeModalCalendarioBtn.onclick = closeModalCalentario;
-
-            async function saveModalCalentar(){
-                const fechaInicio = document.getElementById("fechaInicio");
-                const fechaFinal = document.getElementById("fechaFinal")
-                console.log(fechaInicio.value, fechaFinal.value)
-
-                try{
-
-                    const data = {
-                        fecha_inicio: fechaInicio.value,
-                        fecha_final: fechaFinal.value
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth', // Vista por defecto
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay',
+                },
+                events: async function (fetchInfo, successCallback, failureCallback) {
+                    try {
+                        const response = await axios.get('/dashboard_jmedico/gestion_calendario');
+                        successCallback(response.data);
+                    } catch (error) {
+                        console.error('Error al cargar eventos:', error);
+                        failureCallback(error);
                     }
-
-                const response = await fetch('/bloquear-fechas', {  // Cambia '/ruta-del-servidor' por tu URL de destino
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                    });
-
-                    console.log(response)
-            }catch(error){
-                console.log(error)
-            }
-            }
+                },
+                eventClick: function (info) {
+                    alert(`Evento: ${info.event.title}\nInicio: ${info.event.start}`);
+                },
+            });
+            calendar.render();
+        });
     </script>
-
-<%- include('../_partials/footer') %>
+</body>
+</html>

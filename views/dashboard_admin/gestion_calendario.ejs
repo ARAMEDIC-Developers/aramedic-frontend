@@ -1,110 +1,202 @@
-
 <%- include('../_partials/header') %>
 
-    <div class="dashboard-container">
-        <%- include('../_partials/sidebar') %>
+<div class="dashboard-container">
+    <%- include('../_partials/sidebar') %>
 
-        <!-- Contenido Principal -->
-        <main id="main-content">
-            <%- include('../_partials/sub_header') %>
-            <!-- Lista de Notificaciones -->
-            <%- include('../_partials/notificaciones') %>
+    <!-- Contenido Principal -->
+    <main id="main-content">
+        <%- include('../_partials/sub_header') %>
+        <!-- Lista de Notificaciones -->
+        <%- include('../_partials/notificaciones') %>
 
-            <%- include('../_partials/modal_bl_fecha') %>
+        <%- include('../_partials/modal_bl_fecha') %>
 
-            <section id="calendario" >
-                <h2 class="section-title">Calendario</h2>
+        <section id="calendario">
+            <h2 class="section-title">Calendario</h2>
 
-                
-                <div>
-                    <button onclick="openModalCalendario()">Bloquear fechas</button>
-                </div>
+            <div>
+                <button onclick="openModalCalendario()">Bloquear fechas</button>
+            </div>
 
-                <div>
-                    <button onclick="openModalCalendario()">Bloquear horas de un día</button>
-                </div>
+            <div>
+                <button onclick="openModalCalendario()">Bloquear horas de un día</button>
+            </div>
 
-                <!-- Contenido del calendario -->
-                <div class="container">
-
-                    <div class="calendar">
-                        <div class="header">
-                            <div class="month"></div>
-                            <div class="btns">
-                                <div class="btn today-btn">
-                                    <i class="fas fa-calendar-day"></i>
-                                </div>
-                                <div class="btn prev-btn">
-                                    <i class="fas fa-chevron-left"></i>
-                                </div>
-                                <div class="btn next-btn">
-                                    <i class="fas fa-chevron-right"></i>
-                                </div>
+            <!-- Contenido del calendario -->
+            <div class="container">
+                <div class="calendar">
+                    <div class="header">
+                        <div class="month"></div>
+                        <div class="btns">
+                            <div class="btn today-btn">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="btn prev-btn">
+                                <i class="fas fa-chevron-left"></i>
+                            </div>
+                            <div class="btn next-btn">
+                                <i class="fas fa-chevron-right"></i>
                             </div>
                         </div>
-                        <div class="weekdays">
-                            <div class="day">Dom</div>
-                            <div class="day">Lun</div>
-                            <div class="day">Mar</div>
-                            <div class="day">Mie</div>
-                            <div class="day">Jue</div>
-                            <div class="day">Vie</div>
-                            <div class="day">Sab</div>
-                        </div>
-                        <div class="days">
-
-                        </div>
                     </div>
+                    <div class="weekdays">
+                        <div class="day">Dom</div>
+                        <div class="day">Lun</div>
+                        <div class="day">Mar</div>
+                        <div class="day">Mie</div>
+                        <div class="day">Jue</div>
+                        <div class="day">Vie</div>
+                        <div class="day">Sab</div>
+                    </div>
+                    <div class="days"></div>
                 </div>
-            </section>
+            </div>
+        </section>
+    </main>
+</div>
 
+<script>
+    // Obtener la sesión del usuario para validaciones si es necesario
+    const session = "<%= JSON.stringify(usuario) %>";
+    console.log(session);
 
-        </main>
-    </div>
+    // Variables para el modal de calendario
+    const modalCalendario = document.getElementById("myModal");
+    const closeModalCalendarioBtn = document.getElementsByClassName("close-calentario")[0];
 
-    <script>
-        const session = "<%= JSON.stringify(usuario) %>";
-        console.log(session)
-            const modalCalendario = document.getElementById("myModal");
-            const closeModalCalendarioBtn = document.getElementsByClassName("close-calentario")[0];
+    // Funciones para abrir y cerrar el modal del calendario
+    function openModalCalendario(date) {
+        modalCalendario.classList.add('active');
+    }
 
-            function openModalCalendario(date) {
-                modalCalendario.classList.add('active');
+    function closeModalCalentario() {
+        modalCalendario.classList.remove('active');
+    }
+
+    closeModalCalendarioBtn.onclick = closeModalCalentario;
+
+    // Función para guardar fechas bloqueadas del calendario
+    async function saveModalCalentar() {
+        const fechaInicio = document.getElementById("fechaInicio");
+        const fechaFinal = document.getElementById("fechaFinal");
+        console.log(fechaInicio.value, fechaFinal.value);
+
+        try {
+            const data = {
+                fecha_inicio: fechaInicio.value,
+                fecha_final: fechaFinal.value
+            };
+
+            const response = await fetch('/bloquear-fechas', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // Función para obtener eventos del servidor y renderizarlos en el calendario
+    async function obtenerEventos() {
+        try {
+            const response = await fetch('/dashboard_jmedico/gestion_calendario', {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Error al obtener eventos');
+            }
+            
+            const eventos = await response.json();
+            console.log('Eventos obtenidos:', eventos);
+
+            // Renderizar los eventos en el calendario
+            renderCalendar(eventos);
+
+        } catch (error) {
+            console.error('Error al obtener eventos:', error);
+        }
+    }
+
+    // Llama a la función para obtener eventos cuando se cargue la página
+    window.onload = function() {
+        obtenerEventos();
+        inicializarApp(); // Inicializar la aplicación, si es necesario
+    };
+
+    // Función para renderizar el calendario con eventos
+    function renderCalendar(eventos = []) {
+        const date = new Date();
+        const daysContainer = document.querySelector(".days");
+        const monthElement = document.querySelector(".month");
+        const nextBtn = document.querySelector(".next-btn");
+        const prevBtn = document.querySelector(".prev-btn");
+        const todayBtn = document.querySelector(".today-btn");
+
+        // Obtener datos del mes y año actuales
+        let currentMonth = date.getMonth();
+        let currentYear = date.getFullYear();
+
+        // Función para mostrar los eventos en el calendario
+        function renderizarEventos(eventos) {
+            eventos.forEach(evento => {
+                const startDate = new Date(evento.start);
+                const day = startDate.getDate();
+
+                // Seleccionar el día correspondiente en el calendario y mostrar el evento
+                const dayElement = document.querySelector(`.day[data-date="${startDate.toISOString().split('T')[0]}"]`);
+                if (dayElement) {
+                    dayElement.classList.add('event-day');
+                    dayElement.innerHTML += `<div class="event">${evento.title}</div>`;
+                }
+            });
+        }
+
+        // Función para renderizar días en el calendario
+        function renderDays() {
+            date.setDate(1);
+            const firstDayIndex = date.getDay();
+            const prevLastDay = new Date(currentYear, currentMonth, 0).getDate();
+            const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const nextDays = 7 - new Date(currentYear, currentMonth + 1, 0).getDay() - 1;
+
+            monthElement.innerHTML = `${months[currentMonth]} ${currentYear}`;
+            let days = "";
+
+            // Días del mes anterior
+            for (let x = firstDayIndex; x > 0; x--) {
+                days += `<div class="day prev" data-date="${new Date(currentYear, currentMonth - 1, prevLastDay - x + 1).toISOString().split('T')[0]}">${prevLastDay - x + 1}</div>`;
             }
 
-            function closeModalCalentario() {
-                modalCalendario.classList.remove('active');
+            // Días del mes actual
+            for (let i = 1; i <= lastDay; i++) {
+                const dayDate = new Date(currentYear, currentMonth, i).toISOString().split('T')[0];
+                days += `<div class="day" data-date="${dayDate}">${i}</div>`;
             }
 
-            closeModalCalendarioBtn.onclick = closeModalCalentario;
-
-            async function saveModalCalentar(){
-                const fechaInicio = document.getElementById("fechaInicio");
-                const fechaFinal = document.getElementById("fechaFinal")
-                console.log(fechaInicio.value, fechaFinal.value)
-
-                try{
-
-                    const data = {
-                        fecha_inicio: fechaInicio.value,
-                        fecha_final: fechaFinal.value
-                    }
-
-                const response = await fetch('/bloquear-fechas', {  // Cambia '/ruta-del-servidor' por tu URL de destino
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                    });
-
-                    console.log(response)
-            }catch(error){
-                console.log(error)
+            // Días del siguiente mes
+            for (let j = 1; j <= nextDays; j++) {
+                days += `<div class="day next" data-date="${new Date(currentYear, currentMonth + 1, j).toISOString().split('T')[0]}">${j}</div>`;
             }
-            }
-    </script>
+
+            daysContainer.innerHTML = days;
+
+            // Mostrar eventos en el calendario
+            renderizarEventos(eventos);
+        }
+
+        renderDays();
+    }
+</script>
 
 <%- include('../_partials/footer') %>
-

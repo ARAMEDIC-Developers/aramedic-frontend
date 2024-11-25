@@ -7,6 +7,8 @@ const link = require("../config/link");
 const checkLoginMedico = require('../validaciones/authMedico');
 const { validarServicio } = require('../validaciones/servicios');
 const calendar = require('../config/googleCalendar');
+const { google } = require('googleapis');
+
 
 router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
     const data = {
@@ -156,26 +158,45 @@ router.post("/dashboard_jmedico/historia_clinica", checkLoginMedico, async(req, 
 // En tu archivo de rutas (por ejemplo, jmedico.js o donde se defina la ruta)
 router.get("/dashboard_jmedico/gestion_calendario", checkLoginMedico, async (req, res) => {
     try {
+        // Verifica inicialización
+        if (!calendar || !calendar.events) {
+            console.error('El objeto calendar no está inicializado correctamente.');
+            return res.status(500).json({ error: 'API de Google Calendar no inicializada' });
+        }
+
+        const calendarId = process.env.CALENDAR_ID || '202010603@urp.edu.pe';
+
+        if (!calendarId) {
+            return res.status(400).json({ error: 'No se especificó un calendarId válido' });
+        }
+
         const response = await calendar.events.list({
-            calendarId: 'primary', // Cambia por el ID del calendario que usas
+            calendarId,
             timeMin: new Date().toISOString(),
             singleEvents: true,
             orderBy: 'startTime',
         });
 
-        const events = response.data.items.map(event => ({
+        const events = response?.data?.items?.map(event => ({
             id: event.id,
             title: event.summary,
             start: event.start.dateTime || event.start.date,
             end: event.end.dateTime || event.end.date,
-        }));
+        })) || [];
+
+        if (events.length === 0) {
+            return res.status(404).json({ message: 'No hay eventos disponibles' });
+        }
 
         res.json(events);
     } catch (error) {
-        console.error('Error al obtener eventos:', error);
-        res.status(500).send('Error al obtener eventos');
+        console.error('Error al obtener eventos:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Error al obtener eventos del calendario. Verifica tu configuración o permisos.' });
     }
 });
+
+
+
 
 
 

@@ -7,28 +7,43 @@ const keyFile = path.join(__dirname, 'calendario-442806-a679283718b4.json');
 // Verificar si el archivo de credenciales existe
 if (!fs.existsSync(keyFile)) {
     console.log('El archivo de credenciales no se encuentra');
+    process.exit(1); // Detener la ejecución si no se encuentra el archivo
 } else {
     console.log('Archivo de credenciales encontrado');
 }
 
 // Cargar las credenciales manualmente
-const key = require(keyFile);
+let key;
+try {
+    key = require(keyFile);
+} catch (error) {
+    console.error('Error al cargar el archivo de credenciales:', error);
+    process.exit(1);
+}
 
-// Crear un cliente OAuth2 a partir de las credenciales de la cuenta de servicio
+// Crear un cliente de autenticación a partir de las credenciales de la cuenta de servicio
 const auth = new google.auth.GoogleAuth({
     credentials: key,
     scopes: ['https://www.googleapis.com/auth/calendar'],
 });
 
-console.log('Configuración de autenticación:', auth);
-
+// Crear una instancia de la API de Google Calendar
 const calendar = google.calendar({ version: 'v3', auth });
 
-// Función para obtener los eventos
+// Verificar que el objeto 'calendar' esté correctamente inicializado
+console.log('Objeto calendar:', calendar);
+
 async function obtenerEventosCalendario() {
     try {
+        // Asegúrate de que el cliente esté correctamente autorizado
+        console.log('Autenticando con Google Calendar...');
+        
+        // Verifica si el cliente de autenticación es válido
+        const authClient = await auth.getClient();
+        console.log('Autenticación exitosa:', authClient ? 'Sí' : 'No');
+
         const response = await calendar.events.list({
-            calendarId: '202010603@urp.edu.pe', // Cambia por el ID de tu calendario
+            calendarId: '202010603@urp.edu.pe', // ID del calendario
             timeMin: new Date().toISOString(),
             maxResults: 50,
             singleEvents: true,
@@ -48,6 +63,7 @@ async function obtenerEventosCalendario() {
     }
 }
 
+// Probar la función de obtención de eventos
 obtenerEventosCalendario()
     .then(eventos => {
         console.log('Eventos obtenidos:', eventos);
@@ -55,3 +71,9 @@ obtenerEventosCalendario()
     .catch(error => {
         console.error('Error:', error);
     });
+
+// Exportar la instancia del calendario para usar en otras partes de la aplicación
+module.exports = {
+    auth,
+    calendar,
+};
