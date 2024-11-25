@@ -311,10 +311,10 @@ router.post("/dashboard_jmedico/cuentas/guardar", checkLoginMedico, async (req, 
 
 router.get("/dashboard_jmedico/servicios", checkLoginMedico, async (req, res) => {
     try {
-        const servicios = await conexion.query(`
-            SELECT id, nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion 
-            FROM servicios
-        `);
+
+        const medico_id = req.session.medico_id;
+        const servicios = await conexion.query(`SELECT s.id, s.nombre, s.descripcion, s.costo, s.tiempo_duracion, s.tiempo_recuperacion  FROM medico_servicio m
+                                                JOIN servicios s ON m.servicio_id=s.id WHERE m.medico_id = `+medico_id);
         const data = {
             link: link,
             usuario: req.session,

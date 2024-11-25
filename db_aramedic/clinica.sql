@@ -2,17 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
-<<<<<<< HEAD
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-11-2024 a las 05:17:49
+-- Tiempo de generación: 25-11-2024 a las 06:16:28
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
-=======
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 18-11-2024 a las 04:08:48
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
->>>>>>> origin/jonathanv11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -156,9 +149,10 @@ CREATE TABLE `historial_medico` (
 
 INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`, `horaCreacion`, `horaActualizacion`) VALUES
 (1, 2, 'Chequeo Semanal', 'Sin anomalías', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80, 165, 2.5, '', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-20 19:58:59'),
-(2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'NA', 1, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-20 19:59:02'),
+(2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'trabaja dean', 0, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-24 05:01:10'),
 (15, 7, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
-(16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08');
+(16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
+(17, 7, '<xzxczxc', 'zxczxc', 'zxczxc', 'zzczx', 'czxczxc', 0, 0, 'zxczx', 111, 111, 11, 'asdasd', 'asdasd', 'asda', 'asda', 'asdas', 'asdas', 3, '2024-11-25 04:41:31', '2024-11-25 04:41:31');
 
 --
 -- Disparadores `historial_medico`
@@ -285,17 +279,20 @@ CREATE TABLE `servicios` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `descripcion` text DEFAULT NULL,
-  `costo` decimal(10,2) NOT NULL
+  `costo` decimal(10,2) NOT NULL,
+  `tiempo_duracion` varchar(255) DEFAULT NULL,
+  `tiempo_recuperacion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
 -- Volcado de datos para la tabla `servicios`
 --
 
-INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`) VALUES
-(1, 'Consulta General', 'Consulta general con el médico', 50.00),
-(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00),
-(3, 'Radiografía', 'Radiografía de diagnóstico', 75.00);
+INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracion`, `tiempo_recuperacion`) VALUES
+(1, 'Consulta General', 'Consulta general con el médico', 50.00, '20', '1'),
+(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, '40', '1'),
+(3, 'Radiografía', 'Radiografía de diagnóstico', 600.00, '50', '2'),
+(8, 'asd', 'asdasd', 20.00, '1', '1'),
+(9, 'nose', 'asd', 30.00, '1', '1');
 
 -- --------------------------------------------------------
 
@@ -443,7 +440,7 @@ ALTER TABLE `fechas`
 -- AUTO_INCREMENT de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `medicos`
