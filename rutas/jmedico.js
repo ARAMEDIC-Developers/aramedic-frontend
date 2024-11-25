@@ -6,6 +6,7 @@ const conexion = require("../config/conexion");
 const link = require("../config/link");
 const checkLoginMedico = require('../validaciones/authMedico');
 const { validarServicio } = require('../validaciones/servicios');
+const calendar = require('../config/googleCalendar');
 
 router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
     const data = {
@@ -152,19 +153,34 @@ router.post("/dashboard_jmedico/historia_clinica", checkLoginMedico, async(req, 
     );
 });
 
-router.get("/dashboard_jmedico/gestion_calendario", checkLoginMedico, async (req,res) => {
-    // traer citas de la base de datos
-    // const citas = database.Citas('select * from citas');
+// En tu archivo de rutas (por ejemplo, jmedico.js o donde se defina la ruta)
+router.get("/dashboard_jmedico/gestion_calendario", checkLoginMedico, async (req, res) => {
+    try {
+        const response = await calendar.events.list({
+            calendarId: 'primary', // Cambia por el ID del calendario que usas
+            timeMin: new Date().toISOString(),
+            singleEvents: true,
+            orderBy: 'startTime',
+        });
 
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de calendario',
-        'link' : link,
-        'usuario': req.session
-    };
-    
-    res.render("dashboard_medico/gestion_calendario", data);
+        const events = response.data.items.map(event => ({
+            id: event.id,
+            title: event.summary,
+            start: event.start.dateTime || event.start.date,
+            end: event.end.dateTime || event.end.date,
+        }));
+
+        res.json(events);
+    } catch (error) {
+        console.error('Error al obtener eventos:', error);
+        res.status(500).send('Error al obtener eventos');
+    }
 });
+
+
+
+
+
 
 router.get("/dashboard_jmedico/test", checkLoginMedico, async (req,res) => {
     // traer citas de la base de datos

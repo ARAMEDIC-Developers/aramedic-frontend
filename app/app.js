@@ -6,11 +6,14 @@ const methodOverride = require('method-override'); // Para usar métodos PUT y D
 const cors = require('cors');
 const session = require('express-session');
 
+
+
 // Configuraciones
 app.set("view engine", "ejs"); // Páginas dinámicas
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method')); // Permite usar métodos PUT y DELETE
+
 
 // Manejo de sesiones
 app.use(session({
@@ -46,6 +49,8 @@ app.use(require("../rutas/jmedico"));
 app.use(require("../rutas/dpaciente"));
 app.use(require("../rutas/admin"));
 app.use(require("../rutas/recuperarcuentaU"));
+app.use(require("../rutas/calendario"));
+
 
 // Configuración del puerto del servidor
 const PORT = process.env.PORT || 3000;
