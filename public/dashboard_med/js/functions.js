@@ -402,40 +402,61 @@ function renderCalendar() {
     const nextDays = 7 - lastDayIndex - 1;
 
     month.innerHTML = `${months[currentMonth]} ${currentYear}`;
-    let days = "";
+    let daysHTML = "";
+
+    // Obtener la fecha actual para comparación
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);  // Establecer la hora a 00:00 para comparar solo las fechas
 
     // Días del mes anterior
     for (let x = firstDay.getDay(); x > 0; x--) {
-        days += `<div class="day prev">${prevLastDayDate - x + 1}</div>`;
+        daysHTML += `<div class="day prev">${prevLastDayDate - x + 1}</div>`;
     }
 
     // Días del mes actual
     for (let i = 1; i <= lastDayDate; i++) {
-        // Crear una fecha para cada día
         const dayDate = new Date(currentYear, currentMonth, i);
-        
+        // Comparar si el día es pasado
+        const isPastDay = dayDate < currentDate;
+        // Si es el día actual, marcarlo con la clase "today"
         if (
             i === new Date().getDate() &&
             currentMonth === new Date().getMonth() &&
             currentYear === new Date().getFullYear()
         ) {
-            days += `<button onclick="openModalCalendario('${dayDate.toISOString()}')" class="day today">${i}</button>`;
+            daysHTML += `<button onclick="openModalCalendario('${dayDate.toISOString()}')" class="day today" ${isPastDay ? 'disabled' : ''}>${i}</button>`;
         } else {
-            days += `<button onclick="openModalCalendario('${dayDate.toISOString()}')" class="day">${i}</button>`;
+            daysHTML += `<button onclick="openModalCalendario('${dayDate.toISOString()}')" class="day ${isPastDay ? 'disabled' : ''}" ${isPastDay ? 'disabled' : ''}>${i}</button>`;
         }
     }
-
     // Días del siguiente mes
     for (let j = 1; j <= nextDays; j++) {
-        days += `<div class="day next">${j}</div>`;
+        daysHTML += `<div class="day next">${j}</div>`;
     }
-
-
     hideTodayBtn();
-    daysContainer.innerHTML = days;
+    daysContainer.innerHTML = daysHTML;
 }
 
+// Función para manejar la selección de la fecha y abrir el modal
+function openModalCalendario(date) {
+    const selectedDate = new Date(date);
+    const currentDate = new Date();
 
+    // Validar si la fecha seleccionada es menor que la actual
+    if (selectedDate < currentDate) {
+        return; // Si la fecha seleccionada es pasada, no abrir el modal
+    }
+
+    fecha = date;
+    const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}/${
+        (selectedDate.getMonth() + 1).toString().padStart(2, '0')}/${selectedDate.getFullYear()}`;
+    
+    // Mostrar la fecha en el modal
+    document.getElementById('current-date-modal').innerText = formattedDate;
+    modalCalendario.classList.add('active');
+}
+
+// Llamar a la función para renderizar el calendario inicialmente
 renderCalendar();
 
 nextBtn.addEventListener("click", ()=>{

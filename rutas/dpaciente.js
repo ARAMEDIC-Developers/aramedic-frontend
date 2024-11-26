@@ -26,20 +26,75 @@ router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res)
     res.render("dashboard_paciente/calendario", data);
 });
 
-router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req,res) => {
-    // traer citas de la base de datos
-    // const citas = database.Citas('select * from citas');
+router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req, res) => {
+    const medico_servicios = `
+    SELECT m.id AS medico_id, 
+           m.nombre AS medico_nombre, 
+           m.apellido AS medico_apellido,
+           GROUP_CONCAT(
+               CONCAT(s.id, '|', s.nombre, '|', s.descripcion, '|', s.costo) 
+               SEPARATOR ','
+           ) AS servicios
+    FROM medicos m
+    JOIN medico_servicio ms ON m.id = ms.medico_id
+    JOIN servicios s ON ms.servicio_id = s.id
+    GROUP BY m.id;
+    `;
 
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de calendario',
-        'usuario': req.session,
-        'link' : link,
-    };
-    
-    res.render("dashboard_paciente/solicitar_consulta", data);
+    conexion.query(medico_servicios, async function(error, rows) {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Error al obtener médicos" });
+        }
+
+        const med_sv = rows.map(medico => {
+            const servicios = medico.servicios.split(',').map(servicio => {
+                const [servicio_id, servicio_nombre, servicio_descripcion, servicio_costo] = servicio.split('|');
+                return {
+                    servicio_id: servicio_id, 
+                    servicio_nombre: servicio_nombre, 
+                    servicio_descripcion: servicio_descripcion, 
+                    servicio_costo: parseFloat(servicio_costo) 
+                };
+            });
+            return {
+                medico_id: medico.medico_id,
+                medico_nombre: medico.medico_nombre,
+                medico_apellido: medico.medico_apellido,
+                servicios 
+            };
+        });
+
+        const data = {
+            'usuario': req.session,
+            'link': link,
+            'medico_servicios': med_sv 
+        };
+        console.log(med_sv) // VERIFICAR FUNCIONALIDAD (BORRAR)
+        res.status(200).render("dashboard_paciente/solicitar_consulta", data);
+    });
 });
 
+router.post("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req,res) => {
+    const idusuario = req.session.paciente_id;
+    const {medico_id, servicio_id, fecha, hora} =req.body;
+    const citas = `
+    INSERT INTO citas(paciente_id, medico_id, servicio_id, fecha, hora)
+    VALUES (?, ?, ?, ?, ?)
+    `
+    conexion.query(citas, [idusuario, medico_id, servicio_id, fecha, hora], async function(error, rows){
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Error al registrar la cita" });
+        }
+        const data = {
+            'titulo': 'Página de calendario',
+            'usuario': req.session,
+            'link': link,
+        };
+        res.status(200).render("dashboard_paciente/calendario", data);
+    });
+});
 
 router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
     // const citas = database.Historias('select * from historias');

@@ -85,31 +85,6 @@ router.post("/registroU", validateCreate, async function(req, res) {
     }
 });
 
-// Ruta para registrar cita
-router.post("/registro-cita", async (req, res) => {
-    let connection = null;
-    try {
-        connection = await conec.beginTransaction();
-        await conec.execute(connection, `
-            INSERT INTO citas(
-            paciente_id, 
-            medico_id, 
-            servicio_id,
-            fecha,
-            hora,
-            estado) 
-            VALUES (?,?,?,?,?,?)`, Object.values(req.body));
-        await conec.commit(connection);
-        res.status(201).send("Probando ruta");
-    } catch (error) {
-        if (connection != null) {
-            await conec.rollback(connection);
-        }
-        console.log(error);
-        return res.status(500).send("Error en registrar");
-    }
-});
-
 router.get("/suggestion-password", async (req, res) => {
     const password = generatePassword.generate({
         length: 12,

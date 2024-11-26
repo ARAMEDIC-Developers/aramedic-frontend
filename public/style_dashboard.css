@@ -303,6 +303,7 @@ body::before {
     cursor: pointer;
     font-size: 16px;
     transition: all 0.3s ease;
+    text-decoration: none;
 }
 
 .btn-primary:hover, .btn-primary:focus {
@@ -632,18 +633,20 @@ body::before {
     min-height: 70vh;
     display: flex;
     align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
 
 }
-.calendar{
-    width: 100%;
-    max-width: 800px;
-    padding: 30px 20px;
-    border-radius: 10px;
-    background-color: #f1f1fb;
-
-
+.calendar {
+  width: 100%;
+  max-width: 1100px;
+  height: 550px;
+  padding: 30px 20px;
+  border-radius: 10px;
+  background-color: #f1f1fb;
+  margin-bottom: 80px; 
 }
+
 .calendar .header{
     display: flex;
     justify-content: space-between;
@@ -1054,3 +1057,17 @@ body::before {
       padding: 6px 12px;
     }
   }
+  
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group select {
+    width: 50%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
