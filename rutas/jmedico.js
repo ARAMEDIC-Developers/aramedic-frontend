@@ -6,8 +6,6 @@ const conexion = require("../config/conexion");
 const link = require("../config/link");
 const checkLoginMedico = require('../validaciones/authMedico');
 const { validarServicio } = require('../validaciones/servicios');
-const calendar = require('../config/googleCalendar');
-const { google } = require('googleapis');
 
 
 router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
@@ -221,15 +219,35 @@ router.post("/dashboard_jmedico/test", checkLoginMedico, (req,res) => {
     
     res.json(data);
 });
-router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req,res) => {
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de citas',
-        'link' : link,
-        'usuario': req.session
-    };
-    
-    res.render("dashboard_medico/citas", data);
+router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req, res) => {
+    try {
+        const citas = await conexion.query(`
+            SELECT 
+                c.id, 
+                p.nombre AS nombre_paciente,
+                p.apellido AS apellido_paciente,
+                c.medico_id,
+                c.servicio_id,
+                c.fecha,
+                c.hora,
+                c.estado
+            FROM citas c
+            JOIN pacientes p ON c.paciente_id = p.id
+            WHERE c.medico_id = ? 
+            ORDER BY c.fecha, c.hora;
+        `, [req.session.medico_id]);  // Se pasa el ID del médico para filtrar las citas
+
+        res.render("dashboard_medico/citas", {
+            'total_citas': citas.length,
+            'titulo': 'Página de citas',
+            'link': link,
+            'usuario': req.session,
+            'citas': citas
+        });
+    } catch (error) {
+        console.error("Error al obtener citas:", error);
+        res.status(500).send("Error al obtener citas");
+    }
 });
 
 router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req, res) => {

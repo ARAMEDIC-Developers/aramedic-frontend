@@ -122,7 +122,7 @@
                 icon:"error",
                 title:"Error!",
                 text:"Eliga un medico y un servicio primero para continuar",
-                footer: '<a href="https://www.youtube.com/watch?v=7QyDL3zQ-2I" target="_blank">¿Porque tengo este error?</a>' //:P
+                footer: '<a href="https://youtu.be/UZKuju7vIbM?si=6PpR1o_qlxsoOcWy" target="_blank">¿Porque tengo este error?</a>' //:P
             });
         }
     });
@@ -159,20 +159,20 @@
         });
     }
 
-    function sendWhatsapp (phone, fecha, hora) {
-        // Crear mensaje con formato
-        const message = `
-        Buenos días, doctor. Me gustaría agendar una consulta médica para el día ${fecha} a las ${hora}. ¿Le parece conveniente esa hora?`.trim();
+    // function sendWhatsapp (phone, fecha, hora) {
+    //     // Crear mensaje con formato
+    //     const message = `
+    //     Buenos días, doctor. Me gustaría agendar una consulta médica para el día ${fecha} a las ${hora}. ¿Le parece conveniente esa hora?`.trim();
 
-        // Limpiar y formatear el número de teléfono
-        const cleanPhone = phone.replace(/\D/g, '');
+    //     // Limpiar y formatear el número de teléfono
+    //     const cleanPhone = phone.replace(/\D/g, '');
 
-        // Crear la URL de WhatsApp
-        const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+    //     // Crear la URL de WhatsApp
+    //     const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 
-        // Abrir en una nueva ventana
-        window.open(whatsappUrl, '_blank');
-    }
+    //     // Abrir en una nueva ventana
+    //     window.open(whatsappUrl, '_blank');
+    // }
 
     async function fetchSaveCita(){
         if(hora.trim().length === 0){
@@ -221,10 +221,10 @@
                 closeModalCalentario();
                 Swal.fire({
                 title: "Su cita ha sido registrada",
-                text: "Redirigiendo a WhatsApp",
+                text: "Redirigiendo al inicio",
                 icon: "success"
             }).then(()=>{
-                sendWhatsapp("+51974617857", registrarfecha, registrarhora)
+                window.location.href = '/dashboard_paciente';
             });
         }catch(error){
             Swal.fire({

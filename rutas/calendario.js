@@ -5,7 +5,7 @@ const link = require("../config/link");
 const { validateItem } = require('../validaciones/login');
 const { validationResult } = require('express-validator');
 const bcrypt = require("bcrypt"); // Importamos bcrypt para comparar las contraseñas
-const calendar = require('../config/googleCalendar');
+
 
 // Obtener eventos del calendario
 router.get('/eventos', async (req, res) => {

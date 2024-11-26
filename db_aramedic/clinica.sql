@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-11-2024 a las 06:51:26
+-- Tiempo de generación: 26-11-2024 a las 21:31:47
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -69,7 +69,11 @@ CREATE TABLE `citas` (
 
 INSERT INTO `citas` (`id`, `paciente_id`, `medico_id`, `servicio_id`, `fecha`, `hora`, `estado`) VALUES
 (1, 1, 1, 1, '2023-11-15', '10:00:00', 'confirmada'),
-(2, 2, 2, 1, '2023-11-16', '11:00:00', 'pendiente');
+(2, 2, 2, 1, '2023-11-16', '11:00:00', 'pendiente'),
+(3, 8, 3, 2, '2024-11-27', '12:20:00', 'pendiente'),
+(4, 8, 3, 1, '2024-11-27', '08:00:00', 'pendiente'),
+(5, 9, 3, 2, '2024-11-27', '19:00:00', 'pendiente'),
+(6, 9, 3, 2, '2024-11-27', '19:00:00', 'pendiente');
 
 -- --------------------------------------------------------
 
@@ -152,7 +156,8 @@ INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_pre
 (2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'trabaja dean', 0, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-24 05:01:10'),
 (15, 7, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
 (16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
-(17, 7, '<xzxczxc', 'zxczxc', 'zxczxc', 'zzczx', 'czxczxc', 0, 0, 'zxczx', 111, 111, 11, 'asdasd', 'asdasd', 'asda', 'asda', 'asdas', 'asdas', 3, '2024-11-25 04:41:31', '2024-11-25 04:41:31');
+(17, 7, '<xzxczxc', 'zxczxc', 'zxczxc', 'zzczx', 'czxczxc', 0, 0, 'zxczx', 111, 111, 11, 'asdasd', 'asdasd', 'asda', 'asda', 'asdas', 'asdas', 3, '2024-11-25 04:41:31', '2024-11-25 04:41:31'),
+(18, 9, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-26 19:55:29', '2024-11-26 19:55:29');
 
 --
 -- Disparadores `historial_medico`
@@ -238,7 +243,8 @@ INSERT INTO `pacientes` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `genero
 (1, 'Juan', 'Pérez', '1985-05-10', 0, '', '', '555123456', 'pierocarhuaricra@gmail.com', 'Calle 123, Ciudad', 1),
 (2, 'Maria', 'Gomez', '1990-11-25', 1, '', '', '555654321', 'maria.gomez@example.com', 'Avenida 456, Ciudad', 4),
 (7, 'DERECK', 'MUÑOZ', NULL, NULL, '', '', '999999999', 'dereckmunoz07@gmail.com', NULL, 11),
-(8, 'DERECK', 'Muñoz', NULL, NULL, '', '', '999999999', 'dereckmunoz07@gmail.com', NULL, 12);
+(8, 'DERECK', 'Muñoz', NULL, NULL, '', '', '999999999', 'dereckmunoz07@gmail.com', NULL, 12),
+(9, 'DERECK', 'FERNANDO', NULL, NULL, '', '', '999999991', 'dereckmunoz07@gmail.com', NULL, 15);
 
 --
 -- Disparadores `pacientes`
@@ -320,7 +326,8 @@ INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`) VALUES
 (11, '74733211', '$2b$10$ZRdhUj6d8GHNd/hsK47GHuohNlxhd2GvWXZQ/PfWR.GTZWHJgATEC', 1),
 (12, '74733299', '$2b$10$/NB90fLoUA5hcLz.kwL8VubJn8mpflhdKGtI6Lpt3Mjgsj9BQ5v3S', 1),
 (13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2),
-(14, '12345678', '$2b$10$KSRLPcmF4VVRaj1Ug58hke2a5trtFVJCmqXvAZSKZGAyTnJPZt/L2', 3);
+(14, '12345678', '$2b$10$KSRLPcmF4VVRaj1Ug58hke2a5trtFVJCmqXvAZSKZGAyTnJPZt/L2', 3),
+(15, '74733225', '$2b$10$DyYWE5niW4MimCyA8o29B.K153phNPwVBqe1thqwwKjvb6xcGB6RK', 1);
 
 -- --------------------------------------------------------
 
@@ -423,7 +430,7 @@ ALTER TABLE `usuarios_key`
 -- AUTO_INCREMENT de la tabla `citas`
 --
 ALTER TABLE `citas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `especialidades`
@@ -441,7 +448,7 @@ ALTER TABLE `fechas`
 -- AUTO_INCREMENT de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `medicos`
@@ -459,7 +466,7 @@ ALTER TABLE `medico_servicio`
 -- AUTO_INCREMENT de la tabla `pacientes`
 --
 ALTER TABLE `pacientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -477,7 +484,7 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios_key`
