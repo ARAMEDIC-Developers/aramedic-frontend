@@ -26,28 +26,51 @@ router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res)
     res.render("dashboard_paciente/calendario", data);
 });
 
-router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req, res) =>{
+router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req, res) => {
     const medico_servicios = `
-    SELECT m.id AS medico_id, m.nombre AS medico_nombre, m.apellido AS medico_apellido, s.id AS servicio_id, 
-           s.nombre AS servicio_nombre, s.descripcion AS servicio_descripcion, s.costo AS servicio_costo
-    FROM medico_servicio ms 
-    JOIN medicos m ON ms.medico_id = m.id
+    SELECT m.id AS medico_id, 
+           m.nombre AS medico_nombre, 
+           m.apellido AS medico_apellido,
+           GROUP_CONCAT(
+               CONCAT(s.id, '|', s.nombre, '|', s.descripcion, '|', s.costo) 
+               SEPARATOR ','
+           ) AS servicios
+    FROM medicos m
+    JOIN medico_servicio ms ON m.id = ms.medico_id
     JOIN servicios s ON ms.servicio_id = s.id
-    `
+    GROUP BY m.id;
+    `;
+
     conexion.query(medico_servicios, async function(error, rows) {
         if (error) {
             console.error(error);
             return res.status(500).json({ error: "Error al obtener médicos" });
         }
 
-        const med_sv = rows;
-        console.log(med_sv);
-        
+        const med_sv = rows.map(medico => {
+            const servicios = medico.servicios.split(',').map(servicio => {
+                const [servicio_id, servicio_nombre, servicio_descripcion, servicio_costo] = servicio.split('|');
+                return {
+                    servicio_id: servicio_id, 
+                    servicio_nombre: servicio_nombre, 
+                    servicio_descripcion: servicio_descripcion, 
+                    servicio_costo: parseFloat(servicio_costo) 
+                };
+            });
+            return {
+                medico_id: medico.medico_id,
+                medico_nombre: medico.medico_nombre,
+                medico_apellido: medico.medico_apellido,
+                servicios 
+            };
+        });
+
         const data = {
             'usuario': req.session,
             'link': link,
-            'medico_servicios': med_sv
+            'medico_servicios': med_sv 
         };
+        console.log(med_sv) // VERIFICAR FUNCIONALIDAD (BORRAR)
         res.status(200).render("dashboard_paciente/solicitar_consulta", data);
     });
 });
