@@ -11,12 +11,55 @@ const { google } = require('googleapis');
 
 
 router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
+
     const data = {
         'link' : link,
-        'usuario': req.session
+        'usuario': req.session,
     }
 
     res.render("dashboard_medico/gestion_calendario", data);
+});
+
+router.get("/dashboard_jmedico/events", async function(req,res){
+
+    const result = await new Promise((resolve, reject)=>{
+        conexion.query(`
+        SELECT 
+            p.nombre,
+            p.apellido,
+            s.nombre as consulta,
+            c.fecha,
+            c.hora
+        FROM citas as c 
+        INNER JOIN medicos as m on m.id = c.medico_id
+        INNER JOIN pacientes as p on p.id = c.paciente_id
+        INNER JOIN servicios as s on s.id = c.servicio_id`, [], function(error, rows){
+            if(error){
+                reject(false);
+            }
+            resolve(rows);
+        });
+    });
+
+    if (!result){
+        return res.json([]);
+    }
+
+    const events = result.map((item, index)=>{
+        const title = item.nombre+" "+item.apellido + " - " +item.consulta;
+
+        const [hours, minutes, seconds = 0] = item.hora.split(":").map(Number)
+
+        const current = new Date(item.fecha)
+        const start = new Date(current.getFullYear(), current.getMonth(), current.getDate(),hours,minutes, seconds);
+        return {
+            title,
+            start,
+            end: start
+        }
+    });
+
+    res.json(events);
 });
 
 router.get("/dashboard_jmedico/historias", checkLoginMedico, function(req,res){
@@ -155,54 +198,6 @@ router.post("/dashboard_jmedico/historia_clinica", checkLoginMedico, async(req, 
     );
 });
 
-// En tu archivo de rutas (por ejemplo, jmedico.js o donde se defina la ruta)
-router.get("/dashboard_jmedico/gestion_calendario", checkLoginMedico, async (req, res) => {
-    try {
-        // Verifica inicialización
-        if (!calendar || !calendar.events) {
-            console.error('El objeto calendar no está inicializado correctamente.');
-            return res.status(500).json({ error: 'API de Google Calendar no inicializada' });
-        }
-
-        const calendarId = process.env.CALENDAR_ID || '202010603@urp.edu.pe';
-
-        if (!calendarId) {
-            return res.status(400).json({ error: 'No se especificó un calendarId válido' });
-        }
-
-        const response = await calendar.events.list({
-            calendarId,
-            timeMin: new Date().toISOString(),
-            singleEvents: true,
-            orderBy: 'startTime',
-        });
-
-        const events = response?.data?.items?.map(event => ({
-            id: event.id,
-            title: event.summary,
-            start: event.start.dateTime || event.start.date,
-            end: event.end.dateTime || event.end.date,
-        })) || [];
-
-        if (events.length === 0) {
-            return res.status(404).json({ message: 'No hay eventos disponibles' });
-        }
-
-        res.json(events);
-    } catch (error) {
-        console.error('Error al obtener eventos:', error.response?.data || error.message);
-        res.status(500).json({ error: 'Error al obtener eventos del calendario. Verifica tu configuración o permisos.' });
-    }
-});
-
-
-
-
-
-
-
-
-
 router.get("/dashboard_jmedico/test", checkLoginMedico, async (req,res) => {
     // traer citas de la base de datos
     // const citas = database.Citas('select * from citas');
@@ -227,7 +222,6 @@ router.post("/dashboard_jmedico/test", checkLoginMedico, (req,res) => {
     res.json(data);
 });
 router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req,res) => {
-    
     const data = {
         'total_citas':0,
         'titulo' : 'pagina de citas',
