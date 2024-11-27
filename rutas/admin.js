@@ -16,6 +16,46 @@ router.get("/dashboard_admin", checkLoginAdmin, function(req,res){
     res.render("dashboard_admin/gestion_calendario", data);
 });
 
+router.get("/dashboard_admin/events", async function(req,res){
+    const result = await new Promise((resolve, reject)=>{
+        conexion.query(`
+        SELECT 
+            p.nombre,
+            p.apellido,
+            s.nombre as consulta,
+            c.fecha,
+            c.hora
+        FROM citas as c 
+        INNER JOIN medicos as m on m.id = c.medico_id
+        INNER JOIN pacientes as p on p.id = c.paciente_id
+        INNER JOIN servicios as s on s.id = c.servicio_id`, [], function(error, rows){
+            if(error){
+                reject(false);
+            }
+            resolve(rows);
+        });
+    });
+
+    if (!result){
+        return res.json([]);
+    }
+
+    const events = result.map((item, index)=>{
+        const title = item.nombre+" "+item.apellido + " - " +item.consulta;
+
+        const [hours, minutes, seconds = 0] = item.hora.split(":").map(Number)
+
+        const current = new Date(item.fecha)
+        const start = new Date(current.getFullYear(), current.getMonth(), current.getDate(),hours,minutes, seconds);
+        return {
+            title,
+            start,
+            end: start
+        }
+    });
+
+    res.json(events);
+});
 
 router.get("/dashboard_admin/historias", checkLoginAdmin, (req, res) => {
     const buscar = req.query.buscar ?? ""; // Capturar el parámetro de búsqueda desde la URL
@@ -161,20 +201,6 @@ router.post("/dashboard_admin/historia_clinica", checkLoginAdmin, async (req, re
     );
 });
 
-
-router.get("/dashboard_admin/gestion_calendario", checkLoginAdmin, async (req,res) => {
-    // traer citas de la base de datos
-    // const citas = database.Citas('select * from citas');
-
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de calendario',
-        'link' : link,
-        'usuario': req.session
-    };
-    
-    res.render("dashboard_admin/gestion_calendario", data);
-});
 
 // router.get("/dashboard_jmedico/test", checkLoginMedico, async (req,res) => {
 //     // traer citas de la base de datos

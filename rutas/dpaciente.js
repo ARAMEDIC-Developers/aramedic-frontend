@@ -4,7 +4,7 @@ const conexion=require("../config/conexion");
 const link= require("../config/link");
 const checkLoginPaciente = require('../validaciones/authPaciente');
 
-router.get("/dashboard_paciente", function(req,res){
+router.get("/dashboard_paciente", function(req, res){
     const data = {
         'total_citas':0,
         'titulo' : 'pagina de calendario',
@@ -14,16 +14,46 @@ router.get("/dashboard_paciente", function(req,res){
     res.render("dashboard_paciente/calendario", data);
 });
 
-router.get("/dashboard_paciente/calendario", checkLoginPaciente, async (req,res) => {
-    // traer citas de la base de datos
-    // const citas = database.Citas('select * from citas');
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de calendario',
-        'usuario': req.session,
-        'link' : link,
-    };
-    res.render("dashboard_paciente/calendario", data);
+router.get("/dashboard_paciente/events", async function (req, res) {
+    const idpaciente = req.session.paciente_id;
+    if(!idpaciente){
+        return res.status(401).send("inicar sesión nuevamente.")
+    }
+
+    const result = await new Promise((revolve, reject)=>{
+        conexion.query(`SELECT 
+            p.nombre,
+            p.apellido,
+            s.nombre as consulta,
+            c.fecha,
+            c.hora
+        FROM citas as c 
+        INNER JOIN medicos as m on m.id = c.medico_id
+        INNER JOIN pacientes as p on p.id = c.paciente_id
+        INNER JOIN servicios as s on s.id = c.servicio_id
+        WHERE c.paciente_id = ?`, [idpaciente], function(error, rows){
+            if(error){
+                reject(false)
+            }
+            revolve(rows)
+        })
+    });
+
+    const events = result.map((item, index)=>{
+        const title = item.nombre+" "+item.apellido + " - " +item.consulta;
+
+        const [hours, minutes, seconds = 0] = item.hora.split(":").map(Number)
+
+        const current = new Date(item.fecha)
+        const start = new Date(current.getFullYear(), current.getMonth(), current.getDate(),hours,minutes, seconds);
+        return {
+            title,
+            start,
+            end: start
+        }
+    });
+
+    return res.json(events);
 });
 
 router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req, res) => {
@@ -70,7 +100,6 @@ router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (
             'link': link,
             'medico_servicios': med_sv 
         };
-        console.log(med_sv) // VERIFICAR FUNCIONALIDAD (BORRAR)
         res.status(200).render("dashboard_paciente/solicitar_consulta", data);
     });
 });
@@ -78,6 +107,25 @@ router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (
 router.post("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req,res) => {
     const idusuario = req.session.paciente_id;
     const {medico_id, servicio_id, fecha, hora} =req.body;
+
+    console.log(fecha, hora)
+
+    const valid = await new Promise((resolve) => {
+        conexion.query(
+          'SELECT * FROM `citas` WHERE hora = ? AND fecha = ?',
+          [hora, fecha],
+          function (_error, rows) {
+            console.log(rows)
+            // Ignoramos cualquier error y resolvemos solo con true o false
+            resolve(rows.length !== 0);
+          }
+        );
+      });
+      
+    if(valid){
+        return res.status(400).json({ error: "El horario ya se encuentra registrado." });
+    }
+
     const citas = `
     INSERT INTO citas(paciente_id, medico_id, servicio_id, fecha, hora)
     VALUES (?, ?, ?, ?, ?)
@@ -108,7 +156,6 @@ router.get("/dashboard_paciente/citas", checkLoginPaciente, async (req,res) => {
 router.get("/dashboard_paciente/historia_clinica", checkLoginPaciente, async (req,res) => {
     //TRAER HISTORIA DE LA BD
     const idusuario = req.session.paciente_id;
-    console.log(idusuario)
     const historia = `
         SELECT 
             p.nombre AS nombre_paciente, 
@@ -145,7 +192,6 @@ router.get("/dashboard_paciente/historia_clinica", checkLoginPaciente, async (re
     conexion.query(historia, idusuario, async function(error,rows){
         if (error) 
             {
-                console.log("TRIKA error en la consulta de verificación", error);
                 return res.status(500).send(error);
             }
         else if(rows < 1){
@@ -154,7 +200,6 @@ router.get("/dashboard_paciente/historia_clinica", checkLoginPaciente, async (re
         }
         else{
             const historial_medico = rows[0];
-            console.log(historial_medico)
             const data = {
                 'usuario': req.session,
                 'link' : link,

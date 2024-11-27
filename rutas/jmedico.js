@@ -19,7 +19,6 @@ router.get("/dashboard_jmedico", checkLoginMedico, function(req,res){
 });
 
 router.get("/dashboard_jmedico/events", async function(req,res){
-
     const result = await new Promise((resolve, reject)=>{
         conexion.query(`
         SELECT 

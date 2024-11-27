@@ -218,7 +218,14 @@
                 },
                 body: JSON.stringify(data)
                 });
+
                 closeModalCalentario();
+
+                if (!response.ok){
+                    console.log(response)
+                    throw new Exception("se genero un problema");
+                }
+
                 Swal.fire({
                 title: "Su cita ha sido registrada",
                 text: "Redirigiendo al inicio",
@@ -229,8 +236,8 @@
         }catch(error){
             Swal.fire({
                 title: "The Internet?",
-                text: "paso algo",
-                icon: "error"
+                text: "ya consulta ya existe",
+                icon: "warning"
             });
         }finally{
             hora = fecha = "";
