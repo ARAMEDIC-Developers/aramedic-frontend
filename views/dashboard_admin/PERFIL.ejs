@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
+    <link rel="stylesheet" href="Perfil_style.css">
+</head>
+<body>
+    <div class="main-box">
+        <h1>Información Básica del Usuario</h1>
+        <div class="content-box">
+            <!-- Sección de Imagen de Usuario -->
+            <div class="user-image-box">
+                <div class="user-image-square" id="imageContainer">
+                    <img id="userImage" src="/placeholder.jpg" alt="Imagen Usuario">
+                </div>
+                <div class="image-buttons">
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                    <button id="addImageButton">Agregar Imagen</button>
+                    <button id="removeImageButton">Eliminar Imagen</button>
+                </div>
+            </div>
+
+            <!-- Sección de Información Usuario -->
+            <div class="info-wrapper">
+                <!-- Información Usuario -->
+                <div class="info-box">
+                    <h2>Información Usuario</h2>
+                    <div class="form-grid">
+                        <!-- <label for="userType">Usuario_Rol:</label>
+                        <select id="userType">
+                            <option>Usuario ToolWeb</option>
+                        </select>-->
+
+                        <label for="employee">Nombre:</label>
+                        <input type="text" id="employee" value="GABRIEL JULIAN">
+
+                        <label for="employee">Apellido:</label>
+                        <input type="text" id="employee" value="GUTIERREZ GUERRERO">
+
+                        <label for="userSubType">Direccion:</label>
+                        <input type="text" id="employee" value="Av. Brasil 330">
+                        <!--<select id="userSubType">
+                            <option>SoftHot Utilitario</option>
+                        </select>-->
+
+                        <label for="location">Telefono:</label>
+                        <input type="text" id="employee" value="982841355">
+                    </div>
+                </div>
+
+                <!-- Credenciales Globales -->
+                <div class="info-box">
+                    <h2>Credenciales Globales</h2>
+                    <div class="form-grid">
+                        <!--<label for="license">Licencia ToolWeb:</label>
+                        <select id="license">
+                            <option>GabrielGG</option>
+                        </select>-->
+
+                        <label for="username">Usuario:</label>
+                        <input type="text" id="username" value="GabrielGG">
+
+                        <label for="password">Contraseña:</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" value="******">
+                            <button type="button" class="toggle-password" onclick="togglePassword('password', this)">👁️</button>
+                        </div>
+
+                        <label for="verification">Verificación:</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="verification" value="******">
+                            <button type="button" class="toggle-password" onclick="togglePassword('verification', this)">👁️</button>
+                        </div>
+
+                        <label for="email">Correo Electrónico:</label>
+                        <input type="email" id="email" placeholder="correo@ejemplo.com">
+
+                        <!-- <div class="checkbox-group">
+                            <input type="checkbox" id="useEmail">
+                            <label for="useEmail">Usar Correo como Usuario</label>-->
+                            
+                        </div>
+                    </div>
+            <!-- Botones de Acción -->
+            <div class="actions">
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="actions">
+            <!-- <button>Cancelar</button> -->
+            <button>Atrás</button>
+            <!-- <button>Siguiente</button> -->
+            <!-- <button>Terminar</button> -->
+            <button>Salvar y Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar/ocultar contraseña
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                button.eyeIcon = "👁️";
+                //eyeIcon.classList.toggle("bx-hide");
+                //button.textContent = "🙈";
+            } else {
+                input.type = "password";
+                //eyeIcon.classList.toggle("bx-show");
+                //button.textContent = "👁️";
+                button.eyeIcon = "👁️";
+            }
+        }
+
+        // Función para manejar la selección de imagen
+        const imageInput = document.getElementById("imageInput");
+        const userImage = document.getElementById("userImage");
+        const addImageButton = document.getElementById("addImageButton");
+        const removeImageButton = document.getElementById("removeImageButton");
+
+        addImageButton.addEventListener("click", () => {
+            imageInput.click();
+        });
+
+        imageInput.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    userImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeImageButton.addEventListener("click", () => {
+            userImage.src = "/placeholder.svg";
+            imageInput.value = "";
+        });
+    </script>
+</body>
+</html>
