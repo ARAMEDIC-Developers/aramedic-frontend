@@ -97,6 +97,14 @@ header {
 .nav__logo span {
   color: var(--secondary-color);
 }
+.nav__logo:hover {
+  color: var(--white); /* Mantiene el color blanco cuando pasas el mouse */
+}
+
+.nav__logo:hover span {
+  color: var(--secondary-color); /* Mantiene el color del texto "MEDIC" */
+}
+
 
 .nav__links {
   padding-top: 1rem;
@@ -199,7 +207,6 @@ header {
   border: 1px solid var(--primary-color);
   background-color: transparent;
   border-radius: 5px;
-  white-space: nowrap;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -260,6 +267,7 @@ header {
   background-color: var(--primary-color);
 }
 
+
 .about__container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -278,31 +286,31 @@ header {
   border-radius: 10px;
 }
 
-.why__container {
+.unique__container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
   align-items: center;
 }
 
-.why__image img {
+.unique__image img {
   max-width: 400px;
   margin: auto;
   border-radius: 10px;
 }
 
-.why__content p {
+.unique__content p {
   color: var(--text-light);
 }
 
-.why__grid {
+.unique__grid {
   margin-top: 4rem;
   display: grid;
   grid-template-columns: 80px auto;
   gap: 2rem;
 }
 
-.why__grid span {
+.unique__grid span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -312,14 +320,14 @@ header {
   box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1);
 }
 
-.why__grid h4 {
+.unique__grid h4 {
   margin-bottom: 0.5rem;
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--text-dark);
 }
 
-.why__grid p {
+.unique__grid p {
   color: var(--text-light);
 }
 
@@ -369,6 +377,49 @@ header {
   overflow: hidden;
 }
 
+.doctors__card__image img {
+  display: block;
+  width: 100%;
+  transition: transform 0.5s ease;
+}
+
+.doctors__card__image:hover img {
+  transform: scale(1.1); /* Zoom ligero en la imagen */
+}
+
+
+.doctors__card__description {
+  position: absolute;
+  bottom: -100%; /* Inicialmente fuera de la vista */
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.7)); /* Fondo blanco claro con transparencia */
+  color: #333333; /* Gris oscuro para texto */
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera para separarlo del fondo */
+  transition: bottom 0.5s ease, background-color 0.3s ease;
+}
+
+.doctors__card__image:hover .doctors__card__description {
+  bottom: 0; /* Mueve la descripción hacia arriba */
+  background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(240, 240, 240, 0.9)); /* Fondo aún más brillante al hacer hover */
+}
+
+.doctors__card__description h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333333; /* Gris oscuro para el nombre */
+}
+
+.doctors__card__description p {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #555555; /* Gris intermedio para la especialidad */
+}
 .doctors__socials {
   position: absolute;
   left: 0;

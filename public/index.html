@@ -4,6 +4,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/my-app/src/app/app.component.css"/>
     <title>Clínica ARAMEDIC E.I.R.L.</title>
@@ -21,13 +22,13 @@
   <body>
     <header style="background-image: url('imgs/header.png')">
       <nav class="section__container nav__container">
-        <a class="nav__logo" href="#" style="display: inline-flex; align-items: center;text-decoration: none;">
+        <a class="nav__logo" href="javascript:location.reload();" style="display: inline-flex; align-items: center;text-decoration: none;">
           <img src="imgs/logo.ico" style="width: 50px; height: auto; margin-right: 10px;" ><span>ARA</span>MEDIC</a>
         <ul class="nav__links">
-            <li class="link" style="font-style: italic"><a href="#" style ="text-decoration: none;">Nuestros Servicios</a></li>
-            <li class="link" style="font-style: italic"><a href="#" style ="text-decoration: none;">Sobre Nosotros</a></li>
-            <li class="link" style="font-style: italic"><a href="#" style ="text-decoration: none;">¿Por qué nos escogiste?</a></li>
-            <li class="link" style="font-style: italic"><a href="#" style ="text-decoration: none;">Nuestros Especialistas</a></li>
+            <li class="link" style="font-style: italic"><a href="#service" style ="text-decoration: none;">Nuestros Servicios</a></li>
+            <li class="link" style="font-style: italic"><a href="#about" style ="text-decoration: none;">Sobre Nosotros</a></li>
+            <li class="link" style="font-style: italic"><a href="#unique" style ="text-decoration: none;">Lo que nos hace únicos</a></li>
+            <li class="link" style="font-style: italic"><a href="#pages" style ="text-decoration: none;">Nuestros Especialistas</a></li>
         </ul>
         <button class="btn" onclick="window.location.href='login';" style="background-color:rgb(255, 155, 55);">Iniciar Sesión</button>
         <!-- <button class="btn" onclick="window.location.href='registroU';" style="background-color:rgb(254, 254, 253);">Registrarse</button> -->
@@ -125,40 +126,70 @@
         <div class="service__header__content">
           <h2 class="section__header">Nuestros Servicios</h2>
           <p>
-            Ofrecemos los siguientes servicios de acuerdo a lo que vino buscando: 
+            Descubre una amplia variedad de procedimientos diseñados para mejorar tu bienestar y resaltar tu belleza. Cada uno de nuestros servicios está realizado por profesionales altamente capacitados que utilizan técnicas avanzadas para garantizar resultados óptimos.
           </p>
         </div>
-        <button class="service__btn">Todos Nuestros Servicios</button>
       </div>
       <div class="service__grid">
         <div class="service__card">
-          <span><i class="ri-microscope-line"></i></span>
-          <h4>Consulta médica</h4>
+          <span><i class="ri-body-scan-line"></i></span>
+          <h4>Abdominoplastia</h4>
           <p>
-            Programe su cita para conseguir una evalución con resultados concisos y realze su belleza.
+            Remodela y tonifica la zona abdominal, eliminando el exceso de piel y grasa para un contorno más definido.
           </p>
-          <a href="#">Ver más</a>
         </div>
         <div class="service__card">
-          <span><i class="ri-mental-health-line"></i></span>
-          <h4>Health Check</h4>
+          <span><i class="ri-user-smile-line"></i></span>
+          <h4>Liposucción Facial y Papada</h4>
           <p>
-            Our thorough assessments and expert evaluations help you stay
-            proactive about your health.
+            Define y estiliza el contorno del rostro, eliminando depósitos de grasa no deseados en áreas específicas.
           </p>
-          <a href="#">Ver más</a>
         </div>
         <div class="service__card">
-          <span><i class="ri-hospital-line"></i></span>
-          <h4>General Dentistry</h4>
+          <span><i class="ri-hand-heart-line"></i></span>
+          <h4>Mastectomía</h4>
           <p>
-            Experience comprehensive oral care with Dentistry. Trust us to keep
-            your smile healthy and bright.
+            Procedimiento quirúrgico especializado para el tratamiento del cáncer de mama o como medida preventiva.
           </p>
-          <a href="#">Ver más</a>
+        </div>
+        <div class="service__card">
+          <span><i class="ri-user-heart-line"></i></span>
+          <h4>Mastopexia</h4>
+          <p>
+            Levanta y rejuvenece los senos para lograr una apariencia más firme y juvenil.
+          </p>
+        </div>
+        <div class="service__card">
+          <span><i class="fas fa-user-nurse"></i></span>
+          <h4>Rinoplastia</h4>
+          <p>
+            Corrige y mejora la forma y funcionalidad de la nariz, equilibrando tus rasgos faciales.
+          </p>
+        </div>
+        <div class="service__card">
+          <span><i class="fas fa-syringe"></i></span>
+          <h4>Reducción Mamaria</h4>
+          <p>
+            Reduce el tamaño de los senos para aliviar molestias físicas y lograr proporciones armoniosas.
+          </p>
+        </div>
+        <div class="service__card">
+          <span><i class="ri-contrast-drop-2-line"></i></span>
+          <h4>Aumento de Glúteo</h4>
+          <p>
+            Mejora la forma y el volumen de los glúteos mediante técnicas avanzadas y seguras.
+          </p>
+        </div>
+        <div class="service__card">
+          <span><i class="ri-brush-line"></i></span>
+          <h4>Lifting</h4>
+          <p>
+            Rejuvenece tu apariencia eliminando flacidez y líneas de expresión en el rostro y el cuello.
+          </p>
         </div>
       </div>
     </section>
+    
     
     <section class="section__container about__container" id="about">
       <div class="about__content">
@@ -178,99 +209,87 @@
       </div>
     </section>
     
-    <section class="section__container why__container" id="blog">
-      <div class="why__image">
-        <img src="imgs/choose-us.jpg" alt="why choose us" />
+    <section class="section__container unique__container" id="unique">
+      <div class="unique__image">
+        <img src="imgs/choose-us.jpg" alt="lo que nos hace únicos" />
       </div>
-      <div class="why__content">
-        <h2 class="section__header">¿Por qué nos escogiste?</h2>
+      <div class="unique__content">
+        <h2 class="section__header">Lo que nos hace únicos</h2>
         <p>
-          With a steadfast commitment to your well-being, our team of highly
-          trained healthcare professionals ensures that you receive nothing
-          short of exceptional patient experiences.
+          En ARAMEDIC, marcamos la diferencia al ofrecer una experiencia integral que prioriza tu bienestar, confianza y satisfacción. Nuestro equipo está dedicado a proporcionar un servicio excepcional, utilizando tecnología de vanguardia y técnicas avanzadas que garantizan resultados sobresalientes en cada tratamiento.
         </p>
-        <div class="why__grid">
-          <span><i class="ri-hand-heart-line"></i></span>
-          <div>
-            <h4>Buena experiencia al menor costo</h4>
-            <p>
-              Ofrecemos  
-            </p>
-          </div>
-          <span><i class="ri-truck-line"></i></span>
-          <div>
-            <h4>Free Ambulance Car</h4>
-            <p>
-              A compassionate initiative to prioritize your health and
-              well-being without any financial burden.
-            </p>
-          </div>
-          <span><i class="ri-hospital-line"></i></span>
-          <div>
-            <h4>Medical and Surgical</h4>
-            <p>
-              Our Medical and Surgical services offer advanced healthcare
-              solutions to address medical needs.
-            </p>
-          </div>
+        <div class="unique__grid">
+          
+            <span><i class="ri-heart-2-fill" style="color: rgb(255, 155, 55);"></i></span>
+            <div>
+              <h4>Atención Personalizada</h4>
+              <p>
+                Escuchamos y comprendemos tus necesidades para ofrecer soluciones que se ajusten a tus objetivos y expectativas.
+              </p>
+            </div>
+          
+          
+            <span><i class="ri-shield-check-line" style="color: rgb(85, 204, 124);"></i></span>
+            <div>
+              <h4>Seguridad y Confianza</h4>
+              <p>
+                Nos aseguramos de que cada procedimiento se realice con los más altos estándares de calidad y seguridad.
+              </p>
+            </div>
+          
+          
+            <span><i class="ri-hospital-line" style="color: rgb(65, 179, 255);"></i></span>
+            <div>
+              <h4>Instalaciones Modernas</h4>
+              <p>
+                Contamos con tecnología de última generación y un ambiente diseñado para tu comodidad y tranquilidad.
+              </p>
+            </div>
+          
         </div>
       </div>
     </section>
+    
     
     <section class="section__container doctors__container" id="pages">
       <div class="doctors__header">
         <div class="doctors__header__content">
           <h2 class="section__header">Nuestros Especialistas</h2>
           <p>
-            Contamos con una línea de especialistas con una amplia gama de conocimientos y quienes buscan brindar la mejor atención a sus pacientes
-          </p>
+            Contamos con un equipo de especialistas altamente capacitados, comprometidos con ofrecer una atención de calidad excepcional y enfocados en garantizar el bienestar y la satisfacción de cada paciente.          </p>
         </div>
-        <div class="doctors__nav">
-          <span><i class="ri-arrow-left-line"></i></span>
-          <span><i class="ri-arrow-right-line"></i></span>
-        </div>
+        
       </div>
       <div class="doctors__grid">
         <div class="doctors__card">
           <div class="doctors__card__image">
             <img src="imgs/doctor-1.jpg" alt="doctor" />
-            <div class="doctors__socials">
-              <span><i class="ri-instagram-line"></i></span>
-              <span><i class="ri-facebook-fill"></i></span>
-              <span><i class="ri-heart-fill"></i></span>
-              <span><i class="ri-twitter-fill"></i></span>
+            <div class="doctors__card__description">
+              <h4>Dra. Lydia Osorio</h4>
+              <p>Enfermera</p>
             </div>
           </div>
-          <h4>Lydia Osorio</h4>
-          <p>Enfermera</p>
         </div>
         <div class="doctors__card">
           <div class="doctors__card__image">
             <img src="imgs/doctor-2.jpg" alt="doctor" />
-            <div class="doctors__socials">
-              <span><i class="ri-instagram-line"></i></span>
-              <span><i class="ri-facebook-fill"></i></span>
-              <span><i class="ri-heart-fill"></i></span>
-              <span><i class="ri-twitter-fill"></i></span>
+            <div class="doctors__card__description">
+              <h4>Dr. Aldo Reyes</h4>
+              <p>Director médico y cirujano plástico</p>
             </div>
           </div>
-          <h4>Dr. Aldo Reyes</h4>
-          <p>Director médico y cirujano plástico</p>
         </div>
         <div class="doctors__card">
           <div class="doctors__card__image">
             <img src="imgs/doctor-3.jpg" alt="doctor" />
-            <div class="doctors__socials">
-              <span><i class="ri-instagram-line"></i></span>
-              <span><i class="ri-facebook-fill"></i></span>
-              <span><i class="ri-heart-fill"></i></span>
-              <span><i class="ri-twitter-fill"></i></span>
+            <div class="doctors__card__description">
+              <h4>Dr. Luis Trujillo</h4>
+              <p>Cosmiatra</p>
             </div>
           </div>
-          <h4>Norma</h4>
-          <p>Cosmiatra</p>
         </div>
       </div>
+      
     </section>
     
     <footer class="footer">
