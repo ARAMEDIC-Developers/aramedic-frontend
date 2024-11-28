@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-11-2024 a las 16:16:44
+-- Tiempo de generación: 28-11-2024 a las 20:38:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -217,8 +217,7 @@ INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`, `estado`) VALUE
 (4, 3, 10, 'activo'),
 (5, 3, 11, 'activo'),
 (6, 3, 10, 'activo'),
-(7, 3, 11, 'activo'),
-(8, 3, 12, 'activo');
+(7, 3, 11, 'activo');
 
 -- --------------------------------------------------------
 
@@ -293,22 +292,25 @@ CREATE TABLE `servicios` (
   `costo` decimal(10,2) NOT NULL,
   `tiempo_duracion` varchar(255) DEFAULT NULL,
   `tiempo_recuperacion` varchar(255) DEFAULT NULL,
-  `estado` enum('activo','inactivo') DEFAULT 'activo'
+  `estado` enum('activo','inactivo') DEFAULT 'activo',
+  `visibilidad` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `servicios`
 --
 
-INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracion`, `tiempo_recuperacion`, `estado`) VALUES
-(1, 'Consulta General', 'Consulta general con el médico', 50.00, '20', '1', 'activo'),
-(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, '40', '1', 'activo'),
-(3, 'Radiografía', 'Radiografía de diagnóstico', 600.00, '50', '2', 'activo'),
-(8, 'asd', 'asdasd', 20.00, '1', '1', 'activo'),
-(9, 'nose', 'asd', 30.00, '1', '1', 'activo'),
-(10, 'DERECK FERNANDO', '1212', 111.00, '1', '1', 'inactivo'),
-(11, 'ddasd', 'aaaaa', 111.00, '11', '1', 'activo'),
-(12, 'trabaja dean', 'no hace nada', 122.00, '1', '1', 'activo');
+INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracion`, `tiempo_recuperacion`, `estado`, `visibilidad`) VALUES
+(1, 'Consulta General', 'Consulta general con el médico', 40.00, '30', '1', 'activo', 1),
+(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, '40', '14', 'activo', 1),
+(3, 'Radiografía', 'Radiografía de diagnóstico', 600.00, '50', '2', 'activo', 1),
+(8, 'sdfjdj', 'asdasd', 20.00, '1', '1', 'activo', 1),
+(9, 'ahora ya sé', 'te aaa', 10000.00, '4', '5', 'inactivo', 1),
+(10, 'DERECK FERNANDO', '1212', 111.00, '1', '1', 'inactivo', 1),
+(11, 'dfsdfksdj lksdf', 'aaaaa', 111.00, '11', '1', 'activo', 0),
+(13, 'Rinoplastia', 'ah', 150.00, '10', '1', 'inactivo', 1),
+(14, 'prueba', 'mi descripcion', 1.00, '1', '1', 'activo', 1),
+(15, 'Dean', 'asd', 15.00, '16', '16', 'activo', 1);
 
 -- --------------------------------------------------------
 
@@ -329,7 +331,7 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`) VALUES
 (1, '74972730', 'Asd123123', 1),
-(2, '75565656', 'Asd123123', 2),
+(2, '75565656', '$2b$10$EzLs./21NvTdspUqgckjruVffrW799/lrBihEZ2W8cMEA9wlSaYI6', 2),
 (3, NULL, 'contrasena_segura789', 3),
 (4, '16780921', 'Asd123123', 1),
 (11, '74733211', '$2b$10$ZRdhUj6d8GHNd/hsK47GHuohNlxhd2GvWXZQ/PfWR.GTZWHJgATEC', 1),
@@ -487,7 +489,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
