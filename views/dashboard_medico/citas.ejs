@@ -38,8 +38,8 @@
                             <% citas.forEach(cita => { %>
                                 <tr style="border-bottom: 1px solid #ddd;">
                                     <td style="padding: 10px;"><%= cita.nombre_paciente %> <%= cita.apellido_paciente %></td>
-                                    <td style="padding: 10px;">Consulta</td> <!-- O ajusta según sea necesario -->
-                                    <td style="padding: 10px;"><%= cita.fecha %></td>
+                                    <td style="padding: 10px;">Consulta</td>
+                                    <td style="padding: 10px;" class="fecha-cita" data-fecha="<%= cita.fecha %>"><%= cita.fecha %></td>
                                     <td style="padding: 10px;"><%= cita.hora %></td>
                                     <td style="padding: 10px;"><%= cita.estado %></td>
                                     <td style="padding: 10px;">
@@ -60,44 +60,21 @@
     </main>
 </div>
 
-<!-- Modal para añadir/editar cita -->
-<div id="modalCitas" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2 id="modalTitle">Añadir Cita</h2>
-        <form id="formCitas">
-            <input type="hidden" id="citaId" name="id"> <!-- Campo oculto para el ID de la cita -->
-            <div class="form-group">
-                <label for="nombre">Paciente</label>
-                <input type="text" id="nombre" name="nombre" required>
-            </div>
-            <div class="form-group">
-                <label for="tipoProcedimiento">Tipo de Procedimiento</label>
-                <select id="tipoProcedimiento" name="tipoProcedimiento" required>
-                    <option value="">Seleccione el tipo</option>
-                    <option value="Consulta">Consulta</option>
-                    <option value="Cirugía">Cirugía</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="fecha">Fecha</label>
-                <input type="date" id="fecha" name="fecha" required>
-            </div>
-            <div class="form-group">
-                <label for="hora">Hora de Inicio</label>
-                <input type="time" id="hora" name="hora" required>
-            </div>
-            <div class="form-group">
-                <label for="estado">Estado</label>
-                <select id="estado" name="estado" required>
-                    <option value="">Seleccione el Estado</option>
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="Aceptado">Aceptado</option>
-                </select>
-            </div>
-            <button type="submit" class="btn-guardar">Guardar</button>
-        </form>
-    </div>
-</div>
+<script>
+    // Función para formatear la fecha
+    function formatDate(date) {
+        const d = new Date(date);
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Mes empieza desde 0
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    // Formatear las fechas en la tabla
+    document.querySelectorAll('.fecha-cita').forEach(element => {
+        const rawDate = element.getAttribute('data-fecha');
+        element.textContent = formatDate(rawDate);
+    });
+</script>
 
 <%- include('../_partials/footer') %>
