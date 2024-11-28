@@ -269,16 +269,146 @@ router.get("/dashboard_admin/citas", async (req, res) => {
 
 
 
-router.get("/dashboard_admin/cuentas", checkLoginAdmin, async (req,res) => {
+router.get("/dashboard_admin/cuentas", checkLoginAdmin, async (req, res) => {
+    try {
+        const usuarios = await conexion.query(`
+            SELECT 
+                u.dni, 
+                u.rol_id,
+                COALESCE(p.nombre, m.nombre) AS nombre,
+                COALESCE(p.apellido, m.apellido) AS apellido,
+                COALESCE(p.email, m.email) AS email
+            FROM usuarios u
+            LEFT JOIN pacientes p ON u.dni = p.usuario_id
+            LEFT JOIN medicos m ON u.dni = m.usuario_id
+        `);
 
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de citas',
-        'link' : link,
-        'usuario': req.session
-    };
-    
-    res.render("dashboard_admin/cuentas", data);
+        const data = {
+            'link': link,
+            'usuario': req.session,
+            'usuarios': usuarios
+        };
+        res.render("dashboard_admin/cuentas", data);
+    } catch (error) {
+        console.error("Error al obtener cuentas:", error);
+        res.status(500).send("Error al obtener cuentas");
+    }
+});
+
+router.get("/dashboard_admin/cuentas/buscar", checkLoginAdmin, async (req, res) => {
+    const { dni } = req.query;
+
+    try {
+        let query = `
+            SELECT 
+                u.dni, 
+                u.rol_id,
+                COALESCE(p.nombre, m.nombre) AS nombre,
+                COALESCE(p.apellido, m.apellido) AS apellido,
+                COALESCE(p.email, m.email) AS email
+            FROM usuarios u
+            LEFT JOIN pacientes p ON u.dni = p.usuario_id
+            LEFT JOIN medicos m ON u.dni = m.usuario_id
+        `;
+        
+        if (dni) {
+            query += " WHERE u.dni LIKE ?";
+            const usuarios = await conexion.query(query, [`${dni}%`]);
+            return res.json(usuarios);
+        } else {
+            const usuarios = await conexion.query(query);
+            return res.json(usuarios);
+        }
+    } catch (error) {
+        console.error("Error al buscar cuentas:", error);
+        res.status(500).send("Error al buscar cuentas");
+    }
+});
+
+// Ruta para validar si el DNI ya existe
+router.get("/dashboard_admin/cuentas/validar-dni", checkLoginAdmin, async (req, res) => {
+    const { dni } = req.query;
+
+    try {
+        const [usuarioExistente] = await conexion.query("SELECT * FROM usuarios WHERE dni = ?", [dni]);
+
+        if (usuarioExistente) {
+            return res.json({ existe: true });
+        }
+
+        return res.json({ existe: false });
+    } catch (error) {
+        console.error("Error al validar DNI:", error);
+        res.status(500).send("Error al validar DNI");
+    }
+});
+
+router.get("/dashboard_admin/cuentas/usuario/:dni", async (req, res) => {
+    const { dni } = req.params;
+
+    try {
+        const [usuario] = await conexion.query(`
+            SELECT 
+                u.dni,
+                u.rol_id,
+                p.nombre AS nombre,
+                p.apellido AS apellido,
+                p.email AS email,
+                p.telefono AS telefono,
+                p.fecha_nacimiento,
+                p.genero,
+                p.estado_civil,
+                p.ocupacion,
+                p.direccion,
+                m.especialidad_id AS especialidad
+            FROM usuarios u
+            LEFT JOIN pacientes p ON u.dni = p.usuario_id
+            LEFT JOIN medicos m ON u.dni = m.usuario_id
+            WHERE u.dni = ?
+        `, [dni]);
+
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        res.json(usuario);
+    } catch (error) {
+        console.error("Error al obtener usuario:", error);
+        res.status(500).send("Error al obtener usuario");
+    }
+});
+
+
+// Ruta para guardar usuario (paciente o trabajador)
+router.post("/dashboard_admin/cuentas/guardar", checkLoginAdmin, async (req, res) => {
+    const { dni, nombre, apellido, email, rol, contrasena } = req.body;
+
+    try {
+        // Insertar en la tabla usuarios
+        await conexion.query(
+            "INSERT INTO usuarios (dni, rol_id, contrasena) VALUES (?, ?, ?)",
+            [dni, rol, contrasena]
+        );
+
+        if (rol == 1) { // Si es paciente
+            // Insertar en la tabla pacientes
+            await conexion.query(
+                "INSERT INTO pacientes (usuario_id, nombre, apellido, email) VALUES (?, ?, ?, ?)",
+                [dni, nombre, apellido, email]
+            );
+        } else if (rol == 2 || rol == 3) { // Si es medico o trabajador
+            // Insertar en la tabla medicos
+            await conexion.query(
+                "INSERT INTO medicos (usuario_id, nombre, apellido, email) VALUES (?, ?, ?, ?)",
+                [dni, nombre, apellido, email]
+            );
+        }
+
+        return res.json({ success: true, mensaje: "Usuario agregado exitosamente" });
+    } catch (error) {
+        console.error("Error al guardar usuario:", error);
+        return res.status(500).json({ success: false, mensaje: "Error al guardar usuario" });
+    }
 });
 
 
