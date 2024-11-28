@@ -202,58 +202,71 @@ router.post("/dashboard_admin/historia_clinica", checkLoginAdmin, async (req, re
 });
 
 
-// router.get("/dashboard_jmedico/test", checkLoginMedico, async (req,res) => {
-//     // traer citas de la base de datos
-//     // const citas = database.Citas('select * from citas');
+router.get("/dashboard_admin/test", checkLoginAdmin, async (req,res) => {
+    // traer citas de la base de datos
+    // const citas = database.Citas('select * from citas');
 
-//     const data = {
-//         'total_citas':0,
-//         'titulo' : 'pagina de calendario',
-//         'usuario': req.session
-//     };
+    const data = {
+        'total_citas':0,
+        'titulo' : 'pagina de calendario',
+        'usuario': req.session
+    };
     
-//     res.render('dashboard_medico/test', data);
-// });
+    res.render('dashboard_admin/test', data);
+});
 
-// router.post("/dashboard_jmedico/test", checkLoginMedico, (req,res) => {
+router.post("/dashboard_jmedico/test", checkLoginAdmin, (req,res) => {
 
-//     // console.log(req.body);
+    // console.log(req.body);
 
-//     const data = {
-//         'username': req.body.username,
-//     };
+    const data = {
+        'username': req.body.username,
+    };
     
-//     res.json(data);
-// });
+    res.json(data);
+});
 
-router.get("/dashboard_admin/citas", checkLoginAdmin, async (req, res) => {
+router.get("/dashboard_admin/citas", async (req, res) => {
     try {
-        console.log("ID del administrador:", req.session.admin_id); // Verifica si admin_id es correcto
-        
-        const consultaCitas = `
-            SELECT c.id, c.paciente_id, c.medico_id, c.servicio_id, c.fecha, c.hora, c.estado
-            FROM citas c
-        `;
-        
-        // Realiza la consulta a la base de datos
-        const [citas] = await conexion.query(consultaCitas);
-        console.log("Citas obtenidas:", citas); // Verifica si la consulta devuelve datos
+        const citas = await new Promise((resolve, reject) => {
+            conexion.query(`
+                SELECT 
+                    c.id, 
+                    p.nombre AS nombre_paciente,
+                    p.apellido AS apellido_paciente,
+                    m.nombre AS nombre_medico,
+                    m.apellido AS apellido_medico,
+                    s.nombre AS nombre_servicio,
+                    c.fecha,
+                    c.hora,
+                    c.estado
+                FROM citas c
+                JOIN pacientes p ON c.paciente_id = p.id
+                JOIN medicos m ON c.medico_id = m.id
+                JOIN servicios s ON c.servicio_id = s.id
+                ORDER BY c.fecha, c.hora;
+            `, [], function(error, rows) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
 
-        // Prepara los datos para la vista
-        const data = {
-            'titulo': 'Página de Citas',
+        res.render("dashboard_admin/citas", {
+            'total_citas': citas.length,
+            'titulo': 'Página de citas',
             'link': link,
             'usuario': req.session,
-            'citas': citas || [] // Asegura que sea un array
-        };
-
-        // Renderiza la vista
-        res.render("dashboard_admin/citas", data);
+            'citas': citas
+        });
     } catch (error) {
-        console.error("Error al obtener citas:", error); // Muestra el error en la consola
-        res.status(500).send("Guau");
+        console.error("Error al obtener citas:", error);
+        res.status(500).send("Error al obtener citas");
     }
 });
+
 
 
 router.get("/dashboard_admin/cuentas", checkLoginAdmin, async (req,res) => {
@@ -270,33 +283,26 @@ router.get("/dashboard_admin/cuentas", checkLoginAdmin, async (req,res) => {
 
 
 // Ruta para mostrar la lista de servicios con admin_id
+// Asumiendo que ya tienes una función checkLoginAdmin que verifica si el usuario es administrador
 router.get("/dashboard_admin/servicios", checkLoginAdmin, async (req, res) => {
     try {
-        const admin_id = req.session.admin_id;
-        const consultaServicios = `
-            SELECT s.id, s.nombre, s.descripcion, s.costo
-            FROM medico_servicio m
-            JOIN servicios s ON m.servicio_id = s.id
-            WHERE m.medico_id = ?
-        `;
+        // El administrador no necesita el medico_id, solo mostrar todos los servicios
+        const servicios = await conexion.query(`SELECT s.id, s.nombre, s.descripcion, s.costo, s.tiempo_duracion, s.tiempo_recuperacion 
+                                               FROM servicios s`);
         
-        // Realiza la consulta a la base de datos
-        const [servicios] = await conexion.query(consultaServicios, [admin_id]);
-
-        // Prepara los datos para la vista
         const data = {
-            'link': link,
-            'usuario': req.session,
-            'servicios': servicios || [] // Asegura que sea un array
+            link: link,
+            usuario: req.session,
+            servicios: servicios,
         };
 
-        // Renderiza la vista
-        res.render("dashboard_admin/servicios", data);
+        res.render("dashboard_medico/servicios", data);  // Muestra los servicios en la vista
     } catch (error) {
         console.error("Error al obtener servicios:", error);
         res.status(500).send("Error al obtener servicios");
     }
 });
+
 
 // router.get("/dashboard_jmedico/servicios/buscar", checkLoginMedico, async (req, res) => {
 //     const { nombre } = req.query;
@@ -517,162 +523,166 @@ router.get("/dashboard_admin/historias/descargar_todos_pdf", checkLoginAdmin, (r
 
 
 
-// router.get('/dashboard_jmedico/registrar_historia_clinica', checkLoginMedico, function(req, res) {
-//     const idusuario = req.session.medico_id;
+router.get('/dashboard_admin/registrar_historia_clinica', checkLoginAdmin, function(req, res) {
+    // Consulta para obtener todos los pacientes
+    const pacientesQuery = `
+        SELECT p.id, p.nombre, p.apellido, p.telefono, p.email
+        FROM pacientes p
+    `;
 
-//     // Consulta para obtener los pacientes relacionados con el médico
-//     const pacientesQuery = `
-//         SELECT p.id, p.nombre, p.apellido, p.telefono, p.email
-//         FROM pacientes p
-//         JOIN historial_medico h ON p.id = h.paciente_id
-//         WHERE h.medico_id = ?
-//     `;
+    // Consulta para obtener todos los médicos
+    const medicosQuery = 'SELECT id, nombre, apellido FROM medicos';
+
+    // Ejecutamos la consulta de pacientes
+    conexion.query(pacientesQuery, function(error, pacientes) {
+        if (error) {
+            console.log("Error al obtener pacientes", error);
+            return res.status(500).send("Error al obtener pacientes.");
+        }
+
+        // Ejecutamos la consulta de médicos
+        conexion.query(medicosQuery, function(error, medicos) {
+            if (error) {
+                console.log("Error al obtener médicos", error);
+                return res.status(500).send("Error al obtener médicos.");
+            }
+
+            // Preparamos los datos para la vista
+            const data = {
+                'usuario': req.session,
+                'link': link,
+                'pacientes': pacientes,  // Lista de pacientes
+                'medicos': medicos       // Lista de médicos
+            };
+
+            // Renderizamos la vista correspondiente al administrador
+            res.render("dashboard_admin/registro_historia_clinica", data);
+        });
+    });
+});
+
+
+router.post('/dashboard_admin/guardar_historia_clinica', checkLoginAdmin, function(req, res) {
     
-//     // Consulta para obtener todos los médicos
-//     const medicosQuery = 'SELECT id, nombre, apellido FROM medicos';
-    
-//     conexion.query(pacientesQuery, [idusuario], function(error, pacientes) {
-//         if (error) {
-//             console.log("Error al obtener pacientes", error);
-//             return res.status(500).send("Error al obtener pacientes.");
-//         }
+    const { 
+        pacienteId, 
+        medicoId, // El administrador selecciona el médico responsable
+        motivo, 
+        enfermedadesPrevias, alergias, medicamentosActuales, cirugiasPrevias,
+        fuma, consumeAlcohol, enfermedadesHereditarias, peso, altura, imc, descripcionFisica,
+        cirugia, procedimiento, riesgos, cuidadoPreoperativo, cuidadoPostoperativo
+    } = req.body;
 
-//         // Consulta para obtener la lista de médicos
-//         conexion.query(medicosQuery, function(error, medicos) {
-//             if (error) {
-//                 console.log("Error al obtener médicos", error);
-//                 return res.status(500).send("Error al obtener médicos.");
-//             }
+    // Asegurar que los valores numéricos sean de tipo correcto
+    const validatedFuma = parseInt(fuma) === 1 ? 1 : 0;  // Aseguramos que 'fuma' sea 1 o 0
+    const validatedConsumeAlcohol = parseInt(consumeAlcohol) === 1 ? 1 : 0; // Lo mismo para 'consumeAlcohol'
+    const validatedPeso = peso ? parseFloat(peso) : null; // Aseguramos que peso sea un número o null
+    const validatedAltura = altura ? parseFloat(altura) : null; // Lo mismo para altura
+    const validatedImc = imc ? parseFloat(imc) : null; // Aseguramos que imc sea un número o null
 
-//             // Pasamos la lista de pacientes y médicos a la vista
-//             const data = {
-//                 'usuario': req.session,
-//                 'link': link,
-//                 'pacientes': pacientes,  // Lista de pacientes
-//                 'medicos': medicos       // Lista de médicos
-//             };
+    // Verificar que todos los datos necesarios estén presentes
+    if (!pacienteId || !medicoId || !motivo) {
+        return res.status(400).send("Error: Los campos 'Paciente', 'Médico' y 'Motivo' son obligatorios.");
+    }
 
-//             res.render("dashboard_medico/registro_historia_clinica", data);
-//         });
-//     });
-// });
+    // Obtener la fecha y hora actual en formato 'YYYY-MM-DD HH:MM:SS'
+    const fechaHoraActual = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-// router.post('/dashboard_jmedico/guardar_historia_clinica', checkLoginMedico, function(req, res) {
-//     const { 
-//         pacienteId, 
-//         motivo, enfermedadesPrevias, alergias, medicamentosActuales, cirugiasPrevias,
-//         fuma, consumeAlcohol, enfermedadesHereditarias, peso, altura, imc, descripcionFisica,
-//         cirugia, procedimiento, riesgos, cuidadoPreoperativo, cuidadoPostoperativo
-//     } = req.body;
+    // Datos a insertar en la base de datos
+    const values = [
+        parseInt(medicoId),   // Aseguramos que medicoId sea un número
+        parseInt(pacienteId), // Aseguramos que pacienteId sea un número
+        motivo, 
+        enfermedadesPrevias || null, 
+        alergias || null, 
+        medicamentosActuales || null, 
+        cirugiasPrevias || null, 
+        validatedFuma, 
+        validatedConsumeAlcohol, 
+        enfermedadesHereditarias || null, 
+        validatedPeso, 
+        validatedAltura, 
+        validatedImc, 
+        descripcionFisica || null, 
+        cirugia || null, 
+        procedimiento || null, 
+        riesgos || null, 
+        cuidadoPreoperativo || null, 
+        cuidadoPostoperativo || null,
+        fechaHoraActual,  // horaCreacion
+        fechaHoraActual   // horaActualizacion
+    ];
 
-//     // Obtener el ID del médico logueado desde la sesión
-//     const medicoId = req.session.medico_id;
+    console.log("Valores que se enviarán a la consulta SQL:", values);
 
-//     // Verificar que el medicoId esté disponible
-//     if (!medicoId) {
-//         return res.status(400).send("Error: ID del médico no encontrado.");
-//     }
+    // Consulta SQL para insertar la historia clínica (el campo 'id' es autoincremental)
+    const historia = `
+        INSERT INTO historial_clinico 
+        (medico_id, paciente_id, motivo, enfermedades_previas, alergias, 
+        medicamentos_actuales, cirugias_previas, fuma, consume_alcohol, 
+        enfermedades_hereditarias, peso, altura, imc, descripcion_fisica, 
+        cirugia, procedimiento, riesgos, cuidado_preoperativo, cuidado_postoperativo, 
+        horaCreacion, horaActualizacion)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `;
 
-//     // Asegurar que los valores numéricos sean de tipo correcto
-//     const validatedFuma = parseInt(fuma) === 1 ? 1 : 0;  // Aseguramos que 'fuma' sea 1 o 0
-//     const validatedConsumeAlcohol = parseInt(consumeAlcohol) === 1 ? 1 : 0; // Lo mismo para 'consumeAlcohol'
-//     const validatedPeso = peso ? parseFloat(peso) : null; // Aseguramos que peso sea un número o null
-//     const validatedAltura = altura ? parseFloat(altura) : null; // Lo mismo para altura
-//     const validatedImc = imc ? parseFloat(imc) : null; // Aseguramos que imc sea un número o null
-
-//     // Verificar que todos los datos necesarios estén presentes
-//     if (!pacienteId || !motivo) {
-//         return res.status(400).send("Error: Los campos 'Paciente' y 'Motivo' son obligatorios.");
-//     }
-
-//     // Datos a insertar en la base de datos
-//     const values = [
-//         parseInt(medicoId),   // Aseguramos que medicoId sea un número
-//         parseInt(pacienteId), // Aseguramos que pacienteId sea un número
-//         motivo, 
-//         enfermedadesPrevias || null, 
-//         alergias || null, 
-//         medicamentosActuales || null, 
-//         cirugiasPrevias || null, 
-//         validatedFuma, 
-//         validatedConsumeAlcohol, 
-//         enfermedadesHereditarias || null, 
-//         validatedPeso, 
-//         validatedAltura, 
-//         validatedImc, 
-//         descripcionFisica || null, 
-//         cirugia || null, 
-//         procedimiento || null, 
-//         riesgos || null, 
-//         cuidadoPreoperativo || null, 
-//         cuidadoPostoperativo || null
-//     ];
-
-//     console.log("Valores que se enviarán a la consulta SQL:", values);
-
-//     // Consulta SQL para insertar la historia clínica (el campo 'id' es autoincremental)
-//     const historia = `
-//         INSERT INTO historial_medico 
-//         (medico_id, paciente_id, motivo, enfermedades_previas, alergias, 
-//         medicamentos_actuales, cirugias_previas, fuma, consume_alcohol, 
-//         enfermedades_hereditarias, peso, altura, imc, descripcion_fisica, 
-//         cirugia, procedimiento, riesgos, cuidado_preoperativo, cuidado_postoperativo)
-//         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-//     `;
-
-//     // Ejecutar la consulta SQL
-//     conexion.query(historia, values, function(error, result) {
-//         if (error) {
-//             console.log("Error al guardar historia clínica:", error.message);
-//             return res.status(500).send("Error al guardar la historia clínica. Detalles: " + error.message);
-//         }
+    // Ejecutar la consulta SQL
+    conexion.query(historia, values, function(error, result) {
+        if (error) {
+            console.log("Error al guardar historia clínica:", error.message);
+            return res.status(500).send("Error al guardar la historia clínica. Detalles: " + error.message);
+        }
         
-//         // Redirigir al usuario a la página de historias clínicas si todo fue exitoso
-//         res.redirect("/dashboard_jmedico/historias");
-//     });
-// });
+        // Redirigir al administrador a la página de historias clínicas si todo fue exitoso
+        res.redirect("/dashboard_admin/historias");
+    });
+});
 
-// router.get('/dashboard_jmedico/getPaciente/:id', checkLoginMedico, function(req, res) {
-//     const pacienteId = req.params.id;
 
-//     // Suponiendo que tienes una consulta a la base de datos para obtener los datos del paciente
-//     const query = 'SELECT * FROM pacientes WHERE id = ?';
-//     conexion.query(query, [pacienteId], function(error, result) {
-//         if (error) {
-//             console.log("Error al obtener el paciente", error);
-//             return res.status(500).send("Error al obtener el paciente.");
-//         }
 
-//         if (result.length > 0) {
-//             res.json(result[0]); // Retorna el primer paciente encontrado
-//         } else {
-//             res.status(404).send("Paciente no encontrado.");
-//         }
-//     });
-// });
+router.get('/dashboard_admin/getPaciente/:id', checkLoginAdmin, function(req, res) {
+    const pacienteId = req.params.id;
 
-// router.get('/dashboard_jmedico/getMedico/:id', checkLoginMedico, function(req, res) {
-//     const medicoId = req.params.id;
+    // Consulta para obtener los datos del paciente
+    const query = 'SELECT * FROM pacientes WHERE id = ?';
+    conexion.query(query, [pacienteId], function(error, result) {
+        if (error) {
+            console.log("Error al obtener el paciente:", error);
+            return res.status(500).send("Error al obtener el paciente.");
+        }
 
-//     // Validar que el id sea un número entero positivo
-//     if (isNaN(medicoId) || medicoId <= 0) {
-//         return res.status(400).send("ID de médico no válido.");
-//     }
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna los datos del paciente encontrado
+        } else {
+            res.status(404).send("Paciente no encontrado.");
+        }
+    });
+});
 
-//     // Consulta para obtener los detalles del médico
-//     const query = 'SELECT * FROM medicos WHERE id = ?';
-//     conexion.query(query, [medicoId], function(error, result) {
-//         if (error) {
-//             console.log("Error al obtener el médico: ", error.message);
-//             return res.status(500).send("Error al obtener el médico: " + error.message);
-//         }
 
-//         if (result.length > 0) {
-//             res.json(result[0]); // Retorna el primer médico encontrado
-//         } else {
-//             res.status(404).send("Médico no encontrado.");
-//         }
-//     });
-// });
+router.get('/dashboard_admin/getMedico/:id', checkLoginAdmin, function(req, res) {
+    const medicoId = req.params.id;
+
+    // Validar que el id sea un número entero positivo
+    if (isNaN(medicoId) || medicoId <= 0) {
+        return res.status(400).send("ID de médico no válido.");
+    }
+
+    // Consulta para obtener los detalles del médico
+    const query = 'SELECT * FROM medicos WHERE id = ?';
+    conexion.query(query, [medicoId], function(error, result) {
+        if (error) {
+            console.log("Error al obtener el médico:", error.message);
+            return res.status(500).send("Error al obtener el médico: " + error.message);
+        }
+
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna el primer médico encontrado
+        } else {
+            res.status(404).send("Médico no encontrado.");
+        }
+    });
+});
+
 
 module.exports = router;

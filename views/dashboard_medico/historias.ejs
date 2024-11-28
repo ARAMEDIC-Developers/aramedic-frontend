@@ -19,9 +19,9 @@
             <button id="btnAgregarServicio" class="add-button" onclick="window.location.href='/dashboard_jmedico/registrar_historia_clinica'">
                 <i class="fas fa-plus-circle"></i> Añadir Historia
             </button>
-            <button id="btnGenerarZip" class="add-button" onclick="location.href='/dashboard_jmedico/historias/descargar_todos_pdf'">
+            <!-- <button id="btnGenerarZip" class="add-button" onclick="location.href='/dashboard_jmedico/historias/descargar_todos_pdf'">
                 <i class="fas fa-file-archive"></i> Generar ZIP
-            </button>
+            </button> -->
             <div class="table-container">
                 <table>
                     <thead>
@@ -61,9 +61,9 @@
                                             Eliminar
                                         </button>
                                         <!-- Boton para descargar PDF -->
-                                        <button onclick="location.href='/dashboard_jmedico/historias/descargar_pdf/<%= historia.id %>'" class="btn-descargar" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                                        <!-- <button onclick="location.href='/dashboard_jmedico/historias/descargar_pdf/<%= historia.id %>'" class="btn-descargar" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer;">
                                             Descargar
-                                        </button>
+                                        </button> -->
                                     </td>
                                 </tr>
                             <% }); %>
