@@ -14,6 +14,108 @@ router.get("/dashboard_paciente", function(req, res){
     res.render("dashboard_paciente/calendario", data);
 });
 
+// GET: Ver perfil del paciente
+// GET: Ver perfil del paciente
+router.get("/dashboard_paciente/perfil", checkLoginPaciente, async (req, res) => {
+    try {
+        // Traer los datos del paciente desde la base de datos
+        const idusuario = req.session.paciente_id;
+        const consultaPaciente = `
+            SELECT 
+                p.nombre, 
+                p.apellido, 
+                p.direccion, 
+                p.telefono, 
+                p.usuario_id, 
+                p.email 
+            FROM pacientes p
+            WHERE p.id = ?
+        `;
+
+        conexion.query(consultaPaciente, [idusuario], (error, rows) => {
+            if (error) {
+                console.error("Error al obtener el perfil:", error);
+                return res.status(500).send("Error al cargar el perfil.");
+            } 
+
+            if (rows.length < 1) {
+                console.log('Paciente no encontrado');
+                return res.status(404).send("Paciente no encontrado.");
+            }
+
+            // Obtener el perfil del paciente
+            const paciente = rows[0];
+            const data = {
+                titulo: "Perfil del Paciente",
+                usuario: req.session,
+                paciente: paciente,
+                'link' : link
+            };
+
+            // Renderizar la vista con los datos del paciente
+            res.render("dashboard_paciente/perfil", data);
+        });
+    } catch (error) {
+        console.error("Error al cargar los datos del paciente:", error);
+        res.status(500).send("Error al cargar el perfil.");
+    }
+});
+
+// POST: Editar perfil del paciente
+router.post("/dashboard_paciente/perfil/editar", checkLoginPaciente, async (req, res) => {
+    const { nombre, apellido, direccion, telefono, email } = req.body;
+    const idPaciente = req.session.paciente_id;
+
+    try {
+        // Verificar si el paciente existe antes de realizar la actualización
+        const verificarPaciente = "SELECT * FROM pacientes WHERE id = ?";
+        conexion.query(verificarPaciente, [idPaciente], (error, rows) => {
+            if (error) {
+                console.log("Error en la consulta de verificación del paciente", error);
+                return res.status(500).send("Error al verificar el paciente.");
+            }
+
+            if (rows.length === 0) {
+                // Si no existe el paciente
+                const mensajesError = [{ msg: "Paciente no encontrado." }];
+                return res.render("dashboard_paciente/perfil", {
+                    link,
+                    errors: mensajesError,
+                    oldData: req.body
+                });
+            }
+
+            // Verificar que los datos recibidos son correctos
+            console.log("Datos recibidos para actualizar:", { nombre, apellido, direccion, telefono, email });
+
+            // Si el paciente existe, proceder a actualizar los datos
+            const actualizarPaciente = "UPDATE pacientes SET nombre = ?, apellido = ?, direccion = ?, telefono = ?, email = ? WHERE id = ?";
+            conexion.query(actualizarPaciente, [nombre, apellido, direccion, telefono, email, idPaciente], (updateError, result) => {
+                if (updateError) {
+                    console.log("Error al actualizar el perfil", updateError);
+                    return res.status(500).send("Error al actualizar el perfil.");
+                }
+
+                if (result.affectedRows === 0) {
+                    // Si no se realizaron cambios
+                    return res.status(404).json({ mensaje: "No se realizaron cambios o el paciente no fue encontrado." });
+                }
+
+                console.log("Perfil actualizado exitosamente.");
+                // Redirigir a la página de perfil o dashboard después de la actualización
+                res.redirect("/dashboard_paciente");
+            });
+        });
+    } catch (error) {
+        console.log("Error en el proceso de actualización del perfil", error);
+        res.status(500).json({ mensaje: "Error al actualizar el perfil." });
+    }
+});
+
+
+
+
+
 router.get("/dashboard_paciente/events", async function (req, res) {
     const idpaciente = req.session.paciente_id;
     if(!idpaciente){

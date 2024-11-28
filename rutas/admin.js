@@ -269,34 +269,179 @@ router.get("/dashboard_admin/citas", async (req, res) => {
 
 
 
-router.get("/dashboard_admin/cuentas", checkLoginAdmin, async (req,res) => {
+router.get("/dashboard_admin/cuentas", checkLoginAdmin, async (req, res) => {
+    try {
+        const usuarios = await conexion.query(`
+            SELECT 
+                u.dni, 
+                u.rol_id,
+                COALESCE(p.nombre, m.nombre) AS nombre,
+                COALESCE(p.apellido, m.apellido) AS apellido,
+                COALESCE(p.email, m.email) AS email
+            FROM usuarios u
+            LEFT JOIN pacientes p ON u.dni = p.usuario_id
+            LEFT JOIN medicos m ON u.dni = m.usuario_id
+        `);
 
-    const data = {
-        'total_citas':0,
-        'titulo' : 'pagina de citas',
-        'link' : link,
-        'usuario': req.session
-    };
-    
-    res.render("dashboard_admin/cuentas", data);
+        const data = {
+            'link': link,
+            'usuario': req.session,
+            'usuarios': usuarios
+        };
+        res.render("dashboard_admin/cuentas", data);
+    } catch (error) {
+        console.error("Error al obtener cuentas:", error);
+        res.status(500).send("Error al obtener cuentas");
+    }
+});
+
+router.get("/dashboard_admin/cuentas/buscar", checkLoginAdmin, async (req, res) => {
+    const { dni } = req.query;
+
+    try {
+        let query = `
+            SELECT 
+                u.dni, 
+                u.rol_id,
+                COALESCE(p.nombre, m.nombre) AS nombre,
+                COALESCE(p.apellido, m.apellido) AS apellido,
+                COALESCE(p.email, m.email) AS email
+            FROM usuarios u
+            LEFT JOIN pacientes p ON u.dni = p.usuario_id
+            LEFT JOIN medicos m ON u.dni = m.usuario_id
+        `;
+        
+        if (dni) {
+            query += " WHERE u.dni LIKE ?";
+            const usuarios = await conexion.query(query, [`${dni}%`]);
+            return res.json(usuarios);
+        } else {
+            const usuarios = await conexion.query(query);
+            return res.json(usuarios);
+        }
+    } catch (error) {
+        console.error("Error al buscar cuentas:", error);
+        res.status(500).send("Error al buscar cuentas");
+    }
+});
+
+// Ruta para validar si el DNI ya existe
+router.get("/dashboard_admin/cuentas/validar-dni", checkLoginAdmin, async (req, res) => {
+    const { dni } = req.query;
+
+    try {
+        const [usuarioExistente] = await conexion.query("SELECT * FROM usuarios WHERE dni = ?", [dni]);
+
+        if (usuarioExistente) {
+            return res.json({ existe: true });
+        }
+
+        return res.json({ existe: false });
+    } catch (error) {
+        console.error("Error al validar DNI:", error);
+        res.status(500).send("Error al validar DNI");
+    }
+});
+
+router.get("/dashboard_admin/cuentas/usuario/:dni", async (req, res) => {
+    const { dni } = req.params;
+
+    try {
+        const [usuario] = await conexion.query(`
+            SELECT 
+                u.dni,
+                u.rol_id,
+                p.nombre AS nombre,
+                p.apellido AS apellido,
+                p.email AS email,
+                p.telefono AS telefono,
+                p.fecha_nacimiento,
+                p.genero,
+                p.estado_civil,
+                p.ocupacion,
+                p.direccion,
+                m.especialidad_id AS especialidad
+            FROM usuarios u
+            LEFT JOIN pacientes p ON u.dni = p.usuario_id
+            LEFT JOIN medicos m ON u.dni = m.usuario_id
+            WHERE u.dni = ?
+        `, [dni]);
+
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        res.json(usuario);
+    } catch (error) {
+        console.error("Error al obtener usuario:", error);
+        res.status(500).send("Error al obtener usuario");
+    }
+});
+
+
+// Ruta para guardar usuario (paciente o trabajador)
+router.post("/dashboard_admin/cuentas/guardar", checkLoginAdmin, async (req, res) => {
+    const { dni, nombre, apellido, email, rol, contrasena } = req.body;
+
+    try {
+        // Insertar en la tabla usuarios
+        await conexion.query(
+            "INSERT INTO usuarios (dni, rol_id, contrasena) VALUES (?, ?, ?)",
+            [dni, rol, contrasena]
+        );
+
+        if (rol == 1) { // Si es paciente
+            // Insertar en la tabla pacientes
+            await conexion.query(
+                "INSERT INTO pacientes (usuario_id, nombre, apellido, email) VALUES (?, ?, ?, ?)",
+                [dni, nombre, apellido, email]
+            );
+        } else if (rol == 2 || rol == 3) { // Si es medico o trabajador
+            // Insertar en la tabla medicos
+            await conexion.query(
+                "INSERT INTO medicos (usuario_id, nombre, apellido, email) VALUES (?, ?, ?, ?)",
+                [dni, nombre, apellido, email]
+            );
+        }
+
+        return res.json({ success: true, mensaje: "Usuario agregado exitosamente" });
+    } catch (error) {
+        console.error("Error al guardar usuario:", error);
+        return res.status(500).json({ success: false, mensaje: "Error al guardar usuario" });
+    }
 });
 
 
 // Ruta para mostrar la lista de servicios con admin_id
-// Asumiendo que ya tienes una función checkLoginAdmin que verifica si el usuario es administrador
 router.get("/dashboard_admin/servicios", checkLoginAdmin, async (req, res) => {
     try {
-        // El administrador no necesita el medico_id, solo mostrar todos los servicios
-        const servicios = await conexion.query(`SELECT s.id, s.nombre, s.descripcion, s.costo, s.tiempo_duracion, s.tiempo_recuperacion 
-                                               FROM servicios s`);
-        
+
+        const servicios = await new Promise((resolve, reject)=>{
+            conexion.query(`SELECT 
+                id, 
+                nombre, 
+                descripcion, 
+                costo, 
+                tiempo_duracion, 
+                tiempo_recuperacion, 
+                estado 
+            FROM 
+                servicios
+                WHERE visibilidad=1`,[], function(error, rows){
+                    if(error){
+                        reject("no se pudo obtener datos.");
+                    }
+
+                    resolve(rows);
+                })
+        });
+
         const data = {
             link: link,
             usuario: req.session,
             servicios: servicios,
         };
-
-        res.render("dashboard_medico/servicios", data);  // Muestra los servicios en la vista
+        res.render("dashboard_admin/servicios", data);
     } catch (error) {
         console.error("Error al obtener servicios:", error);
         res.status(500).send("Error al obtener servicios");
@@ -304,75 +449,112 @@ router.get("/dashboard_admin/servicios", checkLoginAdmin, async (req, res) => {
 });
 
 
-// router.get("/dashboard_jmedico/servicios/buscar", checkLoginMedico, async (req, res) => {
-//     const { nombre } = req.query;
-//     //ARREGLAR BUSCAR
-//     try {
-//         let query = "SELECT s.nombre, s.descripcion, s.costo FROM medico_servicio m JOIN servicios s ON m.servicio_id = s.id WHERE m.medico_id = "+req.session.medico_id;
-//         if (nombre) {
-//             query += " AND nombre LIKE ?";
-//             const servicios = await conexion.query(query, [`${nombre}%`]);
-//             return res.json(servicios);
-//         } else {
-//             const servicios = await conexion.query(query);
-//             return res.json(servicios);
-//         }
-//     } catch (error) {
-//         console.error("Error al buscar servicios:", error);
-//         res.status(500).send("Error al buscar servicios");
-//     }
-// });
+router.get("/dashboard_admin/servicios/buscar", checkLoginAdmin, async (req, res) => {
+    const { nombre } = req.query;
 
-// //PARA ADMIN EDITAR COMPLETO / 
-// router.post("/dashboard_jmedico/servicios/guardar", checkLoginMedico, async (req, res) => {
-//     const { nombre, descripcion, costo } = req.body;
-//     // Validar datos de entrada
-//     const validacion = validarServicio({ nombre, descripcion, costo });
-//     if (!validacion.valido) {
-//         return res.status(400).json({ mensaje: validacion.mensaje });
-//     }
-//     try {
-//         // Revisar si el nombre del servicio ya existe
-//         const id = req.body.id;
-//         const [servicioExistente] = await conexion.query("SELECT s.nombre, s.descripcion, s.costo, FROM servicios WHERE id = ?", [id]);
-//         if (servicioExistente) {
-//             // Si existe, actualizar la fila
-//             await conexion.query(
-//                 "UPDATE servicios SET nombre = ?, descripcion = ?, costo = ? WHERE id = ?",
-//                 [nombre, descripcion, costo, id]
-//             );
-//             return res.json({ mensaje: "Servicio actualizado exitosamente" });
-//         } else {
-//             // Si no existe, insertar una nueva fila
-//             await conexion.query(
-//                 "INSERT INTO servicios (nombre, descripcion, costo) VALUES (?, ?, ?)",
-//                 [nombre, descripcion, costo]
-//             );
-//             return res.json({ mensaje: "Servicio añadido exitosamente" });
-//         }
-//     } catch (error) {
-//         console.error("Error al guardar el servicio:", error);
-//         return res.status(500).json({ mensaje: "Error al guardar el servicio" });
-//     }
-// });
+    try {
+        let query = `
+            SELECT id, nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion 
+            FROM servicios
+        `;
 
-// router.delete("/dashboard_jmedico/servicios/eliminar/:id", checkLoginMedico, async (req, res) => {
-//     const { id } = req.params;
-//     const id_medico = req.session.medico_id;  
-//     try {
-//         //const result = await conexion.query("DELETE FROM servicios WHERE id = ?", [id]); | ELIMINAR ADMIN
-//         //ELIMINAR SERVICIO POR MEDICO | USAR PROCEDURES
-//         const result = await conexion.query("DELETE FROM medico_servicio WHERE medico_id = ? AND servicio_id = ?", [id_medico, id]);
-//         if (result.affectedRows > 0) {
-//             return res.json({ mensaje: "Servicio eliminado exitosamente" });
-//         } else {
-//             return res.status(404).json({ mensaje: "Servicio no encontrado" });
-//         }
-//     } catch (error) {
-//         console.error("Error al eliminar servicio:", error);
-//         return res.status(500).json({ mensaje: "Error al eliminar el servicio" });
-//     }
-// });
+        if (nombre) {
+            query += " WHERE nombre LIKE ?";
+            const servicios = await conexion.query(query, [`${nombre}%`]);
+            return res.json(servicios);
+        } else {
+            const servicios = await conexion.query(query);
+            return res.json(servicios);
+        }
+    } catch (error) {
+        console.error("Error al buscar servicios:", error);
+        res.status(500).send("Error al buscar servicios");
+    }
+});
+
+router.post("/dashboard_admin/servicios/guardar", checkLoginAdmin, async (req, res) => {
+    console.log(req.body)
+    const { id,nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado } = req.body;
+
+    // // Validar datos de entrada
+    // const validacion = validarServicio({ nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion });
+    // if (!validacion.valido) {
+    //     return res.status(400).json({ mensaje: validacion.mensaje });
+    // }
+
+    const data = await conexion.query("select * from servicios where id = ?", [id])
+    if(data.length === 0){
+          await conexion.query(
+                `INSERT INTO servicios (nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado, visibilidad) 
+                 VALUES (?, ?, ?, ?, ?,?, 1)`,
+                [nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado]
+            );
+
+            return res.json({ mensaje: "Servicio registrado exitosamente" });
+    }else{
+
+    await conexion.query(
+        `UPDATE servicios 
+         SET 
+         nombre = ?,
+         descripcion = ?, 
+         costo = ?, 
+         tiempo_duracion = ?,
+         tiempo_recuperacion = ? ,
+         estado = ?
+         WHERE id = ?`,
+        [
+            nombre,
+            descripcion, 
+            costo, 
+            tiempo_duracion,
+            tiempo_recuperacion, 
+            estado,
+            id
+        ]
+    ); 
+
+    return res.json({ mensaje: "Servicio actualizado exitosamente" });
+    }
+
+    // try {
+    //     // Revisar si el nombre del servicio ya existe
+    //     const [servicioExistente] = await conexion.query("SELECT * FROM servicios WHERE nombre = ?", [nombre]);
+
+    //     if (servicioExistente) {
+    //         // Si existe, actualizar la fila
+    //         await conexion.query(
+    //             `UPDATE servicios 
+    //              SET descripcion = ?, costo = ?, tiempo_duracion = ?, tiempo_recuperacion = ? 
+    //              WHERE nombre = ?`,
+    //             [descripcion, costo, tiempo_duracion, tiempo_recuperacion, nombre]
+    //         );
+    //         return res.json({ mensaje: "Servicio actualizado exitosamente" });
+    //     } else {
+    //         // Si no existe, insertar una nueva fila
+    //         await conexion.query(
+    //             `INSERT INTO servicios (nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion) 
+    //              VALUES (?, ?, ?, ?, ?)`,
+    //             [nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion]
+    //         );
+    //         return res.json({ mensaje: "Servicio añadido exitosamente" });
+    //     }
+    // } catch (error) {
+    //     console.error("Error al guardar el servicio:", error);
+    //     return res.status(500).json({ mensaje: "Error al guardar el servicio" });
+    // }
+});
+
+router.delete("/dashboard_admin/servicios/eliminar/:id", checkLoginAdmin, async (req, res) => {
+    conexion.query('update servicios set visibilidad = 0 where id = ?',[req.params.id], function(error, rows){
+        if(error){
+            console.log(error)
+            return res.status(500).json({ mensaje: "no se puedo eliminar" });
+        }
+
+        return res.json({ mensaje: "Servicio eliminado exitosamente." });
+    });
+});
 
 // router.post("/bloquear-fechas", async (req, res) =>{
 //     try {
