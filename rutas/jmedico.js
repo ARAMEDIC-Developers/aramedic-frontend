@@ -588,26 +588,72 @@ router.get("/dashboard_jmedico/citas", checkLoginMedico, async (req, res) => {
                 p.apellido AS apellido_paciente,
                 c.medico_id,
                 c.servicio_id,
+                s.nombre AS nombre_cita,
                 c.fecha,
                 c.hora,
                 c.estado
             FROM citas c
             JOIN pacientes p ON c.paciente_id = p.id
+            JOIN servicios s ON c.servicio_id = s.id
             WHERE c.medico_id = ? 
             ORDER BY c.fecha, c.hora;
         `, [req.session.medico_id]);  // Se pasa el ID del médico para filtrar las citas
+
+        const pacientes = await conexion.query(`SELECT * FROM pacientes`);
+        const servicios = await conexion.query(`SELECT * FROM servicios`);
 
         res.render("dashboard_medico/citas", {
             'total_citas': citas.length,
             'titulo': 'Página de citas',
             'link': link,
             'usuario': req.session,
-            'citas': citas
+            'citas': citas,
+            'pacientes': pacientes,
+            'servicios': servicios,
         });
     } catch (error) {
         console.error("Error al obtener citas:", error);
         res.status(500).send("Error al obtener citas");
     }
+});
+
+router.post("/dashboard_jmedico/citas", checkLoginMedico, async(req, res) =>{
+    const idusuario = req.session.medico_id;
+    const {paciente_id, servicio_id, fecha, hora} =req.body;
+
+    console.log(fecha, hora)
+
+    const valid = await new Promise((resolve) => {
+        conexion.query(
+          'SELECT * FROM `citas` WHERE hora = ? AND fecha = ?',
+          [hora, fecha],
+          function (_error, rows) {
+            // Ignoramos cualquier error y resolvemos solo con true o false
+            resolve(rows.length !== 0);
+          }
+        );
+      });
+      
+    if(valid){
+        return res.status(400).json({ error: "El horario ya se encuentra registrado." });
+    }
+
+    const citas = `
+    INSERT INTO citas(paciente_id, medico_id, servicio_id, fecha, hora)
+    VALUES (?, ?, ?, ?, ?)
+    `
+    conexion.query(citas, [paciente_id, idusuario, servicio_id, fecha, hora], async function(error, rows){
+        if (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Error al registrar la cita" });
+        }
+        const data = {
+            'titulo': 'Página de calendario',
+            'usuario': req.session,
+            'link': link,
+        };
+        res.render("dashboard_medico/calendario", data);
+    });
 });
 
 router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req, res) => {
