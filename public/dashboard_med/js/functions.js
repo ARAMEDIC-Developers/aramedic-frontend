@@ -109,75 +109,33 @@ function manejarNotificaciones() {
 }
 
 // Funciones para mostrar datos en el DOM (simuladas)
-// function mostrarCitas() {
-//     const listaCitas = document.getElementById("lista-citas");
-//     listaCitas.innerHTML = `
-//         <div class="cita-card">
-//             <h3>Juan Pérez</h3>
-//             <p><strong>Fecha:</strong> 2024-09-05</p>
-//             <p><strong>Hora:</strong> 10:00 AM</p>
-//             <button class="btn-primary" onclick="mostrarDetallesCita(1)">Ver Detalles</button>
-//         </div>
-//         <div class="cita-card">
-//             <h3>Ana Gómez</h3>
-//             <p><strong>Fecha:</strong> 2024-09-05</p>
-//             <p><strong>Hora:</strong> 11:00 AM</p>
-//             <button class="btn-primary" onclick="mostrarDetallesCita(2)">Ver Detalles</button>
-//         </div>
-//     `;
-// }
+function mostrarCitas() {
+    const listaCitas = document.getElementById("lista-citas");
+    listaCitas.innerHTML = `
 
-// function mostrarHistoriasClinicas() {
-//     const listaHistorias = document.getElementById("lista-historias");
-//     listaHistorias.innerHTML = `
-//         <div class="historia-card">
-//             <h3>Juan Pérez</h3>
-//             <p><strong>Fecha de Creación:</strong> 2024-01-15</p>
-//             <p><strong>Última Actualización:</strong> 2024-09-01</p>
-//             <button class="btn-primary" onclick="verHistoriaClinica(1)">Ver Historia</button>
-//         </div>
-//         <div class="historia-card">
-//             <h3>Ana Gómez</h3>
-//             <p><strong>Fecha de Creación:</strong> 2024-02-20</p>
-//             <p><strong>Última Actualización:</strong> 2024-08-15</p>
-//             <button class="btn-primary" onclick="verHistoriaClinica(2)">Ver Historia</button>
-//         </div>
-//     `;
-// }
+    `;
+}
 
-// function mostrarCuentas() {
-//     const listaCuentas = document.getElementById("lista-cuentas");
-//     listaCuentas.innerHTML = `
-//         <div class="cuenta-card">
-//             <h3>Dr. Fernando Sánchez</h3>
-//             <p><strong>Rol:</strong> Médico</p>
-//             <button class="btn-primary" onclick="editarCuenta(1)">Editar</button>
-//         </div>
-//         <div class="cuenta-card">
-//             <h3>Enfermera García</h3>
-//             <p><strong>Rol:</strong> Enfermera</p>
-//             <button class="btn-primary" onclick="editarCuenta(2)">Editar</button>
-//         </div>
-//     `;
-// }
+function mostrarHistoriasClinicas() {
+    const listaHistorias = document.getElementById("lista-historias");
+    listaHistorias.innerHTML = `
 
-// function mostrarServicios() {
-//     const listaServicios = document.getElementById("lista-servicios");
-//     listaServicios.innerHTML = `
-//         <div class="servicio-card">
-//             <h3>Consulta General</h3>
-//             <p><strong>Duración:</strong> 30 min</p>
-//             <p><strong>Precio:</strong> $50</p>
-//             <button class="btn-primary" onclick="editarServicio(1)">Editar</button>
-//         </div>
-//         <div class="servicio-card">
-//             <h3>Examen de Laboratorio</h3>
-//             <p><strong>Duración:</strong> 1 hora</p>
-//             <p><strong>Precio:</strong> $100</p>
-//             <button class="btn-primary" onclick="editarServicio(2)">Editar</button>
-//         </div>
-//     `;
-// }
+    `;
+}
+
+function mostrarCuentas() {
+    const listaCuentas = document.getElementById("lista-cuentas");
+    listaCuentas.innerHTML = `
+
+    `;
+}
+
+function mostrarServicios() {
+    const listaServicios = document.getElementById("lista-servicios");
+    listaServicios.innerHTML = `
+       
+    `;
+}
 
 // // Funciones para manejar eventos (simuladas)
 // function mostrarDetallesCita(id) {
@@ -349,7 +307,6 @@ function handleMobileNavigation() {
 // Función para inicializar la aplicación
 function inicializarApp() {
     handleMobileNavigation();
-    actualizarPerfilUsuario();
     // manejarNavegacion();
     manejarHamburgerMenu();
     manejarNotificaciones();

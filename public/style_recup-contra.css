@@ -31,7 +31,7 @@ body {
     position: absolute;
     top: 20px;
     left: 20px;
-    font-size: 36px;
+    font-size: 24px; /* Reduced from 36px */
     font-weight: bold;
     color: white;
     z-index: 1000;
@@ -46,78 +46,77 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 480px; /* Reduced from 1200px */
     width: 90%;
     background: #fff;
-    padding: 60px;
-    border-radius: 16px;
+    padding: 40px; /* Reduced from 60px */
+    border-radius: 12px; /* Reduced from 16px */
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: center;
 }
 
 .form-content {
     width: 100%;
-    max-width: 600px;
+    max-width: 400px; /* Reduced from 600px */
+    margin: 0 auto;
 }
 
 .title {
-    font-size: 48px;
+    font-size: 28px; /* Reduced from 48px */
     font-weight: 600;
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px; /* Reduced from 40px */
     color: #333;
 }
 
 .icon-container {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px; /* Reduced from 40px */
 }
 
 .lock-icon {
-    width: 120px;
-    height: 120px;
+    width: 80px; /* Reduced from 120px */
+    height: 80px; /* Reduced from 120px */
 }
 
 .input-group {
     position: relative;
-    margin-bottom: 30px;
+    margin-bottom: 20px; /* Reduced from 30px */
     width: 100%;
 }
 
 .input-group input {
     width: 100%;
-    padding: 20px;
-    padding-right: 50px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    font-size: 18px;
+    padding: 12px 40px 12px 15px; /* Adjusted padding */
+    border: 1px solid #ddd; /* Reduced border width */
+    border-radius: 6px; /* Reduced from 8px */
+    font-size: 16px; /* Reduced from 18px */
     transition: border-color 0.3s ease;
 }
 
 .input-group input:focus {
     border-color: #3498db;
     outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
 }
 
 .toggle-password {
     position: absolute;
-    right: 20px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
     color: #666;
-    font-size: 24px;
+    font-size: 18px; /* Reduced from 24px */
 }
 
 .submit-btn {
     width: 100%;
-    padding: 20px;
+    padding: 12px; /* Reduced from 20px */
     background-color: #3498db;
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 20px;
+    border-radius: 6px; /* Reduced from 8px */
+    font-size: 16px; /* Reduced from 20px */
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.1s;
@@ -133,13 +132,13 @@ body {
 
 .login-link {
     text-align: center;
-    margin-top: 30px;
+    margin-top: 20px; /* Reduced from 30px */
 }
 
 .login-link a {
     color: #3498db;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 14px; /* Reduced from 18px */
     transition: color 0.3s;
 }
 
@@ -148,26 +147,36 @@ body {
     text-decoration: underline;
 }
 
+.error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    text-align: center;
+    display: block;
+    margin-bottom: 10px;
+}
+
 @media (max-width: 768px) {
     .container {
-        padding: 40px;
+        padding: 30px;
+        width: 95%;
     }
     
     .title {
-        font-size: 36px;
+        font-size: 24px;
     }
     
     .lock-icon {
-        width: 90px;
-        height: 90px;
+        width: 60px;
+        height: 60px;
     }
     
-    .input-group input, .submit-btn {
-        font-size: 16px;
-        padding: 15px;
+    .input-group input, 
+    .submit-btn {
+        font-size: 14px;
+        padding: 10px;
     }
     
     .login-link a {
-        font-size: 16px;
+        font-size: 14px;
     }
 }

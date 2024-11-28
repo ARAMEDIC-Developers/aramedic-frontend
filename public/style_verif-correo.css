@@ -176,7 +176,7 @@ header {
     .content-wrapper {
         padding: 30px;
     }
-
+    
     .title {
         font-size: 1.8rem;
     }
@@ -190,12 +190,12 @@ header {
     .logo {
         font-size: 2rem;
     }
-
+    
     .email-icon {
         width: 60px;
         height: 60px;
     }
-
+    
     .content-wrapper {
         padding: 20px;
     }
