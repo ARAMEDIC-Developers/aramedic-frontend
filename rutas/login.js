@@ -5,6 +5,7 @@ const link = require("../config/link");
 const { validateItem } = require('../validaciones/login');
 const { validationResult } = require('express-validator');
 const bcrypt = require("bcrypt"); // Importamos bcrypt para comparar las contraseñas
+const session = require("express-session");
 
 router.get("/login", function(req, res) {
     res.render("login", { link, oldData: {} });
