@@ -210,10 +210,6 @@ CREATE TABLE `medico_servicio` (
 -- Volcado de datos para la tabla `medico_servicio`
 --
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/main
 INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`, `estado`) VALUES
 (1, 1, 1, 'activo'),
 (2, 3, 2, 'activo'),
@@ -222,15 +218,6 @@ INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`, `estado`) VALUE
 (5, 3, 11, 'activo'),
 (6, 3, 10, 'activo'),
 (7, 3, 11, 'activo');
-<<<<<<< HEAD
-=======
-INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`) VALUES
-(1, 1, 1),
-(2, 3, 2),
-(3, 3, 1);
->>>>>>> main
-=======
->>>>>>> refs/remotes/origin/main
 
 -- --------------------------------------------------------
 
@@ -304,29 +291,15 @@ CREATE TABLE `servicios` (
   `descripcion` text DEFAULT NULL,
   `costo` decimal(10,2) NOT NULL,
   `tiempo_duracion` varchar(255) DEFAULT NULL,
-<<<<<<< HEAD
-<<<<<<< HEAD
   `tiempo_recuperacion` varchar(255) DEFAULT NULL,
   `estado` enum('activo','inactivo') DEFAULT 'activo',
   `visibilidad` tinyint(1) NOT NULL
-=======
-  `tiempo_recuperacion` varchar(255) DEFAULT NULL
->>>>>>> main
-=======
-  `tiempo_recuperacion` varchar(255) DEFAULT NULL,
-  `estado` enum('activo','inactivo') DEFAULT 'activo',
-  `visibilidad` tinyint(1) NOT NULL
->>>>>>> refs/remotes/origin/main
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `servicios`
 --
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/main
 INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracion`, `tiempo_recuperacion`, `estado`, `visibilidad`) VALUES
 (1, 'Consulta General', 'Consulta general con el médico', 40.00, '30', '1', 'activo', 1),
 (2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, '40', '14', 'activo', 1),
@@ -338,17 +311,6 @@ INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracio
 (13, 'Rinoplastia', 'ah', 150.00, '10', '1', 'inactivo', 1),
 (14, 'prueba', 'mi descripcion', 1.00, '1', '1', 'activo', 1),
 (15, 'Dean', 'asd', 15.00, '16', '16', 'activo', 1);
-<<<<<<< HEAD
-=======
-INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracion`, `tiempo_recuperacion`) VALUES
-(1, 'Consulta General', 'Consulta general con el médico', 50.00, '20', '1'),
-(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, '40', '1'),
-(3, 'Radiografía', 'Radiografía de diagnóstico', 600.00, '50', '2'),
-(8, 'asd', 'asdasd', 20.00, '1', '1'),
-(9, 'nose', 'asd', 30.00, '1', '1');
->>>>>>> main
-=======
->>>>>>> refs/remotes/origin/main
 
 -- --------------------------------------------------------
 
@@ -527,15 +489,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-<<<<<<< HEAD
-<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-=======
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
->>>>>>> main
-=======
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
->>>>>>> refs/remotes/origin/main
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
