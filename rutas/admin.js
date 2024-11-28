@@ -585,8 +585,7 @@ router.post('/dashboard_admin/guardar_historia_clinica', checkLoginAdmin, functi
         return res.status(400).send("Error: Los campos 'Paciente', 'Médico' y 'Motivo' son obligatorios.");
     }
 
-    // Obtener la fecha y hora actual en formato 'YYYY-MM-DD HH:MM:SS'
-    const fechaHoraActual = new Date().toISOString().slice(0, 19).replace('T', ' ');
+   
 
     // Datos a insertar en la base de datos
     const values = [
@@ -608,21 +607,33 @@ router.post('/dashboard_admin/guardar_historia_clinica', checkLoginAdmin, functi
         procedimiento || null, 
         riesgos || null, 
         cuidadoPreoperativo || null, 
-        cuidadoPostoperativo || null,
-        fechaHoraActual,  // horaCreacion
-        fechaHoraActual   // horaActualizacion
+        cuidadoPostoperativo || null
     ];
 
     console.log("Valores que se enviarán a la consulta SQL:", values);
 
     // Consulta SQL para insertar la historia clínica (el campo 'id' es autoincremental)
     const historia = `
-        INSERT INTO historial_clinico 
-        (medico_id, paciente_id, motivo, enfermedades_previas, alergias, 
-        medicamentos_actuales, cirugias_previas, fuma, consume_alcohol, 
-        enfermedades_hereditarias, peso, altura, imc, descripcion_fisica, 
-        cirugia, procedimiento, riesgos, cuidado_preoperativo, cuidado_postoperativo, 
-        horaCreacion, horaActualizacion)
+        INSERT INTO historial_medico (
+        medico_id, 
+        paciente_id, 
+        motivo, 
+        enfermedades_previas, 
+        alergias, 
+        medicamentos_actuales, 
+        cirugias_previas, 
+        fuma, 
+        consume_alcohol, 
+        enfermedades_hereditarias, 
+        peso, 
+        altura, 
+        imc, 
+        descripcion_fisica, 
+        cirugia, 
+        procedimiento, 
+        riesgos, 
+        cuidado_preoperativo, 
+        cuidado_postoperativo)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
 
