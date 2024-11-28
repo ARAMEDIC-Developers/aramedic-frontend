@@ -152,10 +152,11 @@ CREATE TABLE `historial_medico` (
 --
 
 INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_previas`, `alergias`, `medicamentos_actuales`, `cirugias_previas`, `fuma`, `consume_alcohol`, `enfermedades_hereditarias`, `peso`, `altura`, `imc`, `descripcion_fisica`, `cirugia`, `procedimiento`, `riesgos`, `cuidado_preoperativo`, `cuidado_postoperativo`, `medico_id`, `horaCreacion`, `horaActualizacion`) VALUES
+(1, 2, 'Chequeo Semanal', 'Sin anomalías', 'N/A', 'N/A', 'N/A', 1, 0, 'N/A', 80, 165, 2.5, '', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-20 19:58:59'),
 (2, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'trabaja dean', 0, 1, 'N/A', 90.5, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-11-20 19:56:08', '2024-11-24 05:01:10'),
 (15, 7, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
 (16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
-(17, 7, '<xzxczxc', 'zxczxc', 'zxczxc', 'zzczx', 'czxczxc', 0, 0, 'zxczx', 111, 222, 11, 'asdasd', 'asdasd', 'asda', 'asda', 'asdas', 'asdas', 3, '2024-11-25 04:41:31', '2024-11-28 14:32:33'),
+(17, 7, '<xzxczxc', 'zxczxc', 'zxczxc', 'zzczx', 'czxczxc', 0, 0, 'zxczx', 111, 111, 11, 'asdasd', 'asdasd', 'asda', 'asda', 'asdas', 'asdas', 3, '2024-11-25 04:41:31', '2024-11-25 04:41:31'),
 (18, 9, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-26 19:55:29', '2024-11-26 19:55:29');
 
 --
@@ -202,14 +203,14 @@ INSERT INTO `medicos` (`id`, `nombre`, `apellido`, `especialidad_id`, `telefono`
 CREATE TABLE `medico_servicio` (
   `id` int(11) NOT NULL,
   `medico_id` int(11) DEFAULT NULL,
-  `servicio_id` int(11) DEFAULT NULL,
-  `estado` varchar(20) DEFAULT 'activo'
+  `servicio_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `medico_servicio`
 --
 
+<<<<<<< HEAD
 INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`, `estado`) VALUES
 (1, 1, 1, 'activo'),
 (2, 3, 2, 'activo'),
@@ -218,6 +219,12 @@ INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`, `estado`) VALUE
 (5, 3, 11, 'activo'),
 (6, 3, 10, 'activo'),
 (7, 3, 11, 'activo');
+=======
+INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`) VALUES
+(1, 1, 1),
+(2, 3, 2),
+(3, 3, 1);
+>>>>>>> main
 
 -- --------------------------------------------------------
 
@@ -291,15 +298,20 @@ CREATE TABLE `servicios` (
   `descripcion` text DEFAULT NULL,
   `costo` decimal(10,2) NOT NULL,
   `tiempo_duracion` varchar(255) DEFAULT NULL,
+<<<<<<< HEAD
   `tiempo_recuperacion` varchar(255) DEFAULT NULL,
   `estado` enum('activo','inactivo') DEFAULT 'activo',
   `visibilidad` tinyint(1) NOT NULL
+=======
+  `tiempo_recuperacion` varchar(255) DEFAULT NULL
+>>>>>>> main
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `servicios`
 --
 
+<<<<<<< HEAD
 INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracion`, `tiempo_recuperacion`, `estado`, `visibilidad`) VALUES
 (1, 'Consulta General', 'Consulta general con el médico', 40.00, '30', '1', 'activo', 1),
 (2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, '40', '14', 'activo', 1),
@@ -311,6 +323,14 @@ INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracio
 (13, 'Rinoplastia', 'ah', 150.00, '10', '1', 'inactivo', 1),
 (14, 'prueba', 'mi descripcion', 1.00, '1', '1', 'activo', 1),
 (15, 'Dean', 'asd', 15.00, '16', '16', 'activo', 1);
+=======
+INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `costo`, `tiempo_duracion`, `tiempo_recuperacion`) VALUES
+(1, 'Consulta General', 'Consulta general con el médico', 50.00, '20', '1'),
+(2, 'Examen de Sangre', 'Análisis de sangre completo', 30.00, '40', '1'),
+(3, 'Radiografía', 'Radiografía de diagnóstico', 600.00, '50', '2'),
+(8, 'asd', 'asdasd', 20.00, '1', '1'),
+(9, 'nose', 'asd', 30.00, '1', '1');
+>>>>>>> main
 
 -- --------------------------------------------------------
 
@@ -459,7 +479,7 @@ ALTER TABLE `fechas`
 -- AUTO_INCREMENT de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `medicos`
@@ -471,7 +491,7 @@ ALTER TABLE `medicos`
 -- AUTO_INCREMENT de la tabla `medico_servicio`
 --
 ALTER TABLE `medico_servicio`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `pacientes`
@@ -489,7 +509,11 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+>>>>>>> main
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
