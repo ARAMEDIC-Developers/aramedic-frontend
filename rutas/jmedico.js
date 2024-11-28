@@ -323,6 +323,42 @@ router.get("/dashboard_jmedico/cuentas/validar-dni", checkLoginMedico, async (re
     }
 });
 
+router.get("/dashboard_jmedico/cuentas/usuario/:dni", async (req, res) => {
+    const { dni } = req.params;
+
+    try {
+        const [usuario] = await conexion.query(`
+            SELECT 
+                u.dni,
+                u.rol_id,
+                p.nombre AS nombre,
+                p.apellido AS apellido,
+                p.email AS email,
+                p.telefono AS telefono,
+                p.fecha_nacimiento,
+                p.genero,
+                p.estado_civil,
+                p.ocupacion,
+                p.direccion,
+                m.especialidad_id AS especialidad
+            FROM usuarios u
+            LEFT JOIN pacientes p ON u.dni = p.usuario_id
+            LEFT JOIN medicos m ON u.dni = m.usuario_id
+            WHERE u.dni = ?
+        `, [dni]);
+
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        res.json(usuario);
+    } catch (error) {
+        console.error("Error al obtener usuario:", error);
+        res.status(500).send("Error al obtener usuario");
+    }
+});
+
+
 // Ruta para guardar usuario (paciente o trabajador)
 router.post("/dashboard_jmedico/cuentas/guardar", checkLoginMedico, async (req, res) => {
     const { dni, nombre, apellido, email, rol, contrasena } = req.body;
