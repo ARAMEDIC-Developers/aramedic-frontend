@@ -414,7 +414,7 @@ router.post('/dashboard_jmedico/guardar_historia_clinica', checkLoginMedico, fun
         medicamentos_actuales, cirugias_previas, fuma, consume_alcohol, 
         enfermedades_hereditarias, peso, altura, imc, descripcion_fisica, 
         cirugia, procedimiento, riesgos, cuidado_preoperativo, cuidado_postoperativo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
 
     // Ejecutar la consulta SQL
