@@ -63,6 +63,7 @@
                                     Editar
                                 </button>
                                 <button 
+                                    id = "edit-button"
                                     onclick="eliminarUsuario('<%= usuario.dni %>')" 
                                     style="background-color: #dc3545; color: white; border: none; padding: 10px 10px; cursor: pointer;" 
                                     class="delete-button">
@@ -224,6 +225,7 @@
     const telefonoInput = document.getElementById("telefonoP");
     const rolSelectPaciente = document.getElementById("rolP");
     const botonGuardarCambiosPaciente = document.getElementById("botonGuardarCambiosPaciente");
+    const btnEditar = document.getElementById("edit-button");
 
     // Referencias para el modal de trabajador
     const btnAgregarTrabajador = document.getElementById("btnAgregarTrabajador");
@@ -250,11 +252,11 @@
                 <td style="padding: 10px;">${usuario.apellido || 'N/A'}</td>
                 <td style="padding: 10px;">${usuario.email || 'N/A'}</td>
                 <td style="padding: 10px;">
-                    ${usuario.rol_id === 1 ? 'Paciente' : usuario.rol_id === 2 ? 'Medico' : usuario.rol_id === 3 ? 'Especialista' : 'Desconocido'}
+                    ${usuario.rol_id === 1 ? 'Paciente' : usuario.rol_id === 2 ? 'Medico' : usuario.rol_id === 3 ? 'Administrador' : 'Desconocido'}
                 </td>
                 <td style="padding: 10px;">
-                    <button onclick="editarUsuario('${usuario.dni}')" class="edit-button" style="background-color: #28a745; color: white; padding: 10px;">Editar</button>
-                    <button onclick="eliminarUsuario('${usuario.dni}')" class="delete-button" style="background-color: #dc3545; color: white; padding: 10px;">Eliminar</button>
+                    <button onclick="editarUsuario('${usuario.id}')" class="edit-button" style="background-color: #28a745; color: white; padding: 10px;">Editar</button>
+                    <button onclick="eliminarUsuario('${usuario.id}')" class="delete-button" style="background-color: #dc3545; color: white; padding: 10px;">Eliminar</button>
                 </td>
             `;
             usuariosTableBody.appendChild(tr);
@@ -353,7 +355,7 @@
 
 
     // Función para guardar los datos del formulario del trabajador
-document.getElementById("formTrabajador").addEventListener("submit", async (event) => {
+document.getElementById("botonGuardarTrabajador").addEventListener("click", async (event) => {
     event.preventDefault();
 
     // Verificar que el botón que disparó el evento sea el botón "botonGuardarTrabajador"
@@ -386,18 +388,20 @@ document.getElementById("formTrabajador").addEventListener("submit", async (even
             return;
         }
 
+        const data = {
+            "dni" : dni,
+            "nombre" : nombre,
+            "apellido" : apellido,
+            "email" : email,
+            "rol" : rol,
+            "contrasena" : contrasena,
+        }
+
         // Enviar los datos al servidor
         const responseGuardar = await fetch('/dashboard_admin/cuentas/guardar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                dni,
-                nombre,
-                apellido,
-                email,
-                rol,
-                contrasena
-            })
+            body: JSON.stringify(data)
         });
 
         const result = await responseGuardar.json();
@@ -426,15 +430,8 @@ async function cargarTrabajadores() {
     }
 }
 
-
-
-
-
-
-
-
 // Función para guardar los datos del formulario del paciente
-document.getElementById("formPaciente").addEventListener("submit", async (event) => {
+document.getElementById("botonGuardarPaciente").addEventListener("click", async (event) => {
     event.preventDefault();
 
     // Verificar que el botón que disparó el evento sea el botón "botonGuardarPaciente"
@@ -467,18 +464,20 @@ document.getElementById("formPaciente").addEventListener("submit", async (event)
             return;
         }
 
+        const data = {
+            "dni" : dni,
+            "nombre" : nombre,
+            "apellido" : apellido,
+            "email" : email,
+            "rol" : rol,
+            "contrasena" : contrasena,
+        };
+
         // Enviar los datos al servidor
         const responseGuardar = await fetch('/dashboard_admin/cuentas/guardar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                dni,
-                nombre,
-                apellido,
-                email,
-                rol,
-                contrasena
-            })
+            body: JSON.stringify(data)
         });
 
         const result = await responseGuardar.json();
@@ -507,13 +506,58 @@ async function cargarPacientes() {
     }
 }
 
+btnAgregarPaciente.addEventListener("click", function () {
+        formPaciente.reset();
+
+        // Configuración específica para pacientes
+        fechaNacimientoInput.style.display = "none";
+        generoSelect.style.display = "none";
+        estadoCivilSelect.style.display = "none";
+        ocupacionInput.style.display = "none";
+        direccionInput.style.display = "none";
+        telefonoInput.style.display = "none";
+
+        document.querySelector("label[for='fechaNacimiento']").style.display = "none";
+        document.querySelector("label[for='genero']").style.display = "none";
+        document.querySelector("label[for='estadoCivil']").style.display = "none";
+        document.querySelector("label[for='ocupacion']").style.display = "none";
+        document.querySelector("label[for='direccionPaciente']").style.display = "none";
+        document.querySelector("label[for='telefonoP']").style.display = "none";
+
+        rolSelectPaciente.innerHTML = `<option value="1">Paciente</option>`;
+        botonGuardarCambiosPaciente.style.display = "none";
+        modalPaciente.classList.add("show");
+    });
+
+    // Cerrar el modal de paciente
+    closeModalPaciente.addEventListener("click", function () {
+        modalPaciente.classList.remove("show");
+    });
+
+    // Mostrar el modal para agregar trabajador
+    btnAgregarTrabajador.addEventListener("click", function () {
+        formTrabajador.reset();
+
+        // Configuración específica para trabajadores
+        especialidadInput.style.display = "none";
+        especialidadInput.removeAttribute("required");
+        especialidadLabel.style.display = "none";
+
+        telefonoInputTrabajador.style.display = "none";
+        telefonoInputTrabajador.removeAttribute("required");
+        telefonoLabelTrabajador.style.display = "none";
+
+        rolSelectTrabajador.innerHTML = `
+            <option value="2">Medico</option>
+            <option value="3">Administrador</option>
+        `;
+        botonGuardarCambiosTrabajador.style.display = "none";
+        modalTrabajador.classList.add("show");
+    });
     
     // Llamada inicial para cargar usuarios al inicio
     cargarUsuarios();
 });
 
     </script>
-    
-
-
 <%- include('../_partials/footer') %>
