@@ -6,6 +6,8 @@ const conexion = require("../config/conexion");
 const link = require("../config/link");
 const { validarServicio } = require('../validaciones/servicios');
 const checkLoginAdmin = require("../validaciones/authAdmin");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 router.get("/dashboard_admin", checkLoginAdmin, function(req,res){
     const data = {
@@ -382,32 +384,63 @@ router.get("/dashboard_admin/cuentas/usuario/:dni", async (req, res) => {
 // Ruta para guardar usuario (paciente o trabajador)
 router.post("/dashboard_admin/cuentas/guardar", checkLoginAdmin, async (req, res) => {
     const { dni, nombre, apellido, email, rol, contrasena } = req.body;
-
+    const hashedPas = await bcrypt.hash(contrasena, saltRounds);
     try {
         // Insertar en la tabla usuarios
         await conexion.query(
             "INSERT INTO usuarios (dni, rol_id, contrasena) VALUES (?, ?, ?)",
-            [dni, rol, contrasena]
-        );
-
-        if (rol == 1) { // Si es paciente
-            // Insertar en la tabla pacientes
-            await conexion.query(
-                "INSERT INTO pacientes (usuario_id, nombre, apellido, email) VALUES (?, ?, ?, ?)",
-                [dni, nombre, apellido, email]
-            );
-        } else if (rol == 2 || rol == 3) { // Si es medico o trabajador
-            // Insertar en la tabla medicos
-            await conexion.query(
-                "INSERT INTO medicos (usuario_id, nombre, apellido, email) VALUES (?, ?, ?, ?)",
-                [dni, nombre, apellido, email]
-            );
-        }
-
-        return res.json({ success: true, mensaje: "Usuario agregado exitosamente" });
+            [dni, rol, hashedPas],
+            (error, result) => {
+                if (error) {
+                    console.log("TRIKA error al insertar usuario", error);
+                    return res.status(500).send("Error al registrar el usuario");
+                }
+                const user_id = result.insertId;
+                if (rol == 1) { // Si es paciente
+                    // Insertar en la tabla pacientes
+                    conexion.query(
+                        "INSERT INTO pacientes (usuario_id, nombre, apellido, email) VALUES (?, ?, ?, ?)",
+                        [user_id, nombre, apellido, email]
+                    );
+                } else if (rol == 2) { // Si es medico o trabajador
+                    // Insertar en la tabla medicos
+                    conexion.query(
+                        "INSERT INTO medicos (usuario_id, nombre, apellido, email) VALUES (?, ?, ?, ?)",
+                        [user_id, nombre, apellido, email]
+                    );
+                }
+                return res.json({ success: true, mensaje: "Usuario agregado exitosamente" });
+            });
     } catch (error) {
         console.error("Error al guardar usuario:", error);
-        return res.status(500).json({ success: false, mensaje: "Error al guardar usuario" });
+        return res.status(500).json({ success: false, mensaje: "Error al guardar usuario: SAD" });
+    }
+});
+
+router.post('/dashboard_admin/cuentas/editar', (req, res) => {
+    const { dni } = req.body;
+
+    if (!dni) {
+        return res.status(400).json({ success: false, message: 'DNI no proporcionado' });
+    }
+
+    // Aquí busca el usuario en la base de datos por DNI
+    // Ejemplo: 
+    // const usuario = await Usuario.findOne({ where: { dni } });
+
+    const usuario = {
+        dni: dni,
+        nombre: "Ejemplo",
+        apellido: "Usuario",
+        email: "ejemplo@correo.com"
+    }; // Simulación de respuesta de DB
+
+    if (usuario) {
+        // Si el usuario se encuentra, devuelve los datos para llenar el formulario
+        return res.json({ success: true, usuario });
+    } else {
+        // Si no se encuentra el usuario
+        return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
     }
 });
 
