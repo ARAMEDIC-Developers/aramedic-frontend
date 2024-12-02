@@ -3,31 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil del Paciente</title>
+    <title>Perfil y Registro de Usuario</title>
     <link rel="stylesheet" href="/Perfil_style.css">
 </head>
 <body>
-    <!-- Incluye la barra de tareas -->
+    <!-- Barra de navegación -->
     <%- include('../_partials/header') %>
 
     <div class="dashboard-container">
-        <!-- Incluye el sidebar -->
+        <!-- Sidebar -->
         <%- include('../_partials/sidebar') %>
 
         <!-- Contenido Principal -->
         <main id="main-content">
-            <!-- Incluye el sub-header si lo tienes -->
+            <!-- Sub-header -->
             <%- include('../_partials/sub_header') %>
 
-            <!-- Aquí puedes incluir las notificaciones y otros modales si es necesario -->
+            <!-- Notificaciones y Modales -->
             <%- include('../_partials/notificaciones') %>
             <%- include('../_partials/modal') %>
 
-            <!-- Perfil del Paciente -->
+            <!-- Sección de Perfil -->
             <section id="perfil">
                 <h1>Información Básica del Usuario</h1>
                 <div class="content-box">
-                    <!-- Sección de Imagen de Usuario -->
+                    <!-- Imagen de Usuario -->
                     <div class="user-image-box">
                         <div class="user-image-square" id="imageContainer">
                             <img id="userImage" src="/placeholder.jpg" alt="Imagen Usuario">
@@ -39,29 +39,62 @@
                         </div>
                     </div>
 
-                    <!-- Sección de Información Usuario -->
+                    <!-- Información de Usuario -->
                     <div class="info-wrapper">
                         <div class="info-box">
                             <h2>Información Usuario</h2>
                             <form id="formPerfil" action="/dashboard_paciente/perfil/editar" method="POST">
                                 <div class="form-grid">
                                     <label for="nombre">Nombre:</label>
-                                    <input type="text" id="nombre" name="nombre" value="<%= paciente.nombre %>" required>
+                                    <input type="text" id="nombre" name="nombre" value="<%= paciente ? paciente.nombre : '' %>" required>
 
                                     <label for="apellido">Apellido:</label>
-                                    <input type="text" id="apellido" name="apellido" value="<%= paciente.apellido %>" required>
+                                    <input type="text" id="apellido" name="apellido" value="<%= paciente ? paciente.apellido : '' %>" required>
 
-                                    <label for="direccion">Dirección:</label>
-                                    <input type="text" id="direccion" name="direccion" value="<%= paciente.direccion %>">
+                                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                                    <input type="date" id="fechaNacimiento" name="fechaNacimiento">
 
-                                    <label for="telefono">Teléfono:</label>
-                                    <input type="text" id="telefono" name="telefono" value="<%= paciente.telefono %>">
+                                    <label for="edad">Edad:</label>
+                                    <input type="number" id="edad" name="edad" placeholder="Ej: 30">
+
+                                    <label for="genero">Género:</label>
+                                    <select id="genero" name="genero">
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Femenino">Femenino</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+
+                                    <label for="estadoCivil">Estado Civil:</label>
+                                    <select id="estadoCivil" name="estadoCivil">
+                                        <option value="Soltero">Soltero</option>
+                                        <option value="Casado">Casado</option>
+                                        <option value="Divorciado">Divorciado</option>
+                                        <option value="Viudo">Viudo</option>
+                                    </select>
+
+                                    <label for="ocupacion">Ocupación:</label>
+                                    <input type="text" id="ocupacion" name="ocupacion" placeholder="Ej: Ingeniero">
                                 </div>
 
                                 <h2>Credenciales Globales</h2>
                                 <div class="form-grid">
                                     <label for="email">Correo Electrónico:</label>
-                                    <input type="email" id="email" name="email" value="<%= paciente.email %>" required>
+                                    <input type="email" id="email" name="email" value="<%= paciente ? paciente.email : '' %>" required>
+
+                                    <label for="username">Usuario:</label>
+                                    <input type="text" id="username" name="username" value="GabrielGG" required>
+
+                                    <label for="password">Contraseña:</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" id="password" name="password" value="******" required>
+                                        <button type="button" class="toggle-password" onclick="togglePassword('password', this)">👁️</button>
+                                    </div>
+
+                                    <label for="verification">Verificación:</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" id="verification" name="verification" value="******" required>
+                                        <button type="button" class="toggle-password" onclick="togglePassword('verification', this)">👁️</button>
+                                    </div>
                                 </div>
 
                                 <!-- Botones de Acción -->
@@ -76,20 +109,17 @@
         </main>
     </div>
 
+    <!-- Footer -->
+    <%- include('../_partials/footer_pac') %>
+
     <script>
-        // Función para mostrar/ocultar contraseña (si es necesario)
+        // Mostrar/ocultar contraseñas
         function togglePassword(inputId, button) {
             const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                button.eyeIcon = "👁️";
-            } else {
-                input.type = "password";
-                button.eyeIcon = "👁️";
-            }
+            input.type = input.type === "password" ? "text" : "password";
         }
 
-        // Función para manejar la selección de imagen
+        // Manejar la selección de imagen
         const imageInput = document.getElementById("imageInput");
         const userImage = document.getElementById("userImage");
         const addImageButton = document.getElementById("addImageButton");
