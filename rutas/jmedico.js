@@ -653,45 +653,33 @@ router.post("/dashboard_jmedico/citas", checkLoginMedico, async(req, res) =>{
     });
 });
 
-// router.post("/dashboard_jmedico/citas/guardar", checkLoginAdmin, async (req, res) => {
-//     console.log(req.body)
-//     const { id, paciente_id, servicio_id, fecha, hora, estado } = req.body;
+router.post("/dashboard_admin/citas/guardar", checkLoginMedico, async (req, res) => {
+    console.log(req.body)
+    const { id, pacienteId, medicoId, tservicio, fecha, hora, estado} = req.body;
 
-//     const data = await conexion.query("select * from servicios where id = ?", [id])
-//     if(data.length === 0){
-//           await conexion.query(
-//                 `INSERT INTO citas (id, paciente_id, medico_id, servicio_id, fecha, hora, estado) 
-//                  VALUES (?, ?, ?, ?, ?, ?, ?)`,
-//                 [id, paciente_id, ]
-//             );
+    // // Validar datos de entrada
+    // const validacion = validarServicio({ nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion });
+    // if (!validacion.valido) {
+    //     return res.status(400).json({ mensaje: validacion.mensaje });
+    // }
 
-//             return res.json({ mensaje: "Servicio registrado exitosamente" });
-//     }else{
+    // const data = await conexion.query("select * from servicios where id = ?", [id])
+    // if(data.length === 0){
+          await conexion.query(
+                `UPDATE citas
+                SET
+                paciente_id =?,
+                medico_id =?,
+                servicio_id =?,
+                fecha= ?, 
+                hora= ?, 
+                estado= ?
+                WHERE id=?`,
+                [pacienteId, medicoId, tservicio,fecha, hora, estado, id]
+            );
 
-//     await conexion.query(
-//         `UPDATE servicios 
-//          SET 
-//          nombre = ?,
-//          descripcion = ?, 
-//          costo = ?, 
-//          tiempo_duracion = ?,
-//          tiempo_recuperacion = ? ,
-//          estado = ?
-//          WHERE id = ?`,
-//         [
-//             nombre,
-//             descripcion, 
-//             costo, 
-//             tiempo_duracion,
-//             tiempo_recuperacion, 
-//             estado,
-//             id
-//         ]
-//     ); 
-
-//     return res.json({ mensaje: "Cita actualizado exitosamente" });
-//     }
-// });
+            return res.json({ mensaje: "Cita registrada exitosamente" });
+});
 
 router.delete("/dashboard_jmedico/citas/eliminar/:id", checkLoginMedico, async (req, res) => {
     conexion.query('update citas where id = ?',[req.params.id], function(error, rows){
@@ -930,14 +918,14 @@ router.post("/dashboard_jmedico/servicios/guardar", checkLoginMedico, async (req
 
     await conexion.query(
         `UPDATE servicios 
-         SET 
-         nombre = ?,
-         descripcion = ?, 
-         costo = ?, 
-         tiempo_duracion = ?,
-         tiempo_recuperacion = ? ,
-         estado = ?
-         WHERE id = ?`,
+        SET 
+        nombre = ?,
+        descripcion = ?, 
+        costo = ?, 
+        tiempo_duracion = ?,
+        tiempo_recuperacion = ? ,
+        estado = ?
+        WHERE id = ?`,
         [
             nombre,
             descripcion, 
@@ -951,33 +939,6 @@ router.post("/dashboard_jmedico/servicios/guardar", checkLoginMedico, async (req
 
     return res.json({ mensaje: "Servicio actualizado exitosamente" });
     }
-
-    // try {
-    //     // Revisar si el nombre del servicio ya existe
-    //     const [servicioExistente] = await conexion.query("SELECT * FROM servicios WHERE nombre = ?", [nombre]);
-
-    //     if (servicioExistente) {
-    //         // Si existe, actualizar la fila
-    //         await conexion.query(
-    //             `UPDATE servicios 
-    //              SET descripcion = ?, costo = ?, tiempo_duracion = ?, tiempo_recuperacion = ? 
-    //              WHERE nombre = ?`,
-    //             [descripcion, costo, tiempo_duracion, tiempo_recuperacion, nombre]
-    //         );
-    //         return res.json({ mensaje: "Servicio actualizado exitosamente" });
-    //     } else {
-    //         // Si no existe, insertar una nueva fila
-    //         await conexion.query(
-    //             `INSERT INTO servicios (nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion) 
-    //              VALUES (?, ?, ?, ?, ?)`,
-    //             [nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion]
-    //         );
-    //         return res.json({ mensaje: "Servicio añadido exitosamente" });
-    //     }
-    // } catch (error) {
-    //     console.error("Error al guardar el servicio:", error);
-    //     return res.status(500).json({ mensaje: "Error al guardar el servicio" });
-    // }
 });
 
 router.delete("/dashboard_jmedico/servicios/eliminar/:id", checkLoginMedico, async (req, res) => {

@@ -256,17 +256,63 @@ router.get("/dashboard_admin/citas", async (req, res) => {
             });
         });
 
+        const pacientes = await conexion.query(`SELECT * FROM pacientes`);
+        const medicos = await conexion.query(`SELECT * FROM medicos`);
+        const servicios = await conexion.query(`SELECT * FROM servicios`);
+
         res.render("dashboard_admin/citas", {
             'total_citas': citas.length,
             'titulo': 'Página de citas',
             'link': link,
             'usuario': req.session,
-            'citas': citas
+            'citas': citas,
+            'pacientes': pacientes,
+            'medicos': medicos,
+            'servicios': servicios
         });
     } catch (error) {
         console.error("Error al obtener citas:", error);
         res.status(500).send("Error al obtener citas");
     }
+});
+
+router.post("/dashboard_admin/citas/guardar", checkLoginAdmin, async (req, res) => {
+    console.log(req.body)
+    const { id, pacienteId, medicoId, tservicio, fecha, hora, estado} = req.body;
+
+    // // Validar datos de entrada
+    // const validacion = validarServicio({ nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion });
+    // if (!validacion.valido) {
+    //     return res.status(400).json({ mensaje: validacion.mensaje });
+    // }
+
+    // const data = await conexion.query("select * from servicios where id = ?", [id])
+    // if(data.length === 0){
+        await conexion.query(
+                `UPDATE citas
+                SET
+                paciente_id =?,
+                medico_id =?,
+                servicio_id =?,
+                fecha= ?, 
+                hora= ?, 
+                estado= ?
+                WHERE id=?`,
+                [pacienteId, medicoId, tservicio,fecha, hora, estado, id]
+            );
+
+            return res.json({ mensaje: "Cita registrada exitosamente" });
+});
+
+router.delete("/dashboard_admin/citas/eliminar/:id", checkLoginAdmin, async (req, res) => {
+    conexion.query('DELETE FROM citas WHERE id = ?',[req.params.id], function(error, rows){
+        if(error){
+            console.log(error)
+            return res.status(500).json({ mensaje: "No se pudo eliminar" });
+        }
+
+        return res.json({ mensaje: "Cita eliminada exitosamente." });
+    });
 });
 
 
@@ -550,32 +596,6 @@ router.post("/dashboard_admin/servicios/guardar", checkLoginAdmin, async (req, r
     return res.json({ mensaje: "Servicio actualizado exitosamente" });
     }
 
-    // try {
-    //     // Revisar si el nombre del servicio ya existe
-    //     const [servicioExistente] = await conexion.query("SELECT * FROM servicios WHERE nombre = ?", [nombre]);
-
-    //     if (servicioExistente) {
-    //         // Si existe, actualizar la fila
-    //         await conexion.query(
-    //             `UPDATE servicios 
-    //              SET descripcion = ?, costo = ?, tiempo_duracion = ?, tiempo_recuperacion = ? 
-    //              WHERE nombre = ?`,
-    //             [descripcion, costo, tiempo_duracion, tiempo_recuperacion, nombre]
-    //         );
-    //         return res.json({ mensaje: "Servicio actualizado exitosamente" });
-    //     } else {
-    //         // Si no existe, insertar una nueva fila
-    //         await conexion.query(
-    //             `INSERT INTO servicios (nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion) 
-    //              VALUES (?, ?, ?, ?, ?)`,
-    //             [nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion]
-    //         );
-    //         return res.json({ mensaje: "Servicio añadido exitosamente" });
-    //     }
-    // } catch (error) {
-    //     console.error("Error al guardar el servicio:", error);
-    //     return res.status(500).json({ mensaje: "Error al guardar el servicio" });
-    // }
 });
 
 router.delete("/dashboard_admin/servicios/eliminar/:id", checkLoginAdmin, async (req, res) => {
