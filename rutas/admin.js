@@ -484,9 +484,9 @@ router.post("/dashboard_admin/servicios/guardar", checkLoginAdmin, async (req, r
 
     const data = await conexion.query("select * from servicios where id = ?", [id])
     if(data.length === 0){
-          await conexion.query(
+        await conexion.query(
                 `INSERT INTO servicios (nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado, visibilidad) 
-                 VALUES (?, ?, ?, ?, ?,?, 1)`,
+                VALUES (?, ?, ?, ?, ?,?, 1)`,
                 [nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado]
             );
 

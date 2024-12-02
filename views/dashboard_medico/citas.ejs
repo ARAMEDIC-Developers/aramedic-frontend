@@ -78,9 +78,9 @@
                         <label for="service">Selecciona un Servicio:</label>
                         <select id="service" name="service" required>
                             <option value="">Selecciona un Servicio</option>
-                            <% servicios.forEach(servicio => { %>
-                                <option value="<%= servicio.id %>">
-                                    <%= servicio.nombre %>
+                            <% servicios.forEach(cita => { %>
+                                <option value="<%= cita.id %>">
+                                    <%= cita.nombre %>
                                 </option>
                             <% }); %>
                         </select>
@@ -125,8 +125,51 @@
     </main>
 </div>
 
+<!-- Modal para añadir/editar servicio -->
+<div id="modalServicio" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Editar Cita</h2>
+        <form id="formServicio">
+            <input type="text" id="id" name="id" hidden>
+            <div class="form-group">
+                <label for="nombre">Paciente</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="service">Selecciona el tipo de cita:</label>
+                <select id="tipoProcedimiento" name="tipoProcedimiento" required>
+                    <option value=""></option>
+                    <% servicios.forEach(servicio => { %>
+                        <option value="<%= servicio.id %>">
+                            <%= servicio.nombre %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>            
+            <div class="form-group">
+                <label for="hora">Hora</label>
+                <input type="time" id="hora" name="hora" required>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado de la cita</label>
+                <select id="estado" name="estado">
+                    <option value="pendiente">pendiente</option>
+                    <option value="confirmada">confirmada</option>
+                    <option value="cancelada">cancelada</option>
+                </select>
+            </div>
+            <button type="submit" id="btnGuardar" class="btn-guardar">Guardar</button>
+        </form>
+    </div>
+</div>
+
 <script>
-     const patientSelect = document.getElementById('patient');
+    const patientSelect = document.getElementById('patient');
     const serviceSelect = document.getElementById('service');
     const modalCalendario = document.getElementById("myModal");
     const closeModalCalendarioBtn = document.getElementsByClassName("close-calentario")[0];
@@ -173,7 +216,6 @@
                 icon:"error",
                 title:"Error!",
                 text:"Eliga un medico y un servicio primero para continuar",
-                footer: '<a href="https://youtu.be/UZKuju7vIbM?si=6PpR1o_qlxsoOcWy" target="_blank">¿Porque tengo este error?</a>' //:P
             });
         }
     });
@@ -305,6 +347,109 @@
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeModalCalentario();
+        }
+    });
+
+    // Función para abrir el modal en modo edición con los datos cargados
+    function abrirModalEditar(cita) {
+        document.getElementById("modalTitle").textContent = "Editar Cita";
+        document.getElementById("id").value = cita.id;
+        document.getElementById("nombre").value = cita.nombre;
+        document.getElementById("tipoProcedimiento").value = cita.tipoProcedimiento;
+        document.getElementById("fecha").value = cita.fecha;
+        document.getElementById("hora").value = cita.hora;
+        document.getElementById("estado").value = cita.estado
+        modal.classList.add("show");
+    }
+
+    // Asignar evento de clic en los botones de editar dentro de cada fila de la tabla
+    tablaServicios.addEventListener("click", function (event) {
+        if (event.target && event.target.matches(".btn-editar")) {
+
+            console.log(event.target.dataset.estado)
+
+            const cita = {
+                id: event.target.dataset.id,
+                nombre: event.target.dataset.nombre,
+                tipoProcedimiento: event.target.dataset.tipoProcedimiento,
+                fecha: event.target.dataset.fecha,
+                hora: event.target.dataset.hora,
+                estado: event.target.dataset.estado
+            };
+            abrirModalEditar(cita);
+        }
+    });
+
+    // Guardar o actualizar servicio
+    document.getElementById("formCita").addEventListener("submit", async (event) => {
+        event.preventDefault(); // Previene el envío tradicional del formulario.
+
+        // Obtén el formulario como un objeto FormData
+        const formData = new FormData(event.target);
+
+        // Convierte FormData en un objeto JSON
+        const formDataObject = Object.fromEntries(formData.entries());
+
+        // Envía los datos con fetch
+        try {
+            const response = await fetch("/dashboard_jmedico/citas/guardar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formDataObject),
+            });
+
+            // Maneja la respuesta
+            if (response.ok) {
+            const data = await response.json();
+            console.log("Respuesta del servidor:", data.mensaje);
+            alert(data.mensaje);
+            location.reload();
+            } else {
+                alert("No hay respuesta");
+            }
+        } catch (error) {
+            alert("No hay respuesta");
+            console.error("Error de red:", error);
+        }
+    });
+
+    // Cerrar el modal
+    closeModal.addEventListener("click", () => {
+        modal.classList.remove("show");
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.classList.remove("show");
+        }
+    });
+
+    tablaCitas.addEventListener("click", async function (event) {
+        if (event.target && event.target.matches(".btn-eliminar")) {
+            const id = event.target.dataset.id;
+            const nombreCita = event.target.dataset.nombre;
+
+            if (confirm(`¿Estás seguro de que deseas eliminar esta cita "${nombreCita}"?`)) {
+                try {
+                    const response = await fetch(`/dashboard_jmedico/citas/eliminar/${id}`, {
+                        method: "DELETE",
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert(result.mensaje);
+                        location.reload(); // Recargar la página para actualizar la tabla
+                    } else {
+                        alert(result.mensaje);
+                    }
+                } catch (error) {
+                    console.error("Error al eliminar la cita:", error);
+                    alert("Error al eliminar la cita.");
+                }
+            }
         }
     });
 </script>

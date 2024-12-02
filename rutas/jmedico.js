@@ -653,6 +653,57 @@ router.post("/dashboard_jmedico/citas", checkLoginMedico, async(req, res) =>{
     });
 });
 
+// router.post("/dashboard_jmedico/citas/guardar", checkLoginAdmin, async (req, res) => {
+//     console.log(req.body)
+//     const { id, paciente_id, servicio_id, fecha, hora, estado } = req.body;
+
+//     const data = await conexion.query("select * from servicios where id = ?", [id])
+//     if(data.length === 0){
+//           await conexion.query(
+//                 `INSERT INTO citas (id, paciente_id, medico_id, servicio_id, fecha, hora, estado) 
+//                  VALUES (?, ?, ?, ?, ?, ?, ?)`,
+//                 [id, paciente_id, ]
+//             );
+
+//             return res.json({ mensaje: "Servicio registrado exitosamente" });
+//     }else{
+
+//     await conexion.query(
+//         `UPDATE servicios 
+//          SET 
+//          nombre = ?,
+//          descripcion = ?, 
+//          costo = ?, 
+//          tiempo_duracion = ?,
+//          tiempo_recuperacion = ? ,
+//          estado = ?
+//          WHERE id = ?`,
+//         [
+//             nombre,
+//             descripcion, 
+//             costo, 
+//             tiempo_duracion,
+//             tiempo_recuperacion, 
+//             estado,
+//             id
+//         ]
+//     ); 
+
+//     return res.json({ mensaje: "Cita actualizado exitosamente" });
+//     }
+// });
+
+router.delete("/dashboard_jmedico/citas/eliminar/:id", checkLoginMedico, async (req, res) => {
+    conexion.query('update citas where id = ?',[req.params.id], function(error, rows){
+        if(error){
+            console.log(error)
+            return res.status(500).json({ mensaje: "No se puedo eliminar" });
+        }
+
+        return res.json({ mensaje: "Cita eliminada exitosamente." });
+    });
+});
+
 router.get("/dashboard_jmedico/cuentas", checkLoginMedico, async (req, res) => {
     try {
         const usuarios = await conexion.query(`
