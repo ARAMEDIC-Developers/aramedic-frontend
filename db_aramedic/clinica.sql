@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-11-2024 a las 20:38:14
+-- Tiempo de generación: 03-12-2024 a las 19:29:03
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -68,8 +68,7 @@ CREATE TABLE `citas` (
 --
 
 INSERT INTO `citas` (`id`, `paciente_id`, `medico_id`, `servicio_id`, `fecha`, `hora`, `estado`) VALUES
-(1, 1, 1, 1, '2023-11-15', '10:00:00', 'confirmada'),
-(2, 2, 2, 1, '2023-11-16', '11:00:00', 'pendiente'),
+(1, 1, 2, 2, '2023-11-15', '10:00:00', 'confirmada'),
 (3, 8, 3, 2, '2024-11-27', '12:20:00', 'pendiente'),
 (4, 8, 3, 1, '2024-11-27', '08:00:00', 'pendiente'),
 (5, 9, 3, 2, '2024-11-27', '19:00:00', 'pendiente'),
@@ -322,23 +321,24 @@ CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
   `dni` varchar(8) DEFAULT NULL,
   `contrasena` varchar(255) NOT NULL,
-  `rol_id` int(11) NOT NULL
+  `rol_id` int(11) NOT NULL,
+  `estado` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`) VALUES
-(1, '74972730', 'Asd123123', 1),
-(2, '75565656', '$2b$10$EzLs./21NvTdspUqgckjruVffrW799/lrBihEZ2W8cMEA9wlSaYI6', 2),
-(3, NULL, 'contrasena_segura789', 3),
-(4, '16780921', 'Asd123123', 1),
-(11, '74733211', '$2b$10$ZRdhUj6d8GHNd/hsK47GHuohNlxhd2GvWXZQ/PfWR.GTZWHJgATEC', 1),
-(12, '74733299', '$2b$10$/NB90fLoUA5hcLz.kwL8VubJn8mpflhdKGtI6Lpt3Mjgsj9BQ5v3S', 1),
-(13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2),
-(14, '12345678', '$2b$10$KSRLPcmF4VVRaj1Ug58hke2a5trtFVJCmqXvAZSKZGAyTnJPZt/L2', 3),
-(15, '74733225', '$2b$10$DyYWE5niW4MimCyA8o29B.K153phNPwVBqe1thqwwKjvb6xcGB6RK', 1);
+INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`, `estado`) VALUES
+(1, '74972730', '$2b$10$y.vlmlwXZoz9vK/H8m0qQO7ZfKVvWz/19c0QR2714n1YQZtFWstYS', 1, 1),
+(2, '75565656', '$2b$10$agNIAA3QJNVXckD3YiYc5O9HGYa/owAJlPEOY4WavG8lgXXrw6N8i', 2, 1),
+(3, NULL, 'contrasena_segura789', 3, 1),
+(4, '16780921', 'Asd123123', 1, 1),
+(11, '74733211', '$2b$10$ZRdhUj6d8GHNd/hsK47GHuohNlxhd2GvWXZQ/PfWR.GTZWHJgATEC', 1, 1),
+(12, '74733299', '$2b$10$/NB90fLoUA5hcLz.kwL8VubJn8mpflhdKGtI6Lpt3Mjgsj9BQ5v3S', 1, 1),
+(13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2, 1),
+(14, '12345678', '$2b$10$KSRLPcmF4VVRaj1Ug58hke2a5trtFVJCmqXvAZSKZGAyTnJPZt/L2', 3, 1),
+(15, '74733225', '$2b$10$DyYWE5niW4MimCyA8o29B.K153phNPwVBqe1thqwwKjvb6xcGB6RK', 1, 1);
 
 -- --------------------------------------------------------
 

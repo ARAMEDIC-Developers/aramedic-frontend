@@ -342,22 +342,53 @@
 
 
     // Función para guardar los datos del formulario del trabajador
-document.getElementById("botonGuardarTrabajador").addEventListener("click", async (event) => {
+    document.getElementById("botonGuardarTrabajador").addEventListener("click", async (event) => {
     event.preventDefault();
 
-    // Verificar que el botón que disparó el evento sea el botón "botonGuardarTrabajador"
-    const submitter = event.submitter; // Obtenemos el botón que disparó el evento
+    const submitter = event.submitter;
     if (submitter && submitter.id !== "botonGuardarTrabajador") {
-        return; // Si no es el botón correcto, salimos de la función
+        return;
     }
 
-    const dni = document.getElementById("dniUsuarioT").value;
-    const nombre = document.getElementById("nombreUsuarioT").value;
-    const apellido = document.getElementById("apellidoUsuarioT").value;
-    const email = document.getElementById("emailUsuarioT").value;
-    const rol = document.getElementById("rolT").value;
-    const contrasena = document.getElementById("contraseñaUsuarioT").value;
-    const repetirContrasena = document.getElementById("repetirContraseñaUsuarioT").value;
+    const dni = document.getElementById("dniUsuarioT").value.trim();
+    const nombre = document.getElementById("nombreUsuarioT").value.trim();
+    const apellido = document.getElementById("apellidoUsuarioT").value.trim();
+    const email = document.getElementById("emailUsuarioT").value.trim();
+    const rol = document.getElementById("rolT").value.trim();
+    const contrasena = document.getElementById("contraseñaUsuarioT").value.trim();
+    const repetirContrasena = document.getElementById("repetirContraseñaUsuarioT").value.trim();
+
+    // Validación del DNI: solo números y longitud exacta de 8
+    const dniRegex = /^\d{8}$/;
+    if (!dniRegex.test(dni)) {
+        alert("El DNI debe contener exactamente 8 números.");
+        return;
+    }
+
+    // Validación de nombre y apellido: sin números ni signos
+    const textoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!textoRegex.test(nombre)) {
+        alert("El nombre no puede contener números ni signos.");
+        return;
+    }
+    if (!textoRegex.test(apellido)) {
+        alert("El apellido no puede contener números ni signos.");
+        return;
+    }
+
+    // Validación de email: debe acabar en @gmail.com
+    const emailRegex = /^[^\s@]+@gmail\.com$/;
+    if (!emailRegex.test(email)) {
+        alert("El email debe ser una dirección válida y terminar en @gmail.com.");
+        return;
+    }
+
+    // Validación de contraseña: al menos una mayúscula y un número
+    const contrasenaRegex = /^(?=.*[A-Z])(?=.*\d).+$/;
+    if (!contrasenaRegex.test(contrasena)) {
+        alert("La contraseña debe contener al menos una letra mayúscula y un número.");
+        return;
+    }
 
     // Validar que las contraseñas coincidan
     if (contrasena !== repetirContrasena) {
@@ -376,13 +407,13 @@ document.getElementById("botonGuardarTrabajador").addEventListener("click", asyn
         }
 
         const data = {
-            "dni" : dni,
-            "nombre" : nombre,
-            "apellido" : apellido,
-            "email" : email,
-            "rol" : rol,
-            "contrasena" : contrasena,
-        }
+            dni,
+            nombre,
+            apellido,
+            email,
+            rol,
+            contrasena
+        };
 
         // Enviar los datos al servidor
         const responseGuardar = await fetch('/dashboard_admin/cuentas/guardar', {
@@ -406,6 +437,8 @@ document.getElementById("botonGuardarTrabajador").addEventListener("click", asyn
     }
 });
 
+
+
 // Función para cargar trabajadores
 async function cargarTrabajadores() {
     try {
@@ -421,19 +454,50 @@ async function cargarTrabajadores() {
 document.getElementById("botonGuardarPaciente").addEventListener("click", async (event) => {
     event.preventDefault();
 
-    // Verificar que el botón que disparó el evento sea el botón "botonGuardarPaciente"
-    const submitter = event.submitter; // Obtenemos el botón que disparó el evento
+    const submitter = event.submitter;
     if (submitter && submitter.id !== "botonGuardarPaciente") {
-        return; // Si no es el botón correcto, salimos de la función
+        return;
     }
 
-    const dni = document.getElementById("dniUsuarioP").value;
-    const nombre = document.getElementById("nombreUsuarioP").value;
-    const apellido = document.getElementById("apellidoUsuarioP").value;
-    const email = document.getElementById("emailUsuarioP").value;
-    const rol = document.getElementById("rolP").value;
-    const contrasena = document.getElementById("contraseñaUsuarioP").value;
-    const repetirContrasena = document.getElementById("repetirContraseñaUsuarioP").value;
+    const dni = document.getElementById("dniUsuarioP").value.trim();
+    const nombre = document.getElementById("nombreUsuarioP").value.trim();
+    const apellido = document.getElementById("apellidoUsuarioP").value.trim();
+    const email = document.getElementById("emailUsuarioP").value.trim();
+    const rol = document.getElementById("rolP").value.trim();
+    const contrasena = document.getElementById("contraseñaUsuarioP").value.trim();
+    const repetirContrasena = document.getElementById("repetirContraseñaUsuarioP").value.trim();
+
+    // Validación del DNI: solo números y longitud exacta de 8
+    const dniRegex = /^\d{8}$/;
+    if (!dniRegex.test(dni)) {
+        alert("El DNI debe contener exactamente 8 números.");
+        return;
+    }
+
+    // Validación de nombre y apellido: sin números ni signos
+    const textoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!textoRegex.test(nombre)) {
+        alert("El nombre no puede contener números ni signos.");
+        return;
+    }
+    if (!textoRegex.test(apellido)) {
+        alert("El apellido no puede contener números ni signos.");
+        return;
+    }
+
+    // Validación de email: debe acabar en @gmail.com
+    const emailRegex = /^[^\s@]+@gmail\.com$/;
+    if (!emailRegex.test(email)) {
+        alert("El email debe ser una dirección válida y terminar en @gmail.com.");
+        return;
+    }
+
+    // Validación de contraseña: al menos una mayúscula y un número
+    const contrasenaRegex = /^(?=.*[A-Z])(?=.*\d).+$/;
+    if (!contrasenaRegex.test(contrasena)) {
+        alert("La contraseña debe contener al menos una letra mayúscula y un número.");
+        return;
+    }
 
     // Validar que las contraseñas coincidan
     if (contrasena !== repetirContrasena) {
@@ -452,12 +516,12 @@ document.getElementById("botonGuardarPaciente").addEventListener("click", async 
         }
 
         const data = {
-            "dni" : dni,
-            "nombre" : nombre,
-            "apellido" : apellido,
-            "email" : email,
-            "rol" : rol,
-            "contrasena" : contrasena,
+            dni,
+            nombre,
+            apellido,
+            email,
+            rol,
+            contrasena
         };
 
         // Enviar los datos al servidor
@@ -481,6 +545,7 @@ document.getElementById("botonGuardarPaciente").addEventListener("click", async 
         alert("Error al guardar paciente");
     }
 });
+
 
 // Función para cargar pacientes
 async function cargarPacientes() {
