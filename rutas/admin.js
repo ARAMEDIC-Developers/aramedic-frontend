@@ -553,51 +553,65 @@ router.get("/dashboard_admin/servicios/buscar", checkLoginAdmin, async (req, res
 });
 
 router.post("/dashboard_admin/servicios/guardar", checkLoginAdmin, async (req, res) => {
-    console.log(req.body)
-    const { id,nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado } = req.body;
+    console.log(req.body);
+    const { id, nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado } = req.body;
 
-    // // Validar datos de entrada
-    // const validacion = validarServicio({ nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion });
-    // if (!validacion.valido) {
-    //     return res.status(400).json({ mensaje: validacion.mensaje });
-    // }
+    // Validar que nombre y descripcion no contengan números
+    const contieneNumeros = (texto) => /\d/.test(texto);
+    if (contieneNumeros(nombre) || contieneNumeros(descripcion)) {
+        return res.status(400).json({ mensaje: "El nombre y la descripción no deben contener números." });
+    }
 
-    const data = await conexion.query("select * from servicios where id = ?", [id])
-    if(data.length === 0){
-        await conexion.query(
+    // Validar que costo, tiempo_duracion y tiempo_recuperacion sean mayores a 0
+    if (costo <= 0 || tiempo_duracion <= 0 || tiempo_recuperacion <= 0) {
+        return res.status(400).json({
+            mensaje: "El costo, la duración y el tiempo de recuperación deben ser mayores a 0."
+        });
+    }
+
+    try {
+        const data = await conexion.query("SELECT * FROM servicios WHERE id = ?", [id]);
+        if (data.length === 0) {
+            // Insertar nuevo servicio
+            await conexion.query(
                 `INSERT INTO servicios (nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado, visibilidad) 
-                VALUES (?, ?, ?, ?, ?,?, 1)`,
+                 VALUES (?, ?, ?, ?, ?, ?, 1)`,
                 [nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado]
             );
 
             return res.json({ mensaje: "Servicio registrado exitosamente" });
-    }else{
+        } else {
+            // Actualizar servicio existente
+            await conexion.query(
+                `UPDATE servicios 
+                 SET 
+                 nombre = ?,
+                 descripcion = ?, 
+                 costo = ?, 
+                 tiempo_duracion = ?,
+                 tiempo_recuperacion = ? ,
+                 estado = ?
+                 WHERE id = ?`,
+                [
+                    nombre,
+                    descripcion, 
+                    costo, 
+                    tiempo_duracion,
+                    tiempo_recuperacion, 
+                    estado,
+                    id
+                ]
+            );
 
-    await conexion.query(
-        `UPDATE servicios 
-         SET 
-         nombre = ?,
-         descripcion = ?, 
-         costo = ?, 
-         tiempo_duracion = ?,
-         tiempo_recuperacion = ? ,
-         estado = ?
-         WHERE id = ?`,
-        [
-            nombre,
-            descripcion, 
-            costo, 
-            tiempo_duracion,
-            tiempo_recuperacion, 
-            estado,
-            id
-        ]
-    ); 
-
-    return res.json({ mensaje: "Servicio actualizado exitosamente" });
+            return res.json({ mensaje: "Servicio actualizado exitosamente" });
+        }
+    } catch (error) {
+        console.error("Error en la base de datos:", error);
+        return res.status(500).json({ mensaje: "Error interno del servidor." });
     }
-
 });
+
+
 
 router.delete("/dashboard_admin/servicios/eliminar/:id", checkLoginAdmin, async (req, res) => {
     conexion.query('update servicios set visibilidad = 0 where id = ?',[req.params.id], function(error, rows){

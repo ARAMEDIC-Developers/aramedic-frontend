@@ -205,38 +205,56 @@
 
     // Guardar o actualizar servicio
     document.getElementById("formServicio").addEventListener("submit", async (event) => {
-        event.preventDefault(); // Previene el envío tradicional del formulario.
+    event.preventDefault(); // Previene el envío tradicional del formulario.
 
-        // Obtén el formulario como un objeto FormData
-        const formData = new FormData(event.target);
+    // Obtén el formulario como un objeto FormData
+    const formData = new FormData(event.target);
 
-        // Convierte FormData en un objeto JSON
-        const formDataObject = Object.fromEntries(formData.entries());
+    // Convierte FormData en un objeto JSON
+    const formDataObject = Object.fromEntries(formData.entries());
 
-        // Envía los datos con fetch
-        try {
-            const response = await fetch("/dashboard_admin/servicios/guardar", {
+    // Validación de campos numéricos
+    const { costo, duracion, recuperacion, nombre, descripcion } = formDataObject;
+
+    // Verifica si costo, duracion y recuperacion son mayores a 0
+    if (costo <= 0 || duracion <= 0 || recuperacion <= 0) {
+        alert("Los valores de costo, duración y recuperación deben ser mayores a 0.");
+        return; // Detén la ejecución si hay errores
+    }
+
+    // Verifica si nombre y descripcion contienen números
+    const regex = /\d/; // Expresión regular para detectar números
+    if (regex.test(nombre) || regex.test(descripcion)) {
+        alert("El nombre y la descripción no deben contener números.");
+        return; // Detén la ejecución si hay errores
+    }
+
+    // Envía los datos con fetch
+    try {
+        const response = await fetch("/dashboard_admin/servicios/guardar", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(formDataObject),
-            });
+        });
 
-            // Maneja la respuesta
-            if (response.ok) {
+        // Maneja la respuesta
+        if (response.ok) {
             const data = await response.json();
             console.log("Respuesta del servidor:", data.mensaje);
             alert(data.mensaje);
             location.reload();
-            } else {
-                alert("bo se puso...");
-            }
-        } catch (error) {
-            alert("no se pudo..");
-            console.error("Error de red:", error);
+        } else {
+            alert("No se pudo guardar el servicio. Verifica los datos.");
         }
-    });
+    } catch (error) {
+        alert("Error de red, intenta nuevamente.");
+        console.error("Error de red:", error);
+    }
+});
+
+
     
 });
 

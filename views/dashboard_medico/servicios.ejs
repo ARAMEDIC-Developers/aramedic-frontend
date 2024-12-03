@@ -205,38 +205,57 @@
 
     // Guardar o actualizar servicio
     document.getElementById("formServicio").addEventListener("submit", async (event) => {
-        event.preventDefault(); // Previene el envío tradicional del formulario.
+    event.preventDefault(); // Previene el envío tradicional del formulario.
 
-        // Obtén el formulario como un objeto FormData
-        const formData = new FormData(event.target);
+    // Obtén los valores de los campos
+    const nombre = document.getElementById("nombre").value.trim();
+    const descripcion = document.getElementById("descripcion").value.trim();
 
-        // Convierte FormData en un objeto JSON
-        const formDataObject = Object.fromEntries(formData.entries());
+    // Expresión regular para validar que no contenga números
+    const sinNumeros = /^[^0-9]*$/;
 
-        // Envía los datos con fetch
-        try {
-            const response = await fetch("/dashboard_jmedico/servicios/guardar", {
+    // Validación de los campos
+    if (!sinNumeros.test(nombre)) {
+        alert("El campo 'nombre' no puede contener números.");
+        return; // Detenemos el envío
+    }
+
+    if (!sinNumeros.test(descripcion)) {
+        alert("El campo 'descripción' no puede contener números.");
+        return; // Detenemos el envío
+    }
+
+    // Obtén el formulario como un objeto FormData
+    const formData = new FormData(event.target);
+
+    // Convierte FormData en un objeto JSON
+    const formDataObject = Object.fromEntries(formData.entries());
+
+    // Envía los datos con fetch
+    try {
+        const response = await fetch("/dashboard_jmedico/servicios/guardar", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(formDataObject),
-            });
+        });
 
-            // Maneja la respuesta
-            if (response.ok) {
+        // Maneja la respuesta
+        if (response.ok) {
             const data = await response.json();
             console.log("Respuesta del servidor:", data.mensaje);
             alert(data.mensaje);
             location.reload();
-            } else {
-                alert("bo se puso...");
-            }
-        } catch (error) {
-            alert("no se pudo..");
-            console.error("Error de red:", error);
+        } else {
+            alert("No se pudo guardar el servicio.");
         }
-    });
+    } catch (error) {
+        alert("Hubo un error en la red.");
+        console.error("Error de red:", error);
+    }
+});
+
 
 
 });
