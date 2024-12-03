@@ -38,19 +38,27 @@
                             <% citas.forEach(cita => { %>
                                 <tr style="border-bottom: 1px solid #ddd;">
                                     <td style="padding: 10px;"><%= cita.nombre_paciente %> <%= cita.apellido_paciente %></td>
-                                    <td style="padding: 10px;"><%= cita.nombre_cita%></td>
+                                    <td style="padding: 10px;"><%= cita.nombre_servicio %></td>
                                     <td style="padding: 10px;" class="fecha-cita" data-fecha="<%= cita.fecha %>"><%= cita.fecha %></td>
                                     <td style="padding: 10px;"><%= cita.hora %></td>
                                     <td style="padding: 10px;"><%= cita.estado %></td>
                                     <td style="padding: 10px;">
-                                        <button class="edit-button" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="<%= cita.id %>">Editar</button>
-                                        <button class="delete-button" style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="<%= cita.id %>">Eliminar</button>
+                                        <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                                        data-id="<%= cita.id %>"
+                                        data-nombre-paciente="<%= cita.nombre_paciente %>"
+                                        data-apellido-paciente="<%= cita.apellido_paciente %>"
+                                        data-nombre_servicio="<%= cita.nombre_servicio %>"
+                                        data-fecha="<%= cita.fecha %>"
+                                        data-hora="<%= cita.hora %>"
+                                        data-estado="<%= cita.estado %>"
+                                        >Editar</button>
+                                        <button class="btn-eliminar" style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="<%= cita.id %>">Eliminar</button>
                                     </td>
                                 </tr>
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="6" style="text-align: center; padding: 10px;">No hay citas disponibles.</td>
+                                <td colspan="7" style="text-align: center; padding: 10px;">No hay citas disponibles.</td>
                             </tr>
                         <% } %>
                     </tbody>
@@ -126,19 +134,25 @@
 </div>
 
 <!-- Modal para añadir/editar servicio -->
-<div id="modalServicio" class="modal">
+<!-- Modal para añadir/editar cita -->
+<div id="modalCita" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 id="modalTitle">Editar Cita</h2>
-        <form id="formServicio">
+        <h2 id="modalTitle">Añadir Cita</h2>
+        <form id="formCita">
             <input type="text" id="id" name="id" hidden>
             <div class="form-group">
-                <label for="nombre">Paciente</label>
-                <input type="text" id="nombre" name="nombre" required>
+                <label for="nombrepac">Nombre del Paciente</label>
+                <select id="pacienteId" name="pacienteId" required>
+                    <option value="">Seleccione un paciente</option>
+                    <% pacientes.forEach(function (paciente) { %>
+                        <option value="<%= paciente.id%>"><%= paciente.nombre %> <%= paciente.apellido %></option>
+                    <% }); %>
+                </select>
             </div>
             <div class="form-group">
-                <label for="service">Selecciona el tipo de cita:</label>
-                <select id="tipoProcedimiento" name="tipoProcedimiento" required>
+                <label for="costo">Servicio</label>
+                <select id="tservicio" name="tservicio" required>
                     <option value=""></option>
                     <% servicios.forEach(servicio => { %>
                         <option value="<%= servicio.id %>">
@@ -148,19 +162,19 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="fecha">Fecha</label>
+                <label for="tiempo_duracion">Fecha</label>
                 <input type="date" id="fecha" name="fecha" required>
-            </div>            
+            </div>
             <div class="form-group">
-                <label for="hora">Hora</label>
+                <label for="tiempo_recuperacion">Hora</label>
                 <input type="time" id="hora" name="hora" required>
             </div>
             <div class="form-group">
-                <label for="estado">Estado de la cita</label>
+                <label for="estado">Estado</label>
                 <select id="estado" name="estado">
-                    <option value="pendiente">pendiente</option>
                     <option value="confirmada">confirmada</option>
                     <option value="cancelada">cancelada</option>
+                    <option value="pendiente">pendiente</option>
                 </select>
             </div>
             <button type="submit" id="btnGuardar" class="btn-guardar">Guardar</button>
@@ -169,6 +183,13 @@
 </div>
 
 <script>
+    const searchInput = document.getElementById("searchInput");
+    const tablaCitas = document.getElementById("tablaCitas");
+    const btnAgregarServicio = document.getElementById("btnAgregarServicio");
+    const modal = document.getElementById("modalCita");
+    const closeModal = document.querySelector(".close");
+    const formServicio = document.getElementById("formServicio");
+    const btnGuardar = document.getElementById("btnGuardar");
     const patientSelect = document.getElementById('patient');
     const serviceSelect = document.getElementById('service');
     const modalCalendario = document.getElementById("myModal");
@@ -350,37 +371,27 @@
         }
     });
 
-    // Función para abrir el modal en modo edición con los datos cargados
-    function abrirModalEditar(cita) {
-        document.getElementById("modalTitle").textContent = "Editar Cita";
-        document.getElementById("id").value = cita.id;
-        document.getElementById("nombre").value = cita.nombre;
-        document.getElementById("tipoProcedimiento").value = cita.tipoProcedimiento;
-        document.getElementById("fecha").value = cita.fecha;
-        document.getElementById("hora").value = cita.hora;
-        document.getElementById("estado").value = cita.estado
-        modal.classList.add("show");
-    }
-
-    // Asignar evento de clic en los botones de editar dentro de cada fila de la tabla
-    tablaServicios.addEventListener("click", function (event) {
+     // Asignar evento de clic en los botones de editar dentro de cada fila de la tabla
+     tablaCitas.addEventListener("click", function (event) {
         if (event.target && event.target.matches(".btn-editar")) {
 
-            console.log(event.target.dataset.estado)
+            console.log("prueba")
+            console.log(event.target.dataset)
+            console.log(new Date(event.target.dataset.fecha))
+            
+            const cita = event.target.dataset;
 
-            const cita = {
-                id: event.target.dataset.id,
-                nombre: event.target.dataset.nombre,
-                tipoProcedimiento: event.target.dataset.tipoProcedimiento,
-                fecha: event.target.dataset.fecha,
-                hora: event.target.dataset.hora,
-                estado: event.target.dataset.estado
-            };
-            abrirModalEditar(cita);
+            const date = new Date(cita.fecha);
+            const formattedDate = date.toISOString().split('T')[0];
+
+            document.getElementById("id").value = cita.id;
+            document.getElementById("fecha").value = formattedDate;
+            document.getElementById("hora").value = cita.hora;
+
+            modal.classList.add("show");
         }
     });
 
-    // Guardar o actualizar servicio
     document.getElementById("formCita").addEventListener("submit", async (event) => {
         event.preventDefault(); // Previene el envío tradicional del formulario.
 
@@ -407,10 +418,10 @@
             alert(data.mensaje);
             location.reload();
             } else {
-                alert("No hay respuesta");
+                alert("No se pudo...");
             }
         } catch (error) {
-            alert("No hay respuesta");
+            alert("No se pudo..");
             console.error("Error de red:", error);
         }
     });
@@ -429,10 +440,11 @@
     tablaCitas.addEventListener("click", async function (event) {
         if (event.target && event.target.matches(".btn-eliminar")) {
             const id = event.target.dataset.id;
-            const nombreCita = event.target.dataset.nombre;
+            // const nombreCita = event.target.dataset.nombre;
 
-            if (confirm(`¿Estás seguro de que deseas eliminar esta cita "${nombreCita}"?`)) {
+            if (confirm(`¿Estás seguro de que deseas eliminar esta cita?`)) {
                 try {
+                    console.log("Intentando eliminar cita con ID:", id);
                     const response = await fetch(`/dashboard_jmedico/citas/eliminar/${id}`, {
                         method: "DELETE",
                     });
