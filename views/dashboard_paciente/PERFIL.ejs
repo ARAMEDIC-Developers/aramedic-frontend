@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil y Registro de Usuario</title>
+    <title>Perfil de Usuario</title>
     <link rel="stylesheet" href="/Perfil_style.css">
 </head>
 <body>
@@ -27,7 +27,7 @@
             <section id="perfil">
                 <h1>Información Básica del Usuario</h1>
                 <div class="content-box">
-                    <!-- Imagen de Usuario -->
+                    <!-- Imagen de Usuario 
                     <div class="user-image-box">
                         <div class="user-image-square" id="imageContainer">
                             <img id="userImage" src="/imgs/placeholder.jpg" alt="Imagen Usuario">
@@ -37,7 +37,7 @@
                             <button id="addImageButton">Agregar Imagen</button>
                             <button id="removeImageButton">Eliminar Imagen</button>
                         </div>
-                    </div>
+                    </div>-->
 
                     <!-- Información de Usuario -->
                     <div class="info-wrapper">
@@ -80,21 +80,6 @@
                                 <div class="form-grid">
                                     <label for="email">Correo Electrónico:</label>
                                     <input type="email" id="email" name="email" value="<%= paciente ? paciente.email : '' %>" required>
-
-                                    <!-- <label for="username">Usuario:</label>
-                                    <input type="text" id="username" name="username" value="GabrielGG" required>
-
-                                    <label for="password">Contraseña:</label>
-                                    <div class="password-wrapper">
-                                        <input type="password" id="password" name="password" value="******" required>
-                                        <button type="button" class="toggle-password" onclick="togglePassword('password', this)">👁️</button>
-                                    </div>
-
-                                    <label for="verification">Verificación:</label>
-                                    <div class="password-wrapper">
-                                        <input type="password" id="verification" name="verification" value="******" required>
-                                        <button type="button" class="toggle-password" onclick="togglePassword('verification', this)">👁️</button>
-                                    </div> -->
                                 </div>
 
                                 <!-- Botones de Acción -->
@@ -141,7 +126,7 @@
         });
 
         removeImageButton.addEventListener("click", () => {
-            userImage.src = "/placeholder.svg";
+            userImage.src = "/imgs/placeholder.jpg";
             imageInput.value = "";
         });
     </script>
