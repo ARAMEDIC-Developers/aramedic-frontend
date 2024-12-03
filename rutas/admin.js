@@ -319,22 +319,9 @@ router.delete("/dashboard_admin/citas/eliminar/:id", checkLoginAdmin, async (req
 
 router.get("/dashboard_admin/cuentas", checkLoginAdmin, async (req, res) => {
     try {
-        const usuarios = await conexion.query(`
-            SELECT 
-                u.dni, 
-                u.rol_id,
-                COALESCE(p.nombre, m.nombre) AS nombre,
-                COALESCE(p.apellido, m.apellido) AS apellido,
-                COALESCE(p.email, m.email) AS email
-            FROM usuarios u
-            LEFT JOIN pacientes p ON u.dni = p.usuario_id
-            LEFT JOIN medicos m ON u.dni = m.usuario_id
-        `);
-
         const data = {
             'link': link,
             'usuario': req.session,
-            'usuarios': usuarios
         };
         res.render("dashboard_admin/cuentas", data);
     } catch (error) {
@@ -349,14 +336,16 @@ router.get("/dashboard_admin/cuentas/buscar", checkLoginAdmin, async (req, res) 
     try {
         let query = `
             SELECT 
+                u.id,
                 u.dni, 
                 u.rol_id,
                 COALESCE(p.nombre, m.nombre) AS nombre,
                 COALESCE(p.apellido, m.apellido) AS apellido,
-                COALESCE(p.email, m.email) AS email
+                COALESCE(p.email, m.email) AS email,
+                u.estado
             FROM usuarios u
-            LEFT JOIN pacientes p ON u.dni = p.usuario_id
-            LEFT JOIN medicos m ON u.dni = m.usuario_id
+            LEFT JOIN pacientes p ON u.id = p.usuario_id
+            LEFT JOIN medicos m ON u.id = m.usuario_id
         `;
         
         if (dni) {
@@ -464,32 +453,46 @@ router.post("/dashboard_admin/cuentas/guardar", checkLoginAdmin, async (req, res
 });
 
 router.post('/dashboard_admin/cuentas/editar', (req, res) => {
-    const { dni } = req.body;
+    console.log(req.body)
 
-    if (!dni) {
-        return res.status(400).json({ success: false, message: 'DNI no proporcionado' });
-    }
+    const query = req.body.clave 
+    ? "update usuarios set contrasena = ?,estado = ? where id = ?" 
+    : "update usuarios set estado = ? where id = ?";
 
-    // Aquí busca el usuario en la base de datos por DNI
-    // Ejemplo: 
-    // const usuario = await Usuario.findOne({ where: { dni } });
+    const data = req.body.clave 
+    ? [
+        req.body.clave,
+        req.body.estado,
+        req.body.id
+    ] 
+    : [
+        req.body.estado,
+        req.body.id
+    ];
 
-    const usuario = {
-        dni: dni,
-        nombre: "Ejemplo",
-        apellido: "Usuario",
-        email: "ejemplo@correo.com"
-    }; // Simulación de respuesta de DB
-
-    if (usuario) {
         // Si el usuario se encuentra, devuelve los datos para llenar el formulario
-        return res.json({ success: true, usuario });
-    } else {
-        // Si no se encuentra el usuario
-        return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-    }
+    conexion.query(query, data, function(error, rows){
+        if(error){
+            console.log(error)
+            return res.status(500).json({ mensaje: "no se puedo editar" });
+        }
+    
+        return res.json({ mensaje: "ok si." });
+    });    
 });
 
+router.delete('/dashboard_admin/cuentas/eliminar/:id', (req, res) => {
+    conexion.query('update usuarios set estado = 0 where id = ?',[
+        req.params.id
+    ], function(error, rows){
+        if(error){
+            console.log(error)
+            return res.status(500).json({ mensaje: "no se puedo eliminar" });
+        }
+
+        return res.json({ mensaje: "usuario inhabilitado exitosamente." });
+    });
+});
 
 // Ruta para mostrar la lista de servicios con admin_id
 router.get("/dashboard_admin/servicios", checkLoginAdmin, async (req, res) => {
@@ -599,7 +602,9 @@ router.post("/dashboard_admin/servicios/guardar", checkLoginAdmin, async (req, r
 });
 
 router.delete("/dashboard_admin/servicios/eliminar/:id", checkLoginAdmin, async (req, res) => {
-    conexion.query('update servicios set visibilidad = 0 where id = ?',[req.params.id], function(error, rows){
+    conexion.query('update servicios set visibilidad = 0 where id = ?',[
+        req.params.id
+    ], function(error, rows){
         if(error){
             console.log(error)
             return res.status(500).json({ mensaje: "no se puedo eliminar" });
@@ -608,31 +613,6 @@ router.delete("/dashboard_admin/servicios/eliminar/:id", checkLoginAdmin, async 
         return res.json({ mensaje: "Servicio eliminado exitosamente." });
     });
 });
-
-// router.post("/bloquear-fechas", async (req, res) =>{
-//     try {
-//         console.log("que fue.")
-//         console.log(req.body)
-//         console.log(req.session.medico_id)
-
-//         conexion.query(`
-//             INSERT INTO fechas(
-//             fecha_inicio, 
-//             fecha_final, 
-//             id_usuario) 
-//             VALUES (?,?,?)`, [
-//                 req.body.fecha_inicio,
-//                 req.body.fecha_final,
-//                 req.session.medico_id
-//             ]);
-
-//         res.status(200).send("ok");
-//     } catch (error) {
-       
-//         console.log(error)
-//         return res.status(500).send("sessión terminada")
-//     }
-// });
 
 // //Metodo para generar PDF
 router.get("/dashboard_admin/historias/descargar_pdf/:id", checkLoginAdmin, (req, res) => {

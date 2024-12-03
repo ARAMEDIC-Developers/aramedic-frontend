@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt"); // Importamos bcrypt para comparar las contras
 const session = require("express-session");
 
 router.get("/login", function(req, res) {
-    res.render("login", { link, oldData: {} });
+    res.render("login", { mensaje: null,link, oldData: {} });
 });
 
 router.post("/login", validateItem, async function(req, res) {
@@ -17,6 +17,7 @@ router.post("/login", validateItem, async function(req, res) {
     if (!errors.isEmpty()) {
         // Mostrar errores en la vista
         return res.render("login", {
+            mensaje: null,
             link,
             errors: errors.array(),
             oldData: req.body
@@ -25,14 +26,14 @@ router.post("/login", validateItem, async function(req, res) {
 
     const DNI = req.body.dni;
     const contrasena = req.body.contra;
-    const validar = "SELECT * FROM usuarios WHERE dni = ?";
+    const validar = "SELECT * FROM usuarios WHERE dni = ? and estado = 1";
 
     try {
         // Verificar si el usuario existe
         const [rows] = await conexion.promise().query(validar, [DNI]);
 
         if (rows.length < 1) {
-            const mensaje = "El DNI no existe en la base de datos.";
+            const mensaje = "El usurio no tiene credenciales de accesso o se encuentra inhabilitado.";
             return res.render("login", { mensaje, link, oldData: req.body });
         }
 

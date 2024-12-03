@@ -47,6 +47,14 @@
                     </div>
                 <% } %>
 
+                <% if (mensaje) { %>
+                    <div class="error-box">
+                        <ul class="error-list">
+                            <li><%= mensaje %></li>
+                        </ul>
+                    </div>
+                <% } %>
+
                 <form action="/login" method="POST">
 
                     <div class="field input-field">
