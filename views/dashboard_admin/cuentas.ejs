@@ -255,23 +255,28 @@
         formPaciente.reset();
 
         // Configuración específica para pacientes
-        fechaNacimientoInput.style.display = "none";
-        generoSelect.style.display = "none";
-        estadoCivilSelect.style.display = "none";
-        ocupacionInput.style.display = "none";
-        direccionInput.style.display = "none";
-        telefonoInput.style.display = "none";
+        fechaNacimientoInput.style.display = "block";
+        generoSelect.style.display = "block";
+        estadoCivilSelect.style.display = "block";
+        ocupacionInput.style.display = "block";
+        direccionInput.style.display = "block";
+        telefonoInput.style.display = "block";
 
-        document.querySelector("label[for='fechaNacimiento']").style.display = "none";
-        document.querySelector("label[for='genero']").style.display = "none";
-        document.querySelector("label[for='estadoCivil']").style.display = "none";
-        document.querySelector("label[for='ocupacion']").style.display = "none";
-        document.querySelector("label[for='direccionPaciente']").style.display = "none";
-        document.querySelector("label[for='telefonoP']").style.display = "none";
+        document.querySelector("label[for='fechaNacimiento']").style.display = "block";
+        document.querySelector("label[for='genero']").style.display = "block";
+        document.querySelector("label[for='estadoCivil']").style.display = "block";
+        document.querySelector("label[for='ocupacion']").style.display = "block";
+        document.querySelector("label[for='direccionPaciente']").style.display = "block";
+        document.querySelector("label[for='telefonoP']").style.display = "block";
 
+        // Configurar el selector de rol solo para pacientes
         rolSelectPaciente.innerHTML = `<option value="1">Paciente</option>`;
+
+        // Asegurarse de que los botones específicos se oculten/muestren correctamente
         botonGuardarCambiosPaciente.style.display = "none";
         modalPaciente.classList.add("show");
+        document.getElementById("formFormulario").style.display = "none"; // Ocultar el formulario de edición adicional
+        document.getElementById("formPaciente").style.display = "block"; // Mostrar formulario principal de paciente
     });
 
     // Cerrar el modal de paciente
@@ -668,7 +673,8 @@ async function eliminarUsuario(id){
 async function editarUsuario(id){
     console.log(id)
     document.getElementById("id").value = id
-    document.getElementById("formPaciente").style.display = "none";
+    document.getElementById("formFormulario").style.display = "block"; // Mostrar el formulario de edición
+    document.getElementById("formPaciente").style.display = "none"; // Ocultar el formulario principal de paciente
 
     modalPaciente.classList.add("show");       
 }
