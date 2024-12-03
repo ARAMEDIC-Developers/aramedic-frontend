@@ -3,65 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil del Paciente</title>
+    <title>Perfil de Usuario</title>
     <link rel="stylesheet" href="/Perfil_style.css">
 </head>
 <body>
-    <!-- Incluye la barra de tareas -->
+    <!-- Barra de navegación -->
     <%- include('../_partials/header') %>
 
     <div class="dashboard-container">
-        <!-- Incluye el sidebar -->
+        <!-- Sidebar -->
         <%- include('../_partials/sidebar') %>
 
         <!-- Contenido Principal -->
         <main id="main-content">
-            <!-- Incluye el sub-header si lo tienes -->
+            <!-- Sub-header -->
             <%- include('../_partials/sub_header') %>
 
-            <!-- Aquí puedes incluir las notificaciones y otros modales si es necesario -->
+            <!-- Notificaciones y Modales -->
             <%- include('../_partials/notificaciones') %>
             <%- include('../_partials/modal') %>
 
-            <!-- Perfil del Paciente -->
+            <!-- Sección de Perfil -->
             <section id="perfil">
                 <h1>Información Básica del Usuario</h1>
                 <div class="content-box">
-                    <!-- Sección de Imagen de Usuario -->
+                    <!-- Imagen de Usuario 
                     <div class="user-image-box">
                         <div class="user-image-square" id="imageContainer">
-                            <img id="userImage" src="/placeholder.jpg" alt="Imagen Usuario">
+                            <img id="userImage" src="/imgs/placeholder.jpg" alt="Imagen Usuario">
                         </div>
                         <div class="image-buttons">
                             <input type="file" id="imageInput" accept="image/*" hidden>
                             <button id="addImageButton">Agregar Imagen</button>
                             <button id="removeImageButton">Eliminar Imagen</button>
                         </div>
-                    </div>
+                    </div>-->
 
-                    <!-- Sección de Información Usuario -->
+                    <!-- Información de Usuario -->
                     <div class="info-wrapper">
                         <div class="info-box">
                             <h2>Información Usuario</h2>
                             <form id="formPerfil" action="/dashboard_paciente/perfil/editar" method="POST">
                                 <div class="form-grid">
                                     <label for="nombre">Nombre:</label>
-                                    <input type="text" id="nombre" name="nombre" value="<%= paciente.nombre %>" required>
+                                    <input type="text" id="nombre" name="nombre" value="<%= paciente ? paciente.nombre : '' %>" required>
 
                                     <label for="apellido">Apellido:</label>
-                                    <input type="text" id="apellido" name="apellido" value="<%= paciente.apellido %>" required>
+                                    <input type="text" id="apellido" name="apellido" value="<%= paciente ? paciente.apellido : '' %>" required>
 
-                                    <label for="direccion">Dirección:</label>
-                                    <input type="text" id="direccion" name="direccion" value="<%= paciente.direccion %>">
+                                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" value="<%= paciente.fecha_nacimiento %>" required>
 
-                                    <label for="telefono">Teléfono:</label>
-                                    <input type="text" id="telefono" name="telefono" value="<%= paciente.telefono %>">
+                                    <label for="edad">Edad:</label>
+                                    <input type="text" name="telefono" value="<%= paciente.telefono %>" required />
+
+                                    <label for="genero">Género:</label>
+                                    <select name="genero">
+                                        <option value="0" <%= paciente.genero === 0 ? "selected" : "" %>>Masculino</option>
+                                        <option value="1" <%= paciente.genero === 1 ? "selected" : "" %>>Femenino</option>
+                                    </select>
+
+                                    <label for="estadoCivil">Estado Civil:</label>
+                                    <select name="estado_civil">
+                                        <option value="soltero" <%= paciente.estado_civil === "soltero" ? "selected" : "" %>>Soltero</option>
+                                        <option value="casado" <%= paciente.estado_civil === "casado" ? "selected" : "" %>>Casado</option>
+                                        <option value="divorciado" <%= paciente.estado_civil === "divorciado" ? "selected" : "" %>>Divorciado</option>
+                                    </select>
+
+                                    <label for="ocupacion">Ocupación:</label>
+                                    <input type="text" name="ocupacion" value="<%= paciente.ocupacion %>" required />
                                 </div>
 
                                 <h2>Credenciales Globales</h2>
                                 <div class="form-grid">
                                     <label for="email">Correo Electrónico:</label>
-                                    <input type="email" id="email" name="email" value="<%= paciente.email %>" required>
+                                    <input type="email" id="email" name="email" value="<%= paciente ? paciente.email : '' %>" required>
                                 </div>
 
                                 <!-- Botones de Acción -->
@@ -76,20 +92,38 @@
         </main>
     </div>
 
+    <!-- Footer -->
+    <%- include('../_partials/footer_pac') %>
+
     <script>
-        // Función para mostrar/ocultar contraseña (si es necesario)
-        function togglePassword(inputId, button) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                button.eyeIcon = "👁️";
-            } else {
-                input.type = "password";
-                button.eyeIcon = "👁️";
-            }
+              // Función para formatear la fecha en formato DD/MM/YYYY
+              function formatDate(date) {
+            const d = new Date(date);
+            const day = d.getDate().toString().padStart(2, '0');
+            const month = (d.getMonth() + 1).toString().padStart(2, '0'); // El mes empieza desde 0
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
         }
 
-        // Función para manejar la selección de imagen
+        // Al cargar la página, formateamos la fecha del campo de fecha de nacimiento
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const fechaInput = document.getElementById('fecha_nacimiento');
+            if (fechaInput) {
+                const rawDate = fechaInput.value; // Fecha en formato YYYY-MM-DD
+                fechaInput.value = formatDate(rawDate); // Modificar al formato DD/MM/YYYY
+            }
+        });
+
+
+
+
+        // Mostrar/ocultar contraseñas
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === "password" ? "text" : "password";
+        }
+
+        // Manejar la selección de imagen
         const imageInput = document.getElementById("imageInput");
         const userImage = document.getElementById("userImage");
         const addImageButton = document.getElementById("addImageButton");
@@ -111,7 +145,7 @@
         });
 
         removeImageButton.addEventListener("click", () => {
-            userImage.src = "/placeholder.svg";
+            userImage.src = "/imgs/placeholder.jpg";
             imageInput.value = "";
         });
     </script>
