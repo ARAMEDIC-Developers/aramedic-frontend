@@ -1003,6 +1003,88 @@ router.get('/dashboard_admin/getMedico/:id', checkLoginAdmin, function(req, res)
         }
     });
 });
+router.get('/dashboard_admin/getUltimaHistoriaClinica/:pacienteId', checkLoginAdmin, function(req, res) {
+    const pacienteId = req.params.pacienteId;
+    // Consulta SQL para obtener la última historia clínica del paciente
+    const query = `
+        SELECT h.id, h.motivo, h.enfermedades_previas, h.alergias, h.medicamentos_actuales, h.cirugias_previas, h.fuma, 
+            h.consume_alcohol, h.enfermedades_hereditarias, h.peso, h.altura, h.imc, h.descripcion_fisica, 
+            h.cirugia, h.procedimiento, h.riesgos, h.cuidado_preoperativo, h.cuidado_postoperativo
+        FROM historial_medico h
+        WHERE h.paciente_id = ?
+        ORDER BY h.id DESC
+        LIMIT 1;
+    `;
+    conexion.query(query, [pacienteId], function(error, result) {
+        if (error) {
+            console.error("Error al obtener la última historia clínica:", error);
+            return res.status(500).send("Error al obtener la última historia clínica.");
+        }
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna la última historia clínica encontrada
+        } else {
+            res.status(404).send("No se encontró historia clínica pasada para este paciente.");
+        }
+    });
+});
+
+// Nuevo endpoint para obtener información del paciente por DNI
+router.get('/dashboard_admin/getPacienteByDNI/:id', checkLoginAdmin, function(req, res) {
+    const id = req.params.id;
+    const query = `
+        SELECT 
+            p.id AS paciente_id,
+            p.nombre,
+            p.apellido,
+            p.fecha_nacimiento,
+            p.telefono,
+            p.email,
+            p.direccion
+        FROM pacientes p
+        JOIN usuarios u ON p.usuario_id = u.id
+        WHERE p.id = ?;
+    `;
+
+    conexion.query(query, [id], function(error, result) {
+        if (error) {
+            console.error("Error al obtener datos del paciente por DNI:", error);
+            return res.status(500).send("Error al obtener datos del paciente.");
+        }
+
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna el primer registro del paciente
+        } else {
+            res.status(404).send("Paciente no encontrado.");
+        }
+    });
+});
+router.get('/dashboard_admin/getPacienteByDNI/:dni', checkLoginAdmin, function(req, res) {
+    const dni = req.params.dni;
+    const query = `
+        SELECT 
+            p.id AS paciente_id,
+            p.nombre,
+            p.apellido,
+            p.fecha_nacimiento,
+            p.telefono,
+            p.email,
+            p.direccion
+        FROM pacientes p
+        JOIN usuarios u ON p.usuario_id = u.id
+        WHERE u.dni = ?;
+    `;
+    conexion.query(query, [dni], function(error, result) {
+        if (error) {
+            console.error("Error al obtener datos del paciente por DNI:", error);
+            return res.status(500).send("Error al obtener datos del paciente.");
+        }
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna el primer registro del paciente
+        } else {
+            res.status(404).send("Paciente no encontrado.");
+        }
+    });
+});
 
 
 module.exports = router;

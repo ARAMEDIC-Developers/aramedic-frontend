@@ -171,49 +171,49 @@
 
     <script>
         // Autocompletar datos del paciente
-        document.getElementById('pacienteId').addEventListener('change', function() {
-            const pacienteId = this.value;
-            if (pacienteId) {
-                fetch(`/dashboard_admin/getPacienteByDNI/${pacienteId}`)
-                    .then(response => {
-                        if(!response.ok){
+        document.getElementById('pacienteId').addEventListener('change', function () {
+        const pacienteDNI = this.value.trim();
+        if (pacienteDNI) {
+            fetch(`/dashboard_admin/getPacienteByDNI/${pacienteDNI}`)
+                .then(response => {
+                    if (!response.ok) {
                         throw new Error('Paciente no encontrado');
-                        }
-                        response.json();
-                    })
-                    .then(data => {
-                        // Procesar la fecha si contiene una marca de tiempo
-                        if (data.fecha_nacimiento) {
-                            const fecha = new Date(data.fecha_nacimiento);
-                            data.fecha_nacimiento = fecha.toISOString().split('T')[0]; // yyyy-MM-dd
-                        }
-                        // Rellenar los campos con los datos del paciente
-                        document.getElementById('patientFirstName').value = data.nombre;
-                        document.getElementById('patientLastName').value = data.apellido;
-                        document.getElementById('fechaNacimiento').value = data.fechaNacimiento;
-                        document.getElementById('telefono').value = data.telefono;
-                        document.getElementById('email').value = data.email;
-                        document.getElementById('direccion').value = data.direccion;
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener datos del paciente:', error);
-                    });
-            } else {
-                // Limpiar los campos si no hay paciente seleccionado
+                    }
+                    return response.json();
+            })
+            .then(data => {
+                // Procesar la fecha si contiene una marca de tiempo
+                if (data.fecha_nacimiento) {
+                    const fecha = new Date(data.fecha_nacimiento);
+                    data.fecha_nacimiento = fecha.toISOString().split('T')[0]; // yyyy-MM-dd
+                }
+                // Rellenar los campos con los datos del paciente
+                document.getElementById('patientFirstName').value = data.nombre || '';
+                document.getElementById('patientLastName').value = data.apellido || '';
+                document.getElementById('fechaNacimiento').value = data.fecha_nacimiento || '';
+                document.getElementById('telefono').value = data.telefono || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('direccion').value = data.direccion || '';
+            })
+            .catch(error => {
+                console.error('Error al obtener datos del paciente:', error);
+                alert('Paciente no encontrado. Verifique el DNI.');
+                // Limpiar los campos si ocurre un error
                 document.getElementById('patientFirstName').value = '';
                 document.getElementById('patientLastName').value = '';
                 document.getElementById('fechaNacimiento').value = '';
                 document.getElementById('telefono').value = '';
                 document.getElementById('email').value = '';
                 document.getElementById('direccion').value = '';
-            }
+            });
+        }
         });
 
 
         document.getElementById('pacienteId').addEventListener('change', function () {
     const pacienteId = this.value.trim();
     if (pacienteId) {
-        fetch(`/dashboard_jmedico/getUltimaHistoriaClinica/${pacienteId}`)
+        fetch(`/dashboard_admin/getUltimaHistoriaClinica/${pacienteId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('No se encontró historia clínica pasada.');
