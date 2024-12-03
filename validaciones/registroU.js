@@ -12,6 +12,23 @@ const validateCreate = [
         .isLength({ min: 2 }).withMessage('El apellido debe tener al menos 2 caracteres')
         .matches(/^[^\s]+$/).withMessage('El apellido no debe contener espacios'),
 
+    // Validación personalizada para verificar que nombre y apellido no estén registrados juntos
+    body(['nom', 'ape']).custom(async (value, { req }) => {
+        const { nom, ape } = req.body;
+        return new Promise((resolve, reject) => {
+            const query = "SELECT * FROM pacientes WHERE nombre = ? AND apellido = ?";
+            conexion.query(query, [nom, ape], (error, rows) => {
+                if (error) {
+                    reject(new Error("Error en el servidor al verificar nombre y apellido"));
+                }
+                if (rows.length > 0) {
+                    reject(new Error("El nombre y apellido ya están registrados juntos"));
+                }
+                resolve(true);
+            });
+        });
+    }),
+
     check('ema')
         .isEmail().withMessage('Debe ser un correo válido')
         .notEmpty().withMessage('El correo es obligatorio'),
