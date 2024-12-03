@@ -7,7 +7,8 @@ const link = require("../config/link");
 const { validarServicio } = require('../validaciones/servicios');
 const checkLoginAdmin = require("../validaciones/authAdmin");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const saltRounds = 10
+const moment = require('moment');
 
 router.get("/dashboard_admin", checkLoginAdmin, function(req,res){
     const data = {
@@ -555,51 +556,65 @@ router.get("/dashboard_admin/servicios/buscar", checkLoginAdmin, async (req, res
 });
 
 router.post("/dashboard_admin/servicios/guardar", checkLoginAdmin, async (req, res) => {
-    console.log(req.body)
-    const { id,nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado } = req.body;
+    console.log(req.body);
+    const { id, nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado } = req.body;
 
-    // // Validar datos de entrada
-    // const validacion = validarServicio({ nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion });
-    // if (!validacion.valido) {
-    //     return res.status(400).json({ mensaje: validacion.mensaje });
-    // }
+    // Validar que nombre y descripcion no contengan números
+    const contieneNumeros = (texto) => /\d/.test(texto);
+    if (contieneNumeros(nombre) || contieneNumeros(descripcion)) {
+        return res.status(400).json({ mensaje: "El nombre y la descripción no deben contener números." });
+    }
 
-    const data = await conexion.query("select * from servicios where id = ?", [id])
-    if(data.length === 0){
-        await conexion.query(
+    // Validar que costo, tiempo_duracion y tiempo_recuperacion sean mayores a 0
+    if (costo <= 0 || tiempo_duracion <= 0 || tiempo_recuperacion <= 0) {
+        return res.status(400).json({
+            mensaje: "El costo, la duración y el tiempo de recuperación deben ser mayores a 0."
+        });
+    }
+
+    try {
+        const data = await conexion.query("SELECT * FROM servicios WHERE id = ?", [id]);
+        if (data.length === 0) {
+            // Insertar nuevo servicio
+            await conexion.query(
                 `INSERT INTO servicios (nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado, visibilidad) 
-                VALUES (?, ?, ?, ?, ?,?, 1)`,
+                 VALUES (?, ?, ?, ?, ?, ?, 1)`,
                 [nombre, descripcion, costo, tiempo_duracion, tiempo_recuperacion, estado]
             );
 
             return res.json({ mensaje: "Servicio registrado exitosamente" });
-    }else{
+        } else {
+            // Actualizar servicio existente
+            await conexion.query(
+                `UPDATE servicios 
+                 SET 
+                 nombre = ?,
+                 descripcion = ?, 
+                 costo = ?, 
+                 tiempo_duracion = ?,
+                 tiempo_recuperacion = ? ,
+                 estado = ?
+                 WHERE id = ?`,
+                [
+                    nombre,
+                    descripcion, 
+                    costo, 
+                    tiempo_duracion,
+                    tiempo_recuperacion, 
+                    estado,
+                    id
+                ]
+            );
 
-    await conexion.query(
-        `UPDATE servicios 
-         SET 
-         nombre = ?,
-         descripcion = ?, 
-         costo = ?, 
-         tiempo_duracion = ?,
-         tiempo_recuperacion = ? ,
-         estado = ?
-         WHERE id = ?`,
-        [
-            nombre,
-            descripcion, 
-            costo, 
-            tiempo_duracion,
-            tiempo_recuperacion, 
-            estado,
-            id
-        ]
-    ); 
-
-    return res.json({ mensaje: "Servicio actualizado exitosamente" });
+            return res.json({ mensaje: "Servicio actualizado exitosamente" });
+        }
+    } catch (error) {
+        console.error("Error en la base de datos:", error);
+        return res.status(500).json({ mensaje: "Error interno del servidor." });
     }
-
 });
+
+
 
 router.delete("/dashboard_admin/servicios/eliminar/:id", checkLoginAdmin, async (req, res) => {
     conexion.query('update servicios set visibilidad = 0 where id = ?',[
@@ -618,9 +633,13 @@ router.delete("/dashboard_admin/servicios/eliminar/:id", checkLoginAdmin, async 
 router.get("/dashboard_admin/historias/descargar_pdf/:id", checkLoginAdmin, (req, res) => {
     const historiaId = req.params.id;
 
+    // Consulta extendida con todos los campos
     const query = `
         SELECT p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.fecha_nacimiento, 
-               h.motivo, h.enfermedades_previas, h.alergias, h.medicamentos_actuales
+               h.id, h.paciente_id, h.motivo, h.enfermedades_previas, h.alergias, h.medicamentos_actuales,
+               h.cirugias_previas, h.fuma, h.consume_alcohol, h.enfermedades_hereditarias, h.peso, h.altura,
+               h.imc, h.descripcion_fisica, h.cirugia, h.procedimiento, h.riesgos, h.cuidado_preoperativo, 
+               h.cuidado_postoperativo, h.medico_id, h.horaCreacion, h.horaActualizacion
         FROM historial_medico h
         JOIN pacientes p ON h.paciente_id = p.id
         WHERE h.id = ?;
@@ -636,7 +655,6 @@ router.get("/dashboard_admin/historias/descargar_pdf/:id", checkLoginAdmin, (req
 
         // Configurar headers para la descarga
         res.setHeader("Content-Type", "application/pdf");
-        // Modificar la línea para usar el nombre y apellido del paciente
         res.setHeader(
             "Content-Disposition",
             `attachment; filename=historia_clinica_${historia.nombre_paciente}_${historia.apellido_paciente}.pdf`
@@ -652,46 +670,73 @@ router.get("/dashboard_admin/historias/descargar_pdf/:id", checkLoginAdmin, (req
         // Detalles del paciente
         doc.fontSize(12).text(`Paciente: ${historia.nombre_paciente} ${historia.apellido_paciente}`, { align: "left" });
         doc.text(`Fecha de nacimiento: ${historia.fecha_nacimiento}`, { align: "left" });
-        doc.text(`Motivo de consulta: ${historia.motivo}`, { align: "left" });
         doc.moveDown();
 
-        // Generación de la tabla
-        const tableTop = doc.y + 20;
-        const rowHeight = 20;
-        const columnWidth = [120, 320]; // Tamaños de columnas
-        let currentY = tableTop;
+        // Formatear la hora (solo HH:mm:ss)
+        const horaCreacion = moment(historia.horaCreacion).format('HH:mm:ss');
+        const horaActualizacion = moment(historia.horaActualizacion).format('HH:mm:ss');
 
-        // Títulos de la tabla
-        doc.fontSize(12).text("Descripción", columnWidth[0], currentY, { width: columnWidth[0], align: "center" });
-        doc.text("Detalle", columnWidth[0] + columnWidth[0], currentY, { width: columnWidth[1], align: "center" });
-        currentY += rowHeight;
+        // Incluir la información con la hora formateada
+        doc.fontSize(12).text(`ID Historia Clínica: ${historia.id}`);
+        doc.text(`Motivo de consulta: ${historia.motivo || "No especificado"}`);
+        doc.text(`Enfermedades previas: ${historia.enfermedades_previas || "N/A"}`);
+        doc.text(`Alergias: ${historia.alergias || "N/A"}`);
+        doc.text(`Medicamentos actuales: ${historia.medicamentos_actuales || "N/A"}`);
+        doc.text(`Cirugías previas: ${historia.cirugias_previas || "N/A"}`);
+        doc.text(`Fuma: ${historia.fuma ? 'Sí' : 'No'}`);
+        doc.text(`Consume alcohol: ${historia.consume_alcohol ? 'Sí' : 'No'}`);
+        doc.text(`Enfermedades hereditarias: ${historia.enfermedades_hereditarias || "N/A"}`);
+        doc.text(`Peso: ${historia.peso || "No especificado"}`);
+        doc.text(`Altura: ${historia.altura || "No especificado"}`);
+        doc.text(`IMC: ${historia.imc || "No especificado"}`);
+        doc.text(`Descripción física: ${historia.descripcion_fisica || "N/A"}`);
+        doc.text(`Cirugía: ${historia.cirugia || "No especificado"}`);
+        doc.text(`Procedimiento: ${historia.procedimiento || "No especificado"}`);
+        doc.text(`Riesgos: ${historia.riesgos || "N/A"}`);
+        doc.text(`Cuidado preoperatorio: ${historia.cuidado_preoperativo || "N/A"}`);
+        doc.text(`Cuidado postoperatorio: ${historia.cuidado_postoperativo || "N/A"}`);
+        doc.text(`Médico ID: ${historia.medico_id || "No especificado"}`);
 
-        // Filas de la tabla
-        const rows = [
-            ["Motivo de consulta", historia.motivo || "No especificado"],
-            ["Enfermedades previas", historia.enfermedades_previas || "N/A"],
-            ["Alergias", historia.alergias || "N/A"],
-            ["Medicamentos actuales", historia.medicamentos_actuales || "N/A"]
-        ];
+        // Añadir la hora de creación y actualización
+        doc.moveDown();
+        doc.text(`Hora de Creación: ${horaCreacion}`);
+        doc.text(`Hora de Actualización: ${horaActualizacion}`);
 
-        // Dibujar las filas de la tabla
-        rows.forEach(row => {
-            doc.text(row[0], columnWidth[0], currentY, { width: columnWidth[0], align: "center" });
-            doc.text(row[1], columnWidth[0] + columnWidth[0], currentY, { width: columnWidth[1], align: "center" });
-            currentY += rowHeight;
-        });
-        
         // Finalizar el documento
-        doc.end(); 
+        doc.end();
     });
 });
+
 
 router.get("/dashboard_admin/historias/descargar_todos_pdf", checkLoginAdmin, (req, res) => {
     const idusuario = req.session.admin_id; // Asegúrate de que el id del administrador esté disponible
 
-    // Consulta para obtener todas las historias clínicas del administrador
+    // Consulta para obtener todas las historias clínicas con los datos adicionales
     const historias = `
-        SELECT h.id, p.nombre AS nombre_paciente, p.apellido AS apellido_paciente
+        SELECT h.id, 
+               h.paciente_id, 
+               h.motivo, 
+               h.enfermedades_previas, 
+               h.alergias, 
+               h.medicamentos_actuales, 
+               h.cirugias_previas, 
+               h.fuma, 
+               h.consume_alcohol, 
+               h.enfermedades_hereditarias, 
+               h.peso, 
+               h.altura, 
+               h.imc, 
+               h.descripcion_fisica, 
+               h.cirugia, 
+               h.procedimiento, 
+               h.riesgos, 
+               h.cuidado_preoperativo, 
+               h.cuidado_postoperativo, 
+               h.medico_id, 
+               h.horaCreacion, 
+               h.horaActualizacion,
+               p.nombre AS nombre_paciente, 
+               p.apellido AS apellido_paciente
         FROM historial_medico h
         JOIN pacientes p ON h.paciente_id = p.id;
     `;
@@ -721,20 +766,49 @@ router.get("/dashboard_admin/historias/descargar_todos_pdf", checkLoginAdmin, (r
             // Añadir cada PDF al archivo ZIP con el nombre del paciente
             zip.append(doc, { name: nombreArchivo });
 
+            // Formatear las horas (solo HH:mm:ss)
+            const horaCreacion = moment(historia.horaCreacion).format('HH:mm:ss');
+            const horaActualizacion = moment(historia.horaActualizacion).format('HH:mm:ss');
+
             // Generar contenido del PDF
             doc.fontSize(16).text("Historia Clínica", { align: "center" });
             doc.moveDown();
+
+            // Información básica del paciente
             doc.fontSize(12).text(`Paciente: ${nombrePaciente} ${apellidoPaciente}`, { align: "left" });
             doc.text(`Historia clínica ID: ${historia.id}`, { align: "left" });
+            doc.text(`Motivo: ${historia.motivo}`, { align: "left" });
+            doc.text(`Enfermedades Previas: ${historia.enfermedades_previas}`, { align: "left" });
+            doc.text(`Alergias: ${historia.alergias}`, { align: "left" });
+            doc.text(`Medicamentos Actuales: ${historia.medicamentos_actuales}`, { align: "left" });
+            doc.text(`Cirugías Previas: ${historia.cirugias_previas}`, { align: "left" });
+            doc.text(`Fuma: ${historia.fuma ? 'Sí' : 'No'}`, { align: "left" });
+            doc.text(`Consume Alcohol: ${historia.consume_alcohol ? 'Sí' : 'No'}`, { align: "left" });
+            doc.text(`Enfermedades Hereditarias: ${historia.enfermedades_hereditarias}`, { align: "left" });
+            doc.text(`Peso: ${historia.peso}`, { align: "left" });
+            doc.text(`Altura: ${historia.altura}`, { align: "left" });
+            doc.text(`IMC: ${historia.imc}`, { align: "left" });
+            doc.text(`Descripción Física: ${historia.descripcion_fisica}`, { align: "left" });
+            doc.text(`Cirugía: ${historia.cirugia}`, { align: "left" });
+            doc.text(`Procedimiento: ${historia.procedimiento}`, { align: "left" });
+            doc.text(`Riesgos: ${historia.riesgos}`, { align: "left" });
+            doc.text(`Cuidado Preoperatorio: ${historia.cuidado_preoperativo}`, { align: "left" });
+            doc.text(`Cuidado Postoperatorio: ${historia.cuidado_postoperativo}`, { align: "left" });
 
-            // Aquí puedes incluir más detalles de la historia clínica si lo deseas
-            doc.end();
+            // Información adicional
+            doc.text(`Médico ID: ${historia.medico_id}`, { align: "left" });
+            doc.text(`Hora de Creación: ${horaCreacion}`, { align: "left" });
+            doc.text(`Última Actualización: ${horaActualizacion}`, { align: "left" });
+
+            doc.end();  // Finaliza el documento PDF
         });
 
         // Finalizar la creación del archivo ZIP
         zip.finalize();
     });
 });
+
+
 
 
 
@@ -906,6 +980,88 @@ router.get('/dashboard_admin/getMedico/:id', checkLoginAdmin, function(req, res)
             res.json(result[0]); // Retorna el primer médico encontrado
         } else {
             res.status(404).send("Médico no encontrado.");
+        }
+    });
+});
+router.get('/dashboard_admin/getUltimaHistoriaClinica/:pacienteId', checkLoginAdmin, function(req, res) {
+    const pacienteId = req.params.pacienteId;
+    // Consulta SQL para obtener la última historia clínica del paciente
+    const query = `
+        SELECT h.id, h.motivo, h.enfermedades_previas, h.alergias, h.medicamentos_actuales, h.cirugias_previas, h.fuma, 
+            h.consume_alcohol, h.enfermedades_hereditarias, h.peso, h.altura, h.imc, h.descripcion_fisica, 
+            h.cirugia, h.procedimiento, h.riesgos, h.cuidado_preoperativo, h.cuidado_postoperativo
+        FROM historial_medico h
+        WHERE h.paciente_id = ?
+        ORDER BY h.id DESC
+        LIMIT 1;
+    `;
+    conexion.query(query, [pacienteId], function(error, result) {
+        if (error) {
+            console.error("Error al obtener la última historia clínica:", error);
+            return res.status(500).send("Error al obtener la última historia clínica.");
+        }
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna la última historia clínica encontrada
+        } else {
+            res.status(404).send("No se encontró historia clínica pasada para este paciente.");
+        }
+    });
+});
+
+// Nuevo endpoint para obtener información del paciente por DNI
+router.get('/dashboard_admin/getPacienteByDNI/:id', checkLoginAdmin, function(req, res) {
+    const id = req.params.id;
+    const query = `
+        SELECT 
+            p.id AS paciente_id,
+            p.nombre,
+            p.apellido,
+            p.fecha_nacimiento,
+            p.telefono,
+            p.email,
+            p.direccion
+        FROM pacientes p
+        JOIN usuarios u ON p.usuario_id = u.id
+        WHERE p.id = ?;
+    `;
+
+    conexion.query(query, [id], function(error, result) {
+        if (error) {
+            console.error("Error al obtener datos del paciente por DNI:", error);
+            return res.status(500).send("Error al obtener datos del paciente.");
+        }
+
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna el primer registro del paciente
+        } else {
+            res.status(404).send("Paciente no encontrado.");
+        }
+    });
+});
+router.get('/dashboard_admin/getPacienteByDNI/:dni', checkLoginAdmin, function(req, res) {
+    const dni = req.params.dni;
+    const query = `
+        SELECT 
+            p.id AS paciente_id,
+            p.nombre,
+            p.apellido,
+            p.fecha_nacimiento,
+            p.telefono,
+            p.email,
+            p.direccion
+        FROM pacientes p
+        JOIN usuarios u ON p.usuario_id = u.id
+        WHERE u.dni = ?;
+    `;
+    conexion.query(query, [dni], function(error, result) {
+        if (error) {
+            console.error("Error al obtener datos del paciente por DNI:", error);
+            return res.status(500).send("Error al obtener datos del paciente.");
+        }
+        if (result.length > 0) {
+            res.json(result[0]); // Retorna el primer registro del paciente
+        } else {
+            res.status(404).send("Paciente no encontrado.");
         }
     });
 });

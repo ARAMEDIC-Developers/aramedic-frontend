@@ -150,6 +150,23 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        // Función para formatear la fecha en formato DD/MM/YYYY
+        function formatDate(date) {
+            const d = new Date(date);
+            const day = d.getDate().toString().padStart(2, '0');
+            const month = (d.getMonth() + 1).toString().padStart(2, '0'); // El mes empieza desde 0
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const fechaNacimientoInput = document.getElementById('fechaNacimiento');
+            if (fechaNacimientoInput && fechaNacimientoInput.value) {
+                const formattedDate = formatDate(fechaNacimientoInput.value);
+                fechaNacimientoInput.value = formattedDate; // Asignamos la fecha formateada
+            }
+        });
+    </script>
 </body>
 </html>
