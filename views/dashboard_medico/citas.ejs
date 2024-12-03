@@ -38,19 +38,27 @@
                             <% citas.forEach(cita => { %>
                                 <tr style="border-bottom: 1px solid #ddd;">
                                     <td style="padding: 10px;"><%= cita.nombre_paciente %> <%= cita.apellido_paciente %></td>
-                                    <td style="padding: 10px;"><%= cita.nombre_cita%></td>
+                                    <td style="padding: 10px;"><%= cita.nombre_servicio %></td>
                                     <td style="padding: 10px;" class="fecha-cita" data-fecha="<%= cita.fecha %>"><%= cita.fecha %></td>
                                     <td style="padding: 10px;"><%= cita.hora %></td>
                                     <td style="padding: 10px;"><%= cita.estado %></td>
                                     <td style="padding: 10px;">
-                                        <button class="edit-button" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="<%= cita.id %>">Editar</button>
-                                        <button class="delete-button" style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="<%= cita.id %>">Eliminar</button>
+                                        <button class="btn-editar" style="padding: 5px 10px; background-color: #ffc107; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                                        data-id="<%= cita.id %>"
+                                        data-nombre-paciente="<%= cita.nombre_paciente %>"
+                                        data-apellido-paciente="<%= cita.apellido_paciente %>"
+                                        data-nombre_servicio="<%= cita.nombre_servicio %>"
+                                        data-fecha="<%= cita.fecha %>"
+                                        data-hora="<%= cita.hora %>"
+                                        data-estado="<%= cita.estado %>"
+                                        >Editar</button>
+                                        <button class="btn-eliminar" style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" data-id="<%= cita.id %>">Eliminar</button>
                                     </td>
                                 </tr>
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="6" style="text-align: center; padding: 10px;">No hay citas disponibles.</td>
+                                <td colspan="7" style="text-align: center; padding: 10px;">No hay citas disponibles.</td>
                             </tr>
                         <% } %>
                     </tbody>
@@ -78,9 +86,9 @@
                         <label for="service">Selecciona un Servicio:</label>
                         <select id="service" name="service" required>
                             <option value="">Selecciona un Servicio</option>
-                            <% servicios.forEach(servicio => { %>
-                                <option value="<%= servicio.id %>">
-                                    <%= servicio.nombre %>
+                            <% servicios.forEach(cita => { %>
+                                <option value="<%= cita.id %>">
+                                    <%= cita.nombre %>
                                 </option>
                             <% }); %>
                         </select>
@@ -125,8 +133,64 @@
     </main>
 </div>
 
+<!-- Modal para añadir/editar servicio -->
+<!-- Modal para añadir/editar cita -->
+<div id="modalCita" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Añadir Cita</h2>
+        <form id="formCita">
+            <input type="text" id="id" name="id" hidden>
+            <div class="form-group">
+                <label for="nombrepac">Nombre del Paciente</label>
+                <select id="pacienteId" name="pacienteId" required>
+                    <option value="">Seleccione un paciente</option>
+                    <% pacientes.forEach(function (paciente) { %>
+                        <option value="<%= paciente.id%>"><%= paciente.nombre %> <%= paciente.apellido %></option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="costo">Servicio</label>
+                <select id="tservicio" name="tservicio" required>
+                    <option value=""></option>
+                    <% servicios.forEach(servicio => { %>
+                        <option value="<%= servicio.id %>">
+                            <%= servicio.nombre %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tiempo_duracion">Fecha</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
+            <div class="form-group">
+                <label for="tiempo_recuperacion">Hora</label>
+                <input type="time" id="hora" name="hora" required>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado">
+                    <option value="confirmada">confirmada</option>
+                    <option value="cancelada">cancelada</option>
+                    <option value="pendiente">pendiente</option>
+                </select>
+            </div>
+            <button type="submit" id="btnGuardar" class="btn-guardar">Guardar</button>
+        </form>
+    </div>
+</div>
+
 <script>
-     const patientSelect = document.getElementById('patient');
+    const searchInput = document.getElementById("searchInput");
+    const tablaCitas = document.getElementById("tablaCitas");
+    const btnAgregarServicio = document.getElementById("btnAgregarServicio");
+    const modal = document.getElementById("modalCita");
+    const closeModal = document.querySelector(".close");
+    const formServicio = document.getElementById("formServicio");
+    const btnGuardar = document.getElementById("btnGuardar");
+    const patientSelect = document.getElementById('patient');
     const serviceSelect = document.getElementById('service');
     const modalCalendario = document.getElementById("myModal");
     const closeModalCalendarioBtn = document.getElementsByClassName("close-calentario")[0];
@@ -173,7 +237,6 @@
                 icon:"error",
                 title:"Error!",
                 text:"Eliga un medico y un servicio primero para continuar",
-                footer: '<a href="https://youtu.be/UZKuju7vIbM?si=6PpR1o_qlxsoOcWy" target="_blank">¿Porque tengo este error?</a>' //:P
             });
         }
     });
@@ -305,6 +368,100 @@
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeModalCalentario();
+        }
+    });
+
+     // Asignar evento de clic en los botones de editar dentro de cada fila de la tabla
+     tablaCitas.addEventListener("click", function (event) {
+        if (event.target && event.target.matches(".btn-editar")) {
+
+            console.log("prueba")
+            console.log(event.target.dataset)
+            console.log(new Date(event.target.dataset.fecha))
+            
+            const cita = event.target.dataset;
+
+            const date = new Date(cita.fecha);
+            const formattedDate = date.toISOString().split('T')[0];
+
+            document.getElementById("id").value = cita.id;
+            document.getElementById("fecha").value = formattedDate;
+            document.getElementById("hora").value = cita.hora;
+
+            modal.classList.add("show");
+        }
+    });
+
+    document.getElementById("formCita").addEventListener("submit", async (event) => {
+        event.preventDefault(); // Previene el envío tradicional del formulario.
+
+        // Obtén el formulario como un objeto FormData
+        const formData = new FormData(event.target);
+
+        // Convierte FormData en un objeto JSON
+        const formDataObject = Object.fromEntries(formData.entries());
+
+        // Envía los datos con fetch
+        try {
+            const response = await fetch("/dashboard_jmedico/citas/guardar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formDataObject),
+            });
+
+            // Maneja la respuesta
+            if (response.ok) {
+            const data = await response.json();
+            console.log("Respuesta del servidor:", data.mensaje);
+            alert(data.mensaje);
+            location.reload();
+            } else {
+                alert("No se pudo...");
+            }
+        } catch (error) {
+            alert("No se pudo..");
+            console.error("Error de red:", error);
+        }
+    });
+
+    // Cerrar el modal
+    closeModal.addEventListener("click", () => {
+        modal.classList.remove("show");
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.classList.remove("show");
+        }
+    });
+
+    tablaCitas.addEventListener("click", async function (event) {
+        if (event.target && event.target.matches(".btn-eliminar")) {
+            const id = event.target.dataset.id;
+            // const nombreCita = event.target.dataset.nombre;
+
+            if (confirm(`¿Estás seguro de que deseas eliminar esta cita?`)) {
+                try {
+                    console.log("Intentando eliminar cita con ID:", id);
+                    const response = await fetch(`/dashboard_jmedico/citas/eliminar/${id}`, {
+                        method: "DELETE",
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert(result.mensaje);
+                        location.reload(); // Recargar la página para actualizar la tabla
+                    } else {
+                        alert(result.mensaje);
+                    }
+                } catch (error) {
+                    console.error("Error al eliminar la cita:", error);
+                    alert("Error al eliminar la cita.");
+                }
+            }
         }
     });
 </script>

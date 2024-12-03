@@ -20,7 +20,7 @@
                     <!-- Select para elegir al paciente -->
                     <h3>Seleccionar Paciente</h3>
                     <div class="form-group">
-                        <label for="pacienteId">Paciente:</label>
+                        <label for="pacienteId">DNI del Paciente:</label>
                         <select id="pacienteId" name="pacienteId" required>
                             <option value="">Seleccione un paciente</option>
                             <% pacientes.forEach(function(paciente) { %>
@@ -174,9 +174,19 @@
         document.getElementById('pacienteId').addEventListener('change', function() {
             const pacienteId = this.value;
             if (pacienteId) {
-                fetch(`/dashboard_admin/getPaciente/${pacienteId}`)
-                    .then(response => response.json())
+                fetch(`/dashboard_admin/getPacienteByDNI/${pacienteId}`)
+                    .then(response => {
+                        if(!response.ok){
+                        throw new Error('Paciente no encontrado');
+                        }
+                        response.json();
+                    })
                     .then(data => {
+                        // Procesar la fecha si contiene una marca de tiempo
+                        if (data.fecha_nacimiento) {
+                            const fecha = new Date(data.fecha_nacimiento);
+                            data.fecha_nacimiento = fecha.toISOString().split('T')[0]; // yyyy-MM-dd
+                        }
                         // Rellenar los campos con los datos del paciente
                         document.getElementById('patientFirstName').value = data.nombre;
                         document.getElementById('patientLastName').value = data.apellido;
@@ -199,6 +209,61 @@
             }
         });
 
+
+        document.getElementById('pacienteId').addEventListener('change', function () {
+    const pacienteId = this.value.trim();
+    if (pacienteId) {
+        fetch(`/dashboard_jmedico/getUltimaHistoriaClinica/${pacienteId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('No se encontró historia clínica pasada.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Autocompletar los campos del formulario
+                document.getElementById('motivo').value = data.motivo || '';
+                document.getElementById('enfermedadesPrevias').value = data.enfermedades_previas || '';
+                document.getElementById('alergias').value = data.alergias || '';
+                document.getElementById('medicamentosActuales').value = data.medicamentos_actuales || '';
+                document.getElementById('cirugiasPrevias').value = data.cirugias_previas || '';
+                document.getElementById('fuma').value = data.fuma ? '1' : '0';
+                document.getElementById('consumeAlcohol').value = data.consume_alcohol ? '1' : '0';
+                document.getElementById('enfermedadesHereditarias').value = data.enfermedades_hereditarias || '';
+                document.getElementById('peso').value = data.peso || '';
+                document.getElementById('altura').value = data.altura || '';
+                document.getElementById('imc').value = data.imc || '';
+                document.getElementById('descripcionFisica').value = data.descripcion_fisica || '';
+                document.getElementById('cirugia').value = data.cirugia || '';
+                document.getElementById('procedimiento').value = data.procedimiento || '';
+                document.getElementById('riesgos').value = data.riesgos || '';
+                document.getElementById('cuidadoPreoperativo').value = data.cuidado_preoperativo || '';
+                document.getElementById('cuidadoPostoperativo').value = data.cuidado_postoperativo || '';
+            })
+            .catch(error => {
+                console.error('Error al obtener la historia clínica:', error);
+                alert('No se encontró una historia clínica para este paciente.');
+                // Limpia los campos si no hay datos
+                document.getElementById('motivo').value = '';
+                document.getElementById('enfermedadesPrevias').value = '';
+                document.getElementById('alergias').value = '';
+                document.getElementById('medicamentosActuales').value = '';
+                document.getElementById('cirugiasPrevias').value = '';
+                document.getElementById('fuma').value = '0';
+                document.getElementById('consumeAlcohol').value = '0';
+                document.getElementById('enfermedadesHereditarias').value = '';
+                document.getElementById('peso').value = '';
+                document.getElementById('altura').value = '';
+                document.getElementById('imc').value = '';
+                document.getElementById('descripcionFisica').value = '';
+                document.getElementById('cirugia').value = '';
+                document.getElementById('procedimiento').value = '';
+                document.getElementById('riesgos').value = '';
+                document.getElementById('cuidadoPreoperativo').value = '';
+                document.getElementById('cuidadoPostoperativo').value = '';
+            });
+    }
+});
         // Autocompletar datos del médico
         document.getElementById('medicoId').addEventListener('change', function() {
             const medicoId = this.value;

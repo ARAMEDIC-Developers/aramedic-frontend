@@ -177,7 +177,7 @@
     tablaServicios.addEventListener("click", function (event) {
         if (event.target && event.target.matches(".btn-editar")) {
 
-            console.log(event.target.dataset.estado)
+            console.log("prueba")
 
             const servicio = {
                 id: event.target.dataset.id,
@@ -237,8 +237,7 @@
             console.error("Error de red:", error);
         }
     });
-
-   
+    
 });
 
 tablaServicios.addEventListener("click", async function (event) {
