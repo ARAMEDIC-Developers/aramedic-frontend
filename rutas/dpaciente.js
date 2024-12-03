@@ -3,6 +3,7 @@ const router= express.Router();
 const conexion=require("../config/conexion");
 const link= require("../config/link");
 const checkLoginPaciente = require('../validaciones/authPaciente');
+const bcrypt = require("bcrypt");
 
 router.get("/dashboard_paciente", function(req, res){
     const data = {
@@ -32,8 +33,10 @@ router.get("/dashboard_paciente/perfil", checkLoginPaciente, async (req, res) =>
                 p.ocupacion, 
                 p.telefono, 
                 p.email, 
-                p.direccion 
+                p.direccion,
+                u.contrasena  
             FROM pacientes p
+            JOIN usuarios u ON u.id = p.usuario_id
             WHERE p.id = ?
         `;
 
@@ -49,6 +52,7 @@ router.get("/dashboard_paciente/perfil", checkLoginPaciente, async (req, res) =>
             }
 
             const paciente = rows[0];
+
             res.render("dashboard_paciente/perfil", {
                 titulo: "Perfil del Paciente",
                 usuario: req.session,
@@ -62,12 +66,29 @@ router.get("/dashboard_paciente/perfil", checkLoginPaciente, async (req, res) =>
     }
 });
 
-
 // POST: Editar perfil del paciente
-router.post("/dashboard_paciente/perfil/editar",    checkLoginPaciente,
-    async (req, res) => {
-        const errors = validationResult(req);
-        const {
+router.post("/dashboard_paciente/perfil/editar", checkLoginPaciente, async (req, res) => {
+    const errors = validationResult(req);  // Valida los errores de los campos
+    if (!errors.isEmpty()) {
+        return res.render("dashboard_paciente/perfil", {
+            link,
+            errors: errors.array(),
+            oldData: req.body
+        });
+    }
+
+    const { nombre, apellido, fecha_nacimiento, genero, estado_civil, ocupacion, telefono, email, direccion, contrasena } = req.body;
+    const idPaciente = req.session.paciente_id;  // Obtiene el ID del paciente de la sesión
+
+    try {
+        // Consulta para actualizar los datos del paciente
+        const updatePacienteQuery = `
+            UPDATE pacientes 
+            SET nombre = ?, apellido = ?, fecha_nacimiento = ?, genero = ?, estado_civil = ?, ocupacion = ?, telefono = ?, email = ?, direccion = ?
+            WHERE id = ?
+        `;
+
+        const updatePacienteParams = [
             nombre,
             apellido,
             fecha_nacimiento,
@@ -77,65 +98,53 @@ router.post("/dashboard_paciente/perfil/editar",    checkLoginPaciente,
             telefono,
             email,
             direccion,
-        } = req.body;
-        const idPaciente = req.session.paciente_id;
+            idPaciente
+        ];
 
-        if (!errors.isEmpty()) {
-            return res.render("dashboard_paciente/perfil", {
-                link,
-                errors: errors.array(),
-                oldData: req.body,
+        // Si se envía una nueva contraseña, se encripta y se actualiza en la tabla 'usuarios'
+        if (contrasena) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(contrasena, salt);
+
+            // Actualizar la contraseña en la tabla usuarios
+            const updatePasswordQuery = `
+                UPDATE usuarios 
+                SET contrasena = ?
+                WHERE id = ?
+            `;
+            await new Promise((resolve, reject) => {
+                conexion.query(updatePasswordQuery, [hashedPassword, idPaciente], (error, result) => {
+                    if (error) {
+                        console.error("Error al actualizar la contraseña:", error);
+                        return reject("Error al actualizar la contraseña.");
+                    }
+                    resolve(result);
+                });
             });
         }
 
-        try {
-            const actualizarPaciente = `
-                UPDATE pacientes 
-                SET nombre = ?, apellido = ?, fecha_nacimiento = ?, genero = ?, estado_civil = ?, ocupacion = ?, telefono = ?, email = ?, direccion = ?
-                WHERE id = ?
-            `;
+        // Actualizar los datos del paciente en la tabla 'pacientes'
+        conexion.query(updatePacienteQuery, updatePacienteParams, (error, result) => {
+            if (error) {
+                console.error("Error al actualizar el perfil:", error);
+                return res.status(500).send("Error al actualizar el perfil.");
+            }
 
-            conexion.query(
-                actualizarPaciente,
-                [
-                    nombre,
-                    apellido,
-                    fecha_nacimiento,
-                    genero,
-                    estado_civil,
-                    ocupacion,
-                    telefono,
-                    email,
-                    direccion,
-                    idPaciente,
-                ],
-                (error, result) => {
-                    if (error) {
-                        console.error("Error al actualizar el perfil:", error);
-                        return res.status(500).send("Error al actualizar el perfil.");
-                    }
+            if (result.affectedRows === 0) {
+                console.log("No se realizaron cambios.");
+                return res.status(404).send("No se realizaron cambios.");
+            }
 
-                    if (result.affectedRows === 0) {
-                        console.log("No se realizaron cambios.");
-                        return res.status(404).send("No se realizaron cambios.");
-                    }
+            console.log("Perfil actualizado exitosamente.");
+            req.flash("success_msg", "Perfil actualizado con éxito.");
+            res.redirect("/dashboard_paciente/perfil");
+        });
 
-                    console.log("Perfil actualizado exitosamente.");
-                    req.flash("success_msg", "Perfil actualizado con éxito.");
-                    res.redirect("/dashboard_paciente/perfil");
-                }
-            );
-        } catch (error) {
-            console.error("Error en el proceso de actualización del perfil:", error);
-            res.status(500).send("Error al actualizar el perfil.");
-        }
+    } catch (error) {
+        console.error("Error en el proceso de actualización del perfil:", error);
+        res.status(500).send("Error al actualizar el perfil.");
     }
-);
-
-
-
-
-
+});
 
 
 router.get("/dashboard_paciente/events", async function (req, res) {
