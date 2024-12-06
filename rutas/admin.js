@@ -813,14 +813,21 @@ router.get("/dashboard_admin/historias/descargar_todos_pdf", checkLoginAdmin, (r
 
 
 router.get('/dashboard_admin/registrar_historia_clinica', checkLoginAdmin, function(req, res) {
-    // Consulta para obtener todos los pacientes
+    // Consulta para obtener solo los pacientes habilitados
     const pacientesQuery = `
         SELECT p.id, p.nombre, p.apellido, p.telefono, p.email
         FROM pacientes p
+        JOIN usuarios u ON p.usuario_id = u.id
+        WHERE u.estado = '1'
     `;
 
-    // Consulta para obtener todos los médicos
-    const medicosQuery = 'SELECT id, nombre, apellido FROM medicos';
+    // Consulta para obtener solo los médicos habilitados
+    const medicosQuery = `
+        SELECT m.id, m.nombre, m.apellido
+        FROM medicos m
+        JOIN usuarios u ON m.usuario_id = u.id
+        WHERE u.estado = '1'
+    `;
 
     // Ejecutamos la consulta de pacientes
     conexion.query(pacientesQuery, function(error, pacientes) {
@@ -840,8 +847,8 @@ router.get('/dashboard_admin/registrar_historia_clinica', checkLoginAdmin, funct
             const data = {
                 'usuario': req.session,
                 'link': link,
-                'pacientes': pacientes,  // Lista de pacientes
-                'medicos': medicos       // Lista de médicos
+                'pacientes': pacientes,  // Lista de pacientes habilitados
+                'medicos': medicos       // Lista de médicos habilitados
             };
 
             // Renderizamos la vista correspondiente al administrador
@@ -849,6 +856,8 @@ router.get('/dashboard_admin/registrar_historia_clinica', checkLoginAdmin, funct
         });
     });
 });
+
+
 
 
 router.post('/dashboard_admin/guardar_historia_clinica', checkLoginAdmin, function(req, res) {

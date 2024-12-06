@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-12-2024 a las 19:29:03
+-- Tiempo de generación: 06-12-2024 a las 21:50:40
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -72,7 +72,10 @@ INSERT INTO `citas` (`id`, `paciente_id`, `medico_id`, `servicio_id`, `fecha`, `
 (3, 8, 3, 2, '2024-11-27', '12:20:00', 'pendiente'),
 (4, 8, 3, 1, '2024-11-27', '08:00:00', 'pendiente'),
 (5, 9, 3, 2, '2024-11-27', '19:00:00', 'pendiente'),
-(6, 9, 3, 2, '2024-11-27', '19:00:00', 'pendiente');
+(6, 9, 3, 2, '2024-11-27', '19:00:00', 'pendiente'),
+(15, 1, 3, 2, '2024-12-10', '12:20:00', 'pendiente'),
+(16, 9, 3, 1, '2024-12-07', '11:00:00', 'pendiente'),
+(17, 9, 2, 10, '2024-12-07', '12:20:00', 'pendiente');
 
 -- --------------------------------------------------------
 
@@ -155,7 +158,11 @@ INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_pre
 (15, 7, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
 (16, 8, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-20 19:56:08', '2024-11-20 19:56:08'),
 (17, 7, '<xzxczxc', 'zxczxc', 'zxczxc', 'zzczx', 'czxczxc', 0, 0, 'zxczx', 111, 222, 11, 'asdasd', 'asdasd', 'asda', 'asda', 'asdas', 'asdas', 3, '2024-11-25 04:41:31', '2024-11-28 14:32:33'),
-(18, 9, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-26 19:55:29', '2024-11-26 19:55:29');
+(18, 9, '', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-26 19:55:29', '2024-11-26 19:55:29'),
+(20, 1, 'Chequeo Semanal', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'trabaja dean', 0, 1, 'N/A', 90, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-12-06 18:45:11', '2024-12-06 18:45:11'),
+(21, 1, 'falto', 'Gastritis', 'Inhibidor de bomba de protones', 'Recomendar dieta baja en grasas', 'trabaja dean', 0, 1, 'N/A', 90, 170, 2.5, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 3, '2024-12-06 18:46:21', '2024-12-06 18:46:21'),
+(22, 2, 'trabaja dean', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, '2024-12-06 19:48:13', '2024-12-06 19:48:13'),
+(23, 2, 'trabaja dean', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, '2024-12-06 19:48:33', '2024-12-06 19:48:33');
 
 --
 -- Disparadores `historial_medico`
@@ -163,6 +170,66 @@ INSERT INTO `historial_medico` (`id`, `paciente_id`, `motivo`, `enfermedades_pre
 DELIMITER $$
 CREATE TRIGGER `before_historial_medico_update` BEFORE UPDATE ON `historial_medico` FOR EACH ROW BEGIN
     SET NEW.horaActualizacion = CURRENT_TIMESTAMP;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `before_insert_historial_medico` BEFORE INSERT ON `historial_medico` FOR EACH ROW BEGIN
+    DECLARE user_estado INT;
+    SELECT estado INTO user_estado FROM usuarios WHERE id = NEW.paciente_id;
+    IF user_estado = 0 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'El usuario está deshabilitado y no puede registrar historial médico.';
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `before_update_historial_medico` BEFORE UPDATE ON `historial_medico` FOR EACH ROW BEGIN
+    DECLARE user_estado INT;
+    SELECT estado INTO user_estado FROM usuarios WHERE id = NEW.paciente_id;
+    IF user_estado = 0 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'El usuario está deshabilitado y no puede modificar historial médico.';
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `prevent_disabled_patient_historia` BEFORE INSERT ON `historial_medico` FOR EACH ROW BEGIN
+    DECLARE estado_paciente CHAR(1);
+
+    -- Consultar el estado del paciente
+    SELECT u.estado
+    INTO estado_paciente
+    FROM pacientes p
+    JOIN usuarios u ON p.usuario_id = u.id
+    WHERE p.id = NEW.paciente_id;
+
+    -- Si el paciente está deshabilitado, generar un error
+    IF estado_paciente = '0' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'No se puede registrar una historia clínica para un paciente deshabilitado.';
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `validar_estado_medico_before_insert` BEFORE INSERT ON `historial_medico` FOR EACH ROW BEGIN
+    DECLARE medico_estado VARCHAR(20);
+
+    -- Obtener el estado del usuario relacionado con el médico
+    SELECT u.estado
+    INTO medico_estado
+    FROM usuarios u
+    JOIN medicos m ON m.usuario_id = u.id
+    WHERE m.id = NEW.medico_id;
+
+    -- Verificar si el estado del médico es "habilitado"
+    IF medico_estado = '0' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'No se puede registrar una historia clínica con un médico deshabilitado';
+    END IF;
 END
 $$
 DELIMITER ;
@@ -188,9 +255,10 @@ CREATE TABLE `medicos` (
 --
 
 INSERT INTO `medicos` (`id`, `nombre`, `apellido`, `especialidad_id`, `telefono`, `email`, `usuario_id`) VALUES
-(1, 'Carlos', 'Lopez', 1, '555789012', 'carlos.lopez@example.com', NULL),
+(1, 'Carlos', 'Lopez', 1, '555789012', 'carlos.lopez@example.com', 3),
 (2, 'Ana', 'Martinez', 2, '555345678', 'ana.martinez@example.com', 2),
-(3, 'dereck', 'muñoz', 1, '944224435', 'dereckmunoz07@gmail.com', 13);
+(3, 'dereck', 'muñoz', 1, '944224435', 'dereckmunoz07@gmail.com', 13),
+(4, 'dean', 'dean', NULL, NULL, 'deam@gmail.com', 16);
 
 -- --------------------------------------------------------
 
@@ -215,7 +283,7 @@ INSERT INTO `medico_servicio` (`id`, `medico_id`, `servicio_id`, `estado`) VALUE
 (3, 3, 1, 'activo'),
 (4, 3, 10, 'activo'),
 (5, 3, 11, 'activo'),
-(6, 3, 10, 'activo'),
+(6, 2, 10, 'activo'),
 (7, 3, 11, 'activo');
 
 -- --------------------------------------------------------
@@ -330,15 +398,16 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `dni`, `contrasena`, `rol_id`, `estado`) VALUES
-(1, '74972730', '$2b$10$y.vlmlwXZoz9vK/H8m0qQO7ZfKVvWz/19c0QR2714n1YQZtFWstYS', 1, 1),
+(1, '74972730', '$2b$10$y.vlmlwXZoz9vK/H8m0qQO7ZfKVvWz/19c0QR2714n1YQZtFWstYS', 1, 0),
 (2, '75565656', '$2b$10$agNIAA3QJNVXckD3YiYc5O9HGYa/owAJlPEOY4WavG8lgXXrw6N8i', 2, 1),
-(3, NULL, 'contrasena_segura789', 3, 1),
+(3, '74733222', 'contrasena_segura789', 2, 1),
 (4, '16780921', 'Asd123123', 1, 1),
 (11, '74733211', '$2b$10$ZRdhUj6d8GHNd/hsK47GHuohNlxhd2GvWXZQ/PfWR.GTZWHJgATEC', 1, 1),
 (12, '74733299', '$2b$10$/NB90fLoUA5hcLz.kwL8VubJn8mpflhdKGtI6Lpt3Mjgsj9BQ5v3S', 1, 1),
-(13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2, 1),
+(13, '74733226', '$2b$10$8LvUC5hHxsjhu0rns/YuUeFzQOyfBsu/AiG9jFwT9K4MA27BlW91W', 2, 0),
 (14, '12345678', '$2b$10$KSRLPcmF4VVRaj1Ug58hke2a5trtFVJCmqXvAZSKZGAyTnJPZt/L2', 3, 1),
-(15, '74733225', '$2b$10$DyYWE5niW4MimCyA8o29B.K153phNPwVBqe1thqwwKjvb6xcGB6RK', 1, 1);
+(15, '74733225', '$2b$10$DyYWE5niW4MimCyA8o29B.K153phNPwVBqe1thqwwKjvb6xcGB6RK', 1, 1),
+(16, '77777777', '$2b$10$BWbJsedmwGFE042k5UX2B.ywvRosiohVcu2zeNDuWbek1IaWVqHa6', 2, 0);
 
 -- --------------------------------------------------------
 
@@ -441,7 +510,7 @@ ALTER TABLE `usuarios_key`
 -- AUTO_INCREMENT de la tabla `citas`
 --
 ALTER TABLE `citas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `especialidades`
@@ -459,13 +528,13 @@ ALTER TABLE `fechas`
 -- AUTO_INCREMENT de la tabla `historial_medico`
 --
 ALTER TABLE `historial_medico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `medicos`
 --
 ALTER TABLE `medicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `medico_servicio`
@@ -495,7 +564,7 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios_key`

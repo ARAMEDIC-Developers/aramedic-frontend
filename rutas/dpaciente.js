@@ -192,16 +192,19 @@ router.get("/dashboard_paciente/events", async function (req, res) {
 router.get("/dashboard_paciente/solicitar_consulta", checkLoginPaciente, async (req, res) => {
     const medico_servicios = `
     SELECT m.id AS medico_id, 
-           m.nombre AS medico_nombre, 
-           m.apellido AS medico_apellido,
-           GROUP_CONCAT(
-               CONCAT(s.id, '|', s.nombre, '|', s.descripcion, '|', s.costo) 
-               SEPARATOR ','
-           ) AS servicios
+       m.nombre AS medico_nombre, 
+       m.apellido AS medico_apellido,
+       GROUP_CONCAT(
+           CONCAT(s.id, '|', s.nombre, '|', s.descripcion, '|', s.costo) 
+           SEPARATOR ',' 
+       ) AS servicios
     FROM medicos m
     JOIN medico_servicio ms ON m.id = ms.medico_id
     JOIN servicios s ON ms.servicio_id = s.id
+    JOIN usuarios u ON m.usuario_id = u.id  -- Agregamos JOIN con la tabla usuarios
+    WHERE u.estado = '1'  -- Filtramos los médicos cuyo usuario esté habilitado
     GROUP BY m.id;
+
     `;
 
     conexion.query(medico_servicios, async function(error, rows) {
